@@ -1,0 +1,74 @@
+{
+  "id": "token-action-hud-shadowdark",
+  "title": "Token Action HUD Shadowdark",
+  "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
+  "authors": [
+    {
+      "name": "Larkinabout",
+      "url": "https://github.com/Larkinabout"
+    },
+    { "name": "chrpow",
+      "url": "https://github.com/chrpow"
+    }
+  ],
+  "url": "This is auto replaced",
+  "flags": {},
+  "version": "This is auto replaced",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11.300"
+  },
+  "esmodules": [
+    "./scripts/init.js"
+  ],
+  "scripts": [
+  ],
+  "styles": [
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    }
+  ],
+  "packs": [],
+  "relationships": {
+    "systems": [
+      {
+        "id": "template",
+        "type": "system",
+        "compatibility": [
+          {
+            "minimum": "1.0.0",
+            "verified": "1.0.0"
+          }
+        ]
+      }
+    ],
+    "requires": [
+      {
+        "id": "token-action-hud-core",
+        "type": "module",
+        "compatibility": [
+          {
+            "minimum": "1.4.7",
+            "maximum": "1.4",
+            "verified": "1.4.7"
+          }
+        ]
+      }
+    ],
+    "optional": [],
+    "flags": {
+      "optional": []
+    }
+  },
+  "socket": false,
+  "manifest": "This is auto replaced",
+  "download": "This is auto replaced",
+  "readme": "https://github.com/Larkinabout/fvtt-token-action-hud-template#readme",
+  "protected": false,
+  "coreTranslation": false,
+  "library": false
+}

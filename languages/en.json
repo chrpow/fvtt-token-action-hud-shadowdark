@@ -1,0 +1,20 @@
+{
+  "tokenActionHud": {
+    "template": {
+      "armor": "Armor",
+      "containers": "Containers",
+      "consumables": "Consumables",
+      "equipment": "Equipment",
+      "inventory": "Inventory",
+      "item": "Item",
+      "weapons": "Weapons",
+      "treasure": "Treasure",
+      "settings": {
+        "displayUnequipped": {
+          "hint": "Choose whether to display unequipped items on the HUD",
+          "name": "Display Unequipped"
+        }
+      }
+    }
+  }
+}
