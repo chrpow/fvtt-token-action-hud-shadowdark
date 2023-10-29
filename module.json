@@ -3,66 +3,65 @@
   "title": "Token Action HUD Shadowdark",
   "description": "Token Action HUD is a repositionable HUD of actions for a selected token",
   "authors": [
-    {
-      "name": "Larkinabout",
-      "url": "https://github.com/Larkinabout"
-    },
-    { "name": "chrpow",
-      "url": "https://github.com/chrpow"
-    }
+      {
+          "name": "Larkinabout",
+          "url": "https://github.com/Larkinabout"
+      },
+      {
+          "name": "chrpow",
+          "url": "https://github.com/chrpow"
+      }
   ],
   "url": "This is auto replaced",
   "flags": {},
   "version": "This is auto replaced",
   "compatibility": {
-    "minimum": "11",
-    "verified": "11.313"
+      "minimum": "11",
+      "verified": "11.313"
   },
   "esmodules": [
-    "./scripts/token-action-hud-shadowdark.min.js"
+      "./scripts/token-action-hud-shadowdark.min.js"
   ],
-  "scripts": [
-  ],
-  "styles": [
-  ],
+  "scripts": [],
+  "styles": [],
   "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    }
+      {
+          "lang": "en",
+          "name": "English",
+          "path": "languages/en.json"
+      }
   ],
   "packs": [],
   "relationships": {
-    "systems": [
-      {
-        "id": "shadowdark",
-        "type": "system",
-        "compatibility": [
+      "systems": [
           {
-            "minimum": "1.0.0",
-            "verified": "1.5.0"
+              "id": "shadowdark",
+              "type": "system",
+              "compatibility": [
+                  {
+                      "minimum": "1.0.0",
+                      "verified": "1.5.0"
+                  }
+              ]
           }
-        ]
-      }
-    ],
-    "requires": [
-      {
-        "id": "token-action-hud-core",
-        "type": "module",
-        "compatibility": [
+      ],
+      "requires": [
           {
-            "minimum": "1.4.16",
-            "maximum": "1.21",
-            "verified": "1.4.21"
+              "id": "token-action-hud-core",
+              "type": "module",
+              "compatibility": [
+                  {
+                      "minimum": "1.4.16",
+                      "maximum": "1.21",
+                      "verified": "1.4.21"
+                  }
+              ]
           }
-        ]
+      ],
+      "optional": [],
+      "flags": {
+          "optional": []
       }
-    ],
-    "optional": [],
-    "flags": {
-      "optional": []
-    }
   },
   "socket": false,
   "manifest": "This is auto replaced",
