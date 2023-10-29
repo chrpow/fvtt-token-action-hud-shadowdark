@@ -119,51 +119,45 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #buildStrikes() {
             console.log('building strikes')
-            const actionType = 'attack'
+            // const actionType = 'attack'
 
-            // Create parent group data
-            const parentGroupData = { id: 'attacks', type: 'system' }
+            // // Create parent group data
+            // const parentGroupData = { id: 'attacks', type: 'system' }
 
             // Get strikes
             const attacks = this.actor.itemTypes.Weapon;
             // Exit if no strikes exist
             if (!attacks) return
-            console.log('attacks:')
-            console.log(attacks)
-            const groupData = []
 
-            for (const attack of attacks) {
-                let strikeGroupData = null
+            const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee')
+            const rangedAttacks = attacks.filter((attack) => attack.system.type === 'ranged')
 
-                const strikeId = `${attack.id}-${attack.name.slugify()}`
-                console.log(strikeId)
-                const strikeGroupId = strikeId
-                console.log(strikeGroupId)
-                const strikeGroupName = attack.name
-                console.log(strikeGroupName)
-                const strikeGroupListName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ${attack.name} (${attack.id})`
-                console.log(strikeGroupListName)
-                // const image = attack.img
-                const showTitle = this.showStrikeNames
-                const tooltipData = await this.#getTooltipData(actionType, attack)
-                const tooltip = await this.#getTooltip(actionType, tooltipData)
-                // Create group data
-                strikeGroupData = {
-                    id: strikeGroupId,
-                    name: strikeGroupName,
-                    listName: strikeGroupListName,
-                    type: 'system-derived',
-                    settings: { showTitle },
-                    tooltip }
-                // if (this.showStrikeImages) { strikeGroupData.settings.image = image }
-                console.log('strikeGroupData')
-                console.log(strikeGroupData)
-                // Add group to action list
-                this.addGroup(strikeGroupData, parentGroupData)
+            console.log('melee:')
+            console.log(meleeAttacks)
+            console.log('ranged:')
+            console.log(rangedAttacks)
 
-                // Get actions
-                const id = encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type)
+            // Create group data
+            const parentGroupData = {
+                id: 'attacks',
+                type: 'system'
+            }
+            const meleeGroupData = {
+                id: 'melee',
+                name: 'Melee',
+                type: 'system-derived'
+            }
+            const rangedGroupData = {
+                id: 'ranged',
+                name: 'Ranged',
+                type: 'system-derived'
+            }
+            this.addGroup(meleeGroupData, parentGroupData)
+            this.addGroup(rangedGroupData, parentGroupData)
+
+            for (const attack of meleeAttacks) {
                 const name = attack.name
+                const id = encodeURIComponent(`${attack.id}>${name.slugify()}>0>` + attack.system.type)
                 const actionData = {
                     id: id,
                     name: name,
@@ -171,9 +165,76 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
                 console.log('adding action:')
                 console.log(actionData)
-                
-                this.addActions([actionData], strikeGroupData)
+
+                this.addActions([actionData], meleeGroupData)
             }
+
+            for (const attack of rangedAttacks) {
+                const name = attack.name
+                const id = encodeURIComponent(`${attack.id}>${name.slugify()}>0>` + attack.system.type)
+                const actionData = {
+                    id: id,
+                    name: name,
+                    encodedValue: 'placeholder'
+                }
+                console.log('adding action:')
+                console.log(actionData)
+
+                this.addActions([actionData], rangedGroupData)
+            }
+
+            // if (this.showStrikeImages) { strikeGroupData.settings.image = image }
+            // console.log('strikeGroupData')
+            // console.log(strikeGroupData)
+            // // Add group to action list
+            // this.addGroup(strikeGroupData, parentGroupData)
+
+            // console.log('attacks:')
+            // console.log(attacks)
+            // const groupData = []
+
+            // for (const attack of attacks) {
+            //     let strikeGroupData = null
+
+            //     const strikeId = `${attack.id}-${attack.name.slugify()}`
+            //     console.log(strikeId)
+            //     const strikeGroupId = strikeId
+            //     console.log(strikeGroupId)
+            //     const strikeGroupName = attack.name
+            //     console.log(strikeGroupName)
+            //     const strikeGroupListName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ${attack.name} (${attack.id})`
+            //     console.log(strikeGroupListName)
+            //     // const image = attack.img
+            //     const showTitle = this.showStrikeNames
+            //     const tooltipData = await this.#getTooltipData(actionType, attack)
+            //     const tooltip = await this.#getTooltip(actionType, tooltipData)
+            //     // Create group data
+            //     strikeGroupData = {
+            //         id: strikeGroupId,
+            //         name: strikeGroupName,
+            //         listName: strikeGroupListName,
+            //         type: 'system-derived',
+            //         settings: { showTitle },
+            //         tooltip }
+            //     // if (this.showStrikeImages) { strikeGroupData.settings.image = image }
+            //     console.log('strikeGroupData')
+            //     console.log(strikeGroupData)
+            //     // Add group to action list
+            //     this.addGroup(strikeGroupData, parentGroupData)
+
+            //     // Get actions
+            //     const id = encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type)
+            //     const name = attack.name
+            //     const actionData = {
+            //         id: id,
+            //         name: name,
+            //         encodedValue: 'placeholder'
+            //     }
+            //     console.log('adding action:')
+            //     console.log(actionData)
+
+            //     this.addActions([actionData], strikeGroupData)
+            // }
 
         }
         /**
