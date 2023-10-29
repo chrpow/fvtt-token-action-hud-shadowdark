@@ -68,7 +68,6 @@
   "manifest": "This is auto replaced",
   "download": "This is auto replaced",
   "readme": "https://github.com/chrpow/fvtt-token-action-hud-shadowdark#readme",
-  "protected": false,
   "coreTranslation": false,
   "library": false
 }
