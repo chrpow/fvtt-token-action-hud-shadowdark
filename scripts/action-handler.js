@@ -8,6 +8,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     /**
      * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD
      */
+    console.log("Hello!")
     ActionHandler = class ActionHandler extends coreModule.api.ActionHandler {
         // Initialize actor and token variables
         actors = null
@@ -37,12 +38,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {array} groupIds
          */a
         async buildSystemActions(groupIds) {
+            console.log('~~~~~~building system actions...')
             // Set actor and token variables
             this.actors = (!this.actor) ? this._getActors() : [this.actor]
             this.actorType = this.actor?.type
+            console.log(`actor: ${this.actor.name}`)
 
             // Exit if actor is not a known type
             const knownActors = ['Player', 'NPC', 'Light']
+            console.log(`actorType = ${this.actorType}`)
             if (this.actorType && !knownActors.includes(this.actorType)) return
 
             // Settings
@@ -72,13 +76,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             if (this.actorType === 'Player') {
                 this.#buildCharacterActions()
-            } else if (this.actorType === 'NPC') {
-                this.#buildNpcActions()
-            } else if (this.actorType === 'Light') {
-                this.#buildLightActions()
-            } else if (!this.actor) {
-                this.#buildMultipleTokenActions()
             }
+            // else if (this.actorType === 'NPC') {
+            //     this.#buildNpcActions()
+            // } else if (this.actorType === 'Light') {
+            //     this.#buildLightActions()
+            // } else if (!this.actor) {
+            //     this.#buildMultipleTokenActions()
+            // }
         }
 
         /**
@@ -86,6 +91,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @private
          */
         async #buildCharacterActions() {
+            console.log('building player actions')
             await Promise.all([
                 // this.#buildCombat(),
                 // this.#buildConditions(),
@@ -112,38 +118,87 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build strikes
          */
         async #buildStrikes() {
-            const actionType = 'Weapon'
+            console.log('building strikes')
+            const actionType = 'attack'
 
             // Create parent group data
-            const parentGroupData = { id: 'weapon', type: 'system' }
+            const parentGroupData = { id: 'attacks', type: 'system' }
 
             // Get strikes
-            const strikes = this.actor.items
-                .filter(action => action.type === actionType)
+            const attacks = this.actor.itemTypes.Weapon;
             // Exit if no strikes exist
-            if (!strikes) return
+            if (!attacks) return
+            console.log('attacks:')
+            console.log(attacks)
+            const groupData = []
 
-            for (const strike of strikes) {
-                let auxiliaryActions = []
-                let versatileOptionActions = []
+            for (const attack of attacks) {
                 let strikeGroupData = null
-                const usageData = []
 
-                const strikeId = `${strike.id}-${strike.name}`
-                const strikeGroupId = `strikes+${strikeId}`
-                const strikeGroupName = strike.name
-                const strikeGroupListName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ${strike.name} (${strike.id})`
-                const image = strike.img
+                const strikeId = `${attack.id}-${attack.name.slugify()}`
+                console.log(strikeId)
+                const strikeGroupId = strikeId
+                console.log(strikeGroupId)
+                const strikeGroupName = attack.name
+                console.log(strikeGroupName)
+                const strikeGroupListName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ${attack.name} (${attack.id})`
+                console.log(strikeGroupListName)
+                // const image = attack.img
                 const showTitle = this.showStrikeNames
-                // const tooltipData = await this.#getTooltipData(actionType, strike)
-                // const tooltip = await this.#getTooltip(actionType, tooltipData)
+                const tooltipData = await this.#getTooltipData(actionType, attack)
+                const tooltip = await this.#getTooltip(actionType, tooltipData)
                 // Create group data
-                strikeGroupData = { id: strikeGroupId, name: strikeGroupName, listName: strikeGroupListName, type: 'system-derived', settings: { showTitle }, tooltip }
-                if (this.showStrikeImages) { strikeGroupData.settings.image = image }
-
+                strikeGroupData = {
+                    id: strikeGroupId,
+                    name: strikeGroupName,
+                    listName: strikeGroupListName,
+                    type: 'system-derived',
+                    settings: { showTitle },
+                    tooltip }
+                // if (this.showStrikeImages) { strikeGroupData.settings.image = image }
+                console.log('strikeGroupData')
+                console.log(strikeGroupData)
                 // Add group to action list
                 this.addGroup(strikeGroupData, parentGroupData)
+
+                // Get actions
+                const id = encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type)
+                const name = attack.name
+                const actionData = {
+                    id: id,
+                    name: name,
+                    encodedValue: 'placeholder'
+                }
+                console.log('adding action:')
+                console.log(actionData)
+                
+                this.addActions([actionData], strikeGroupData)
             }
+
+        }
+        /**
+         * Get tooltip data
+         * @param {string} actionType The action type
+         * @param {object} entity     The entity
+         * @returns {object}          The tooltip data
+         */
+        async #getTooltipData(actionType, entity) {
+            return ''
+        }
+
+        /**
+         * Get tooltip
+         * @private
+         * @param {string} actionType  The action type
+         * @param {object} tooltipData The tooltip data
+         * @returns {string}           The tooltip
+         */
+        async #getTooltip(actionType, tooltipData) {
+            return ''
+        }
+
+        #getActionName(entity) {
+            return entity?.name ?? entity?.label ?? ''
         }
         async #buildNpcActions() { }
         async #buildLightActions() { }
