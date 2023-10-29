@@ -29,12 +29,12 @@ export const ACTION_TYPE = {
  * Groups
  */
 export const GROUP = {
-    armor: { id: 'armor', name: 'tokenActionHud.template.armor', type: 'system' },
-    equipment: { id: 'equipment', name: 'tokenActionHud.template.equipment', type: 'system' },
-    consumables: { id: 'consumables', name: 'tokenActionHud.template.consumables', type: 'system' },
+    armor: { id: 'armor', name: 'SHADOWDARK.inventory.section.armor', type: 'system' },
+    equipment: { id: 'equipment', name: 'SHADOWDARK.inventory.section.basic', type: 'system' },
+    consumables: { id: 'consumables', name: 'SHADOWDARK.inventory.section.potions', type: 'system' },
     containers: { id: 'containers', name: 'tokenActionHud.template.containers', type: 'system' },
-    treasure: { id: 'treasure', name: 'tokenActionHud.template.treasure', type: 'system' },
-    weapons: { id: 'weapons', name: 'tokenActionHud.template.weapons', type: 'system' },
+    treasure: { id: 'treasure', name: 'SHADOWDARK.inventory.section.treasure', type: 'system' },
+    weapons: { id: 'weapons', name: 'SHADOWDARK.inventory.section.weapon', type: 'system' },
     combat: { id: 'combat', name: 'tokenActionHud.combat', type: 'system' },
     token: { id: 'token', name: 'tokenActionHud.token', type: 'system' },
     utility: { id: 'utility', name: 'tokenActionHud.utility', type: 'system' }

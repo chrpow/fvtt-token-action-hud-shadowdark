@@ -9,29 +9,73 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
      * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD
      */
     ActionHandler = class ActionHandler extends coreModule.api.ActionHandler {
+        // Initialize actor and token variables
+        actors = null
+        actorId = null
+        actorType = null
+        tokenId = null
+
+        // Initialize items variable
+        items = null
+
+        // Initialize groupIds variables
+        groupIds = null
+        activationGroupIds = null
+        effectGroupIds = null
+        inventoryGroupIds = null
+        spellGroupIds = null
+
+        // Initialize action variables
+        featureActions = null
+        inventoryActions = null
+        spellActions = null
+
         /**
          * Build system actions
          * Called by Token Action HUD Core
          * @override
          * @param {array} groupIds
          */a
-        async buildSystemActions (groupIds) {
+        async buildSystemActions(groupIds) {
             // Set actor and token variables
             this.actors = (!this.actor) ? this._getActors() : [this.actor]
             this.actorType = this.actor?.type
+
+            // Exit if actor is not a known type
+            const knownActors = ['Player', 'NPC', 'Light']
+            if (this.actorType && !knownActors.includes(this.actorType)) return
 
             // Settings
             this.displayUnequipped = Utils.getSetting('displayUnequipped')
 
             // Set items variable
             if (this.actor) {
-                let items = this.actor.items
+                let items = Array.from(this.actor.items)
                 items = coreModule.api.Utils.sortItemsByName(items)
                 this.items = items
             }
 
-            if (this.actorType === 'character') {
+            // Set settings variables
+            this.abbreviateSkills = Utils.getSetting('abbreviateSkills')
+            this.addAuxiliaryActions = Utils.getSetting('addAuxiliaryActions')
+            this.addDamageAndCritical = Utils.getSetting('addDamageAndCritical')
+            this.addStowedItems = Utils.getSetting('addStowedItems')
+            this.addUnequippedItems = Utils.getSetting('addUnequippedItems')
+            this.calculateAttackPenalty = Utils.getSetting('calculateAttackPenalty')
+            this.colorSkills = Utils.getSetting('colorSkills')
+            this.showStrikeImages = Utils.getSetting('showStrikeImages')
+            this.showStrikeNames = Utils.getSetting('showStrikeNames')
+            this.splitStrikes = Utils.getSetting('splitStrikes')
+
+            // Set group variables
+            this.groupIds = groupIds
+
+            if (this.actorType === 'Player') {
                 this.#buildCharacterActions()
+            } else if (this.actorType === 'NPC') {
+                this.#buildNpcActions()
+            } else if (this.actorType === 'Light') {
+                this.#buildLightActions()
             } else if (!this.actor) {
                 this.#buildMultipleTokenActions()
             }
@@ -41,65 +85,68 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build character actions
          * @private
          */
-        #buildCharacterActions () {
-            this.#buildInventory()
+        async #buildCharacterActions() {
+            await Promise.all([
+                // this.#buildCombat(),
+                // this.#buildConditions(),
+                // this.#buildEffects(),
+                // this.#buildElementalBlasts(),
+                // this.#buildFeats(),
+                // this.#buildHeroActions(),
+                // this.#buildHeroPoints(),
+                // this.#buildInitiative(),
+                // this.#buildInventory(),
+                // this.#buildPerceptionCheck(),
+                // this.#buildRecoveryCheck(),
+                // this.#buildRests(),
+                // this.#buildSaves(),
+                // this.#buildSkillActions(),
+                // this.#buildSkills(),
+                // this.#buildSpells(),
+                this.#buildStrikes(),
+                // this.#buildToggles()
+            ])
         }
 
         /**
-         * Build multiple token actions
-         * @private
-         * @returns {object}
+         * Build strikes
          */
-        #buildMultipleTokenActions () {
-        }
+        async #buildStrikes() {
+            const actionType = 'Weapon'
 
-        /**
-         * Build inventory
-         * @private
-         */
-        async #buildInventory () {
-            if (this.items.size === 0) return
+            // Create parent group data
+            const parentGroupData = { id: 'weapon', type: 'system' }
 
-            const actionTypeId = 'item'
-            const inventoryMap = new Map()
+            // Get strikes
+            const strikes = this.actor.items
+                .filter(action => action.type === actionType)
+            // Exit if no strikes exist
+            if (!strikes) return
 
-            for (const [itemId, itemData] of this.items) {
-                const type = itemData.type
-                const equipped = itemData.equipped
+            for (const strike of strikes) {
+                let auxiliaryActions = []
+                let versatileOptionActions = []
+                let strikeGroupData = null
+                const usageData = []
 
-                if (equipped || this.displayUnequipped) {
-                    const typeMap = inventoryMap.get(type) ?? new Map()
-                    typeMap.set(itemId, itemData)
-                    inventoryMap.set(type, typeMap)
-                }
-            }
+                const strikeId = `${strike.id}-${strike.name}`
+                const strikeGroupId = `strikes+${strikeId}`
+                const strikeGroupName = strike.name
+                const strikeGroupListName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ${strike.name} (${strike.id})`
+                const image = strike.img
+                const showTitle = this.showStrikeNames
+                // const tooltipData = await this.#getTooltipData(actionType, strike)
+                // const tooltip = await this.#getTooltip(actionType, tooltipData)
+                // Create group data
+                strikeGroupData = { id: strikeGroupId, name: strikeGroupName, listName: strikeGroupListName, type: 'system-derived', settings: { showTitle }, tooltip }
+                if (this.showStrikeImages) { strikeGroupData.settings.image = image }
 
-            for (const [type, typeMap] of inventoryMap) {
-                const groupId = ITEM_TYPE[type]?.groupId
-
-                if (!groupId) continue
-
-                const groupData = { id: groupId, type: 'system' }
-
-                // Get actions
-                const actions = [...typeMap].map(([itemId, itemData]) => {
-                    const id = itemId
-                    const name = itemData.name
-                    const actionTypeName = coreModule.api.Utils.i18n(ACTION_TYPE[actionTypeId])
-                    const listName = `${actionTypeName ? `${actionTypeName}: ` : ''}${name}`
-                    const encodedValue = [actionTypeId, id].join(this.delimiter)
-
-                    return {
-                        id,
-                        name,
-                        listName,
-                        encodedValue
-                    }
-                })
-
-                // TAH Core method to add actions to the action list
-                this.addActions(actions, groupData)
+                // Add group to action list
+                this.addGroup(strikeGroupData, parentGroupData)
             }
         }
+        async #buildNpcActions() { }
+        async #buildLightActions() { }
+        async #buildMultipleTokenActions() { }
     }
 })
