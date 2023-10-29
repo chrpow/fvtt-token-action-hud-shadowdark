@@ -1,5 +1,5 @@
 // System Module Imports
-import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID } from './constants.js'
+import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY } from './constants.js'
 import { Utils } from './utils.js'
 
 export let ActionHandler = null
@@ -107,7 +107,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 // this.#buildRests(),
                 // this.#buildSaves(),
                 // this.#buildSkillActions(),
-                // this.#buildSkills(),
+                this.#buildAbilities(),
                 // this.#buildSpells(),
                 this.#buildStrikes(),
                 // this.#buildToggles()
@@ -119,11 +119,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #buildStrikes() {
             console.log('building strikes')
-            // const actionType = 'attack'
-
-            // // Create parent group data
-            // const parentGroupData = { id: 'attacks', type: 'system' }
-
             // Get strikes
             const attacks = this.actor.itemTypes.Weapon;
             // Exit if no strikes exist
@@ -160,6 +155,38 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.#addAttacks(rangedAttacks, rangedGroupData)
         }
         /**
+                 * Build abilities
+                 */
+        async #buildAbilities() {
+            console.log('building abilities')
+            const actionType = 'ability'
+            const groupId = 'abilities'
+            const abilities = Object.keys(this.actor.system.abilities)
+
+            const groupData = { id: groupId, name: 'Abilities', type: 'system' }
+
+            const actions = await Promise.all(
+                abilities.map(async (ability) => {
+                    const id = ability
+                    // const label = coreModule.api.Utils.i18n(ABILITY[ability].name)
+                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name)
+                    // const fullName = label
+                    // const actionTypeName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ` ?? ''
+                    // const listName = `${actionTypeName}${name}`
+                    const encodedValue = [actionType, id].join(this.delimiter)
+
+                    return {
+                        id,
+                        name,
+                        encodedValue
+                    }
+                })
+            )
+            console.log(actions)
+            this.addActions(actions, groupData)
+        }
+
+        /**
          * Get tooltip data
          * @param {string} actionType The action type
          * @param {object} entity     The entity
@@ -188,6 +215,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     encodedValue: ['attack', attack.id].join(this.delimiter)
                 }
                 console.log(`encodedValue: ${actionData.encodedValue}`)
+                console.log(actionData)
                 this.addActions([actionData], groupData)
             }
         }

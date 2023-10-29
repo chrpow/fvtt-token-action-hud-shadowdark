@@ -62,6 +62,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             case 'attack':
                 this.#handleAttackAction(event, actor, actionId)
                 break
+            case 'ability':
+                this.#handleAbilityAction(event, actor, actionId)
             // case 'item':
             //     this.#handleItemAction(event, actor, actionId)
             //     break
@@ -80,6 +82,18 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
          #handleAttackAction (event, actor, actionId) {
             actor.rollAttack(actionId)
+            // item.toChat(event)
+        }
+        /**
+         * Handle attack action
+         * @private
+         * @param {object} event    The event
+         * @param {object} actor    The actor
+         * @param {string} actionId The action id
+         */
+        #handleAbilityAction (event, actor, actionId) {
+            console.log(`actionId: ${actionId}`)
+            actor.rollAbility(actionId, {event: event})
             // item.toChat(event)
         }
         /**
