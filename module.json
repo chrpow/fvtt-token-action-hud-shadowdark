@@ -16,10 +16,10 @@
   "version": "This is auto replaced",
   "compatibility": {
     "minimum": "11",
-    "verified": "11.300"
+    "verified": "11.313"
   },
   "esmodules": [
-    "./scripts/init.js"
+    "./scripts/token-action-hud-shadowdark.min.js"
   ],
   "scripts": [
   ],
@@ -52,9 +52,9 @@
         "type": "module",
         "compatibility": [
           {
-            "minimum": "1.4.7",
-            "maximum": "1.4",
-            "verified": "1.4.7"
+            "minimum": "1.4.16",
+            "maximum": "1.21",
+            "verified": "1.4.21"
           }
         ]
       }
