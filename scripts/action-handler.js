@@ -185,8 +185,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const actionData = {
                     id: encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type),
                     name: attack.name,
-                    encodedValue: 'placeholder'
+                    encodedValue: ['attack', attack.id].join(this.delimiter)
                 }
+                console.log(`encodedValue: ${actionData.encodedValue}`)
                 this.addActions([actionData], groupData)
             }
         }

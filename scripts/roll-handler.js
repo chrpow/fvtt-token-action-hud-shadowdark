@@ -18,11 +18,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (payload.length !== 2) {
                 super.throwInvalidValueErr()
             }
+            
 
             const actionTypeId = payload[0]
             const actionId = payload[1]
 
-            const renderable = ['item']
+            console.log(`handling payload: ${actionTypeId}, ${actionId}`)
+            const renderable = ['attack']
 
             if (renderable.includes(actionTypeId) && this.isRenderItem()) {
                 return this.doRenderItem(this.actor, actionId)
@@ -57,15 +59,29 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #handleAction (event, actor, token, actionTypeId, actionId) {
             switch (actionTypeId) {
-            case 'item':
-                this.#handleItemAction(event, actor, actionId)
+            case 'attack':
+                this.#handleAttackAction(event, actor, actionId)
                 break
-            case 'utility':
-                this.#handleUtilityAction(token, actionId)
-                break
+            // case 'item':
+            //     this.#handleItemAction(event, actor, actionId)
+            //     break
+            // case 'utility':
+            //     this.#handleUtilityAction(token, actionId)
+            //     break
             }
         }
 
+         /**
+         * Handle attack action
+         * @private
+         * @param {object} event    The event
+         * @param {object} actor    The actor
+         * @param {string} actionId The action id
+         */
+         #handleAttackAction (event, actor, actionId) {
+            actor.rollAttack(actionId)
+            // item.toChat(event)
+        }
         /**
          * Handle item action
          * @private
