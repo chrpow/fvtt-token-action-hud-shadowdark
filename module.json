@@ -36,12 +36,12 @@
   "relationships": {
     "systems": [
       {
-        "id": "template",
+        "id": "shadowdark",
         "type": "system",
         "compatibility": [
           {
             "minimum": "1.0.0",
-            "verified": "1.0.0"
+            "verified": "1.5.0"
           }
         ]
       }
@@ -67,7 +67,7 @@
   "socket": false,
   "manifest": "This is auto replaced",
   "download": "This is auto replaced",
-  "readme": "https://github.com/Larkinabout/fvtt-token-action-hud-template#readme",
+  "readme": "https://github.com/chrpow/fvtt-token-action-hud-shadowdark#readme",
   "protected": false,
   "coreTranslation": false,
   "library": false

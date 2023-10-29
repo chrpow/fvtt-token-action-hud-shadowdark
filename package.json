@@ -12,5 +12,6 @@
     "eslint-plugin-promise": "^6.1.0",
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2"
-  }
+  },
+  "type": "module"
 }
