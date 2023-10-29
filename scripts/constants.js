@@ -2,7 +2,7 @@
  * Module-based constants
  */
 export const MODULE = {
-    ID: 'token-action-hud-template'
+    ID: 'token-action-hud-shadowdark'
 }
 
 /**
