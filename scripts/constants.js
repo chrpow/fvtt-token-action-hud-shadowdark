@@ -52,3 +52,7 @@ export const ITEM_TYPE = {
     // treasure: { groupId: 'treasure' },
     weapon: { groupId: 'SHADOWDARK.inventory.section.weapon' }
 }
+
+export const COMPENDIUM_ID = {
+    thrown: 'Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC'
+}
