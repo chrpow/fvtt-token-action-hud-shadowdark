@@ -20,13 +20,6 @@ This is an add-on module to [Larkinabout's Token Action HUD Core](https://github
 
 # Installation
 
-## Method 1
-1. On Foundry VTT's **Configuration and Setup** screen, go to **Add-on Modules**
-2. Click **Install Module**
-3. Search for **Token Action HUD Pathfinder 2** 
-4. Click **Install** next to the module listing
-
-## Method 2
 1. On Foundry VTT's **Configuration and Setup** screen, go to **Add-on Modules**
 2. Click **Install Module**
 3. In the Manifest URL field, paste: `https://github.com/chrpow/fvtt-token-action-hud-shadowdark/releases/latest/download/module.json`
