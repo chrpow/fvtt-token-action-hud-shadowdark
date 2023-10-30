@@ -1,5 +1,5 @@
 // System Module Imports
-import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP} from './constants.js'
+import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP } from './constants.js'
 import { Utils } from './utils.js'
 
 export let ActionHandler = null
@@ -72,16 +72,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             if (this.actorType === 'Player') {
                 this.#buildCharacterActions()
+            } else if (this.actorType === 'NPC') {
+                this.#buildNpcActions()
+                // } else if (this.actorType === 'Light') {
+                //     this.#buildLightActions()
+                // } else if (!this.actor) {
+                //     this.#buildMultipleTokenActions()
+                // }
             }
-            // else if (this.actorType === 'NPC') {
-            //     this.#buildNpcActions()
-            // } else if (this.actorType === 'Light') {
-            //     this.#buildLightActions()
-            // } else if (!this.actor) {
-            //     this.#buildMultipleTokenActions()
-            // }
         }
-
         /**
          * Build character actions
          * @private
@@ -173,35 +172,39 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         async #buildSpells() {
-            // Get strikes
-            const spells = this.actor.itemTypes.Spell;
-            // Exit if no strikes exist
-            if (!spells) return
+            const groupId = 'spells'
+            const groupName = 'Spells'//coreModule.api.Utils.i18n(GROUP[groupId].name)
 
-            const meleespells = Array.from(spells.filter((spell) => spell.system.tier === 1 && !spell.system.lost))
-            const rangedspells = Array.from(spells.filter((spell) => spell.system.tier === 2 && !spell.system.lost))
-
-            // Create group data
-            const parentGroupData = {
-                id: 'spells',
+            const spellGroupData = {
+                id: groupId,
+                name: groupName,
                 type: 'system'
             }
-            const meleeGroupData = {
-                id: 'tier1',
-                name: 'Tier 1',
-                type: 'system-derived'
-            }
-            const rangedGroupData = {
-                id: 'tier2',
-                name: 'Tier 2',
-                type: 'system-derived'
-            }
-            await this.addGroup(meleeGroupData, parentGroupData)
-            await this.addGroup(rangedGroupData, parentGroupData)
 
-            await this.#addSpells(meleespells, meleeGroupData)
-            await this.#addSpells(rangedspells, rangedGroupData)
+            const spells = this.actor.itemTypes.Spell
+            const activeTiers = []
+            for (const spell of spells) {
+                if (!activeTiers.includes(spell.system.tier)) {
+                    activeTiers.push(spell.system.tier)
+                }
+            }
+            for (const tier of activeTiers) {
+                const tierGroupId = `tier${tier}`
+                const tierGroupName = `Tier ${tier}`
+
+                const tierGroupData = {
+                    id: tierGroupId,
+                    name: tierGroupName,
+                    type: 'system-derived'
+                }
+
+                const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
+
+                this.addGroup(tierGroupData, spellGroupData, { update: true })
+                this.#addSpells(activeSpells, tierGroupData)
+            }
         }
+
         /**
          * Get tooltip data
          * @param {string} actionType The action type
@@ -209,8 +212,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @returns {object}          The tooltip data
          */
         async #getTooltipData(actionType, entity) {
-                return ''
-            }
+            return ''
+        }
 
         /**
          * Get tooltip
@@ -220,19 +223,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @returns {string}           The tooltip
          */
         async #getTooltip(actionType, tooltipData) {
-                return ''
-            }
+            return ''
+        }
 
         async #addAttacks(attacks, groupData) {
-                for (const attack of attacks) {
-                    const actionData = {
-                        id: attack.id,
-                        name: attack.name,
-                        encodedValue: ['attack', attack.id].join(this.delimiter)
-                    }
-                    this.addActions([actionData], groupData)
+            for (const attack of attacks) {
+                const actionData = {
+                    id: attack.id,
+                    name: attack.name,
+                    encodedValue: ['attack', attack.id].join(this.delimiter)
                 }
+                this.addActions([actionData], groupData)
             }
+        }
         async #addSpells(spells, groupData) {
             for (const spell of spells) {
                 const actionData = {
@@ -244,10 +247,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
         async #getActionName(entity) {
-                return entity?.name ?? entity?.label ?? ''
-            }
+            return entity?.name ?? entity?.label ?? ''
+        }
         async #buildNpcActions() { }
         async #buildLightActions() { }
         async #buildMultipleTokenActions() { }
-        }
-    })
+    }
+})
