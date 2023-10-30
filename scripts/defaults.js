@@ -23,7 +23,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'attacks',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.npc.attacks_label'),
                 groups: [
-                    { ...groups.attacks, nestId: 'attacks' },
+                    { ...groups.attacks, nestId: 'attacks_attacks' },
                 ]
             },
             {
@@ -37,9 +37,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             {
                 nestId: 'abilities',
                 id: 'abilities',
-                name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.tab.abilities'),
+                name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.abilities.label'),
                 groups: [
-                    { ...groups.abilities, nestId: 'abilities' },
+                    { ...groups.abilities, nestId: 'abilities_abilities' },
                 ]
             },
             // ,

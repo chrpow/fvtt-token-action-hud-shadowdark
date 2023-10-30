@@ -48,14 +48,14 @@ export const GROUP = {
 /**
  * Item types
  */
-// export const ITEM_TYPE = {
+export const ITEM_TYPE = {
 //     // armor: { groupId: 'armor' },
 //     // backpack: { groupId: 'containers' },
 //     // consumable: { groupId: 'consumables' },
 //     // equipment: { groupId: 'equipment' },
 //     // treasure: { groupId: 'treasure' },
-//     weapon: { groupId: 'SHADOWDARK.inventory.section.weapon' }
-// }
+    weapon: { groupId: 'SHADOWDARK.inventory.section.weapon' }
+}
 
 export const COMPENDIUM_ID = {
     thrown: 'Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC'

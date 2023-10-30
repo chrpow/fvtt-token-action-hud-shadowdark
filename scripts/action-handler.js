@@ -8,7 +8,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     /**
      * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD
      */
-    console.log("Hello!")
+    //console.log("Hello!")
     ActionHandler = class ActionHandler extends coreModule.api.ActionHandler {
         // Initialize actor and token variables
         actors = null
@@ -38,15 +38,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {array} groupIds
          */a
         async buildSystemActions(groupIds) {
-            console.log('~~~~~~building system actions...')
+            //console.log('~~~~~~building system actions...')
             // Set actor and token variables
             this.actors = (!this.actor) ? this._getActors() : [this.actor]
             this.actorType = this.actor?.type
-            console.log(`actor: ${this.actor.name}`)
+            //console.log(`actor: ${this.actor.name}`)
 
             // Exit if actor is not a known type
             const knownActors = ['Player', 'NPC', 'Light']
-            console.log(`actorType = ${this.actorType}`)
+            //console.log(`actorType = ${this.actorType}`)
             if (this.actorType && !knownActors.includes(this.actorType)) return
 
             // Settings
@@ -91,7 +91,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @private
          */
         async #buildCharacterActions() {
-            console.log('building player actions')
+            //console.log('building player actions')
             await Promise.all([
                 // this.#buildCombat(),
                 // this.#buildConditions(),
@@ -118,7 +118,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build strikes
          */
         async #buildStrikes() {
-            console.log('building strikes')
+            //console.log('building strikes')
             // Get strikes
             const attacks = this.actor.itemTypes.Weapon;
             // Exit if no strikes exist
@@ -127,11 +127,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee')
             const rangedAttacks = attacks.filter((attack) => attack.system.type === 'ranged'
                 || attack.system.properties.some(p => p === COMPENDIUM_ID.thrown))
-
-            console.log('melee:')
-            console.log(meleeAttacks)
-            console.log('ranged:')
-            console.log(rangedAttacks)
 
             // Create group data
             const parentGroupData = {
@@ -158,7 +153,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                  * Build abilities
                  */
         async #buildAbilities() {
-            console.log('building abilities')
+            //console.log('building abilities')
             const actionType = 'ability'
             const groupId = 'abilities'
             const abilities = Object.keys(this.actor.system.abilities)
@@ -182,48 +177,40 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
                 })
             )
-            console.log(actions)
+            //console.log(actions)
             this.addActions(actions, groupData)
         }
 
         async #buildSpells() {
-            console.log('building spells')
-            const actionType = 'spell'
-            const groupId = 'spells'
-            const groupName = 'Spells'//coreModule.api.Utils.i18n(GROUP[groupId].name)
+                               //console.log('building strikes')
+            // Get strikes
+            const spells = this.actor.itemTypes.Spell;
+            // Exit if no strikes exist
+            if (!spells) return
 
-            const spells = this.actor.itemTypes.Spell
+            const meleespells = Array.from(spells.filter((attack) => attack.system.tier === 1))
+            const rangedspells = Array.from(spells.filter((attack) => attack.system.tier === 2))
 
-            const spellGroupData = {
-                id: groupId,
-                name: groupName,
+            // Create group data
+            const parentGroupData = {
+                id: 'spells',
                 type: 'system'
             }
-
-            const activeTiers = []
-            for (const spell of spells) {
-                if (!activeTiers.includes(spell.system.tier)) {
-                    activeTiers.push(spell.system.tier)
-                }
+            const meleeGroupData = {
+                id: 'tier1',
+                name: 'Tier1',
+                type: 'system-derived'
             }
-
-            for (const tier of activeTiers) {
-                const tierGroupId = `tier${tier}`
-                const tierGroupName = `Tier ${tier}`
-
-                const tierGroupData = {
-                    id: tierGroupId,
-                    name: tierGroupName,
-                    type: 'system-derived'
-                }
-
-                await this.addGroup(tierGroupData, spellGroupData)
-
-                //get available spells of this tier
-                const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
-                console.log(`active spells of tier ${tier}:`)
-                console.log(activeSpells)
+            const rangedGroupData = {
+                id: 'tier2',
+                name: 'Tier2',
+                type: 'system-derived'
             }
+            await this.addGroup(meleeGroupData, parentGroupData)
+            await this.addGroup(rangedGroupData, parentGroupData)
+
+            await this.#addSpells(meleespells, meleeGroupData)
+            await this.#addSpells(rangedspells, rangedGroupData)
         }
         /**
          * Get tooltip data
@@ -249,15 +236,27 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #addAttacks(attacks, groupData) {
                 for (const attack of attacks) {
                     const actionData = {
-                        id: encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type),
+                        id: attack.id,
                         name: attack.name,
                         encodedValue: ['attack', attack.id].join(this.delimiter)
                     }
-                    console.log(`encodedValue: ${actionData.encodedValue}`)
-                    console.log(actionData)
+                    //console.log(`encodedValue: ${actionData.encodedValue}`)
+                    //console.log(actionData)
                     this.addActions([actionData], groupData)
                 }
             }
+        async #addSpells(spells, groupData) {
+            for (const spell of spells) {
+                const actionData = {
+                    id: spell.id,
+                    name: spell.name,
+                    encodedValue: ['spell', spell.id].join(this.delimiter)
+                }
+                //console.log(`encodedValue: ${actionData.encodedValue}`)
+                //console.log(actionData)
+                this.addActions([actionData], groupData)
+            }
+        }
         async #getActionName(entity) {
                 return entity?.name ?? entity?.label ?? ''
             }
