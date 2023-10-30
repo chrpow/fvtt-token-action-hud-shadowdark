@@ -60,10 +60,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #handleAction (event, actor, token, actionTypeId, actionId) {
             switch (actionTypeId) {
             case 'attack':
-                this.#handleAttackAction(event, actor, actionId)
+                await this.#handleAttackAction(event, actor, actionId)
                 break
             case 'ability':
-                this.#handleAbilityAction(event, actor, actionId)
+                await this.#handleAbilityAction(event, actor, actionId)
+                break
+            case 'spell':
+                await this.#handleSpellAction(event, actor, actionId)
+                break
             // case 'item':
             //     this.#handleItemAction(event, actor, actionId)
             //     break
@@ -80,20 +84,31 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-         #handleAttackAction (event, actor, actionId) {
+        async #handleAttackAction (event, actor, actionId) {
             actor.rollAttack(actionId)
             // item.toChat(event)
         }
         /**
-         * Handle attack action
+         * Handle ability action
          * @private
          * @param {object} event    The event
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        #handleAbilityAction (event, actor, actionId) {
+        async #handleAbilityAction (event, actor, actionId) {
             console.log(`actionId: ${actionId}`)
             actor.rollAbility(actionId, {event: event})
+            // item.toChat(event)
+        }
+        /**
+         * Handle spell action
+         * @private
+         * @param {object} event    The event
+         * @param {object} actor    The actor
+         * @param {string} actionId The action id
+         */
+        async #handleSpellAction (event, actor, actionId) {
+            actor.castSpell(actionId)
             // item.toChat(event)
         }
         /**

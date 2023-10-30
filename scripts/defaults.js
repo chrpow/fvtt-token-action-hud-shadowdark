@@ -31,7 +31,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'spells',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.spells'),
                 groups: [
-                    { ...groups.spells, nestId: 'spells' },
+                    { ...groups.spells, nestId: 'spells_spells' },
                 ]
             },
             {

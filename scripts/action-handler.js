@@ -188,8 +188,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             // Exit if no strikes exist
             if (!spells) return
 
-            const meleespells = Array.from(spells.filter((attack) => attack.system.tier === 1))
-            const rangedspells = Array.from(spells.filter((attack) => attack.system.tier === 2))
+            const meleespells = Array.from(spells.filter((spell) => spell.system.tier === 1 && !spell.system.lost))
+            const rangedspells = Array.from(spells.filter((spell) => spell.system.tier === 2 && !spell.system.lost))
 
             // Create group data
             const parentGroupData = {
@@ -198,12 +198,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
             const meleeGroupData = {
                 id: 'tier1',
-                name: 'Tier1',
+                name: 'Tier 1',
                 type: 'system-derived'
             }
             const rangedGroupData = {
                 id: 'tier2',
-                name: 'Tier2',
+                name: 'Tier 2',
                 type: 'system-derived'
             }
             await this.addGroup(meleeGroupData, parentGroupData)
