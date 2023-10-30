@@ -23,7 +23,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const actionTypeId = payload[0]
             const actionId = payload[1]
 
-            console.log(`handling payload: ${actionTypeId}, ${actionId}`)
             const renderable = ['attack']
 
             if (renderable.includes(actionTypeId) && this.isRenderItem()) {
@@ -96,7 +95,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} actionId The action id
          */
         async #handleAbilityAction (event, actor, actionId) {
-            console.log(`actionId: ${actionId}`)
             actor.rollAbility(actionId, {event: event})
             // item.toChat(event)
         }

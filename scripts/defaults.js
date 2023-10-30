@@ -6,10 +6,7 @@ import { GROUP } from './constants.js'
 export let DEFAULTS = null
 
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
-    console.log('Core Module:')
-    console.log(coreModule)
     const groups = GROUP
-// weapons: { id: 'weapons', name: 'SHADOWDARK.inventory.section.weapon', type: 'system' },
 
     Object.values(groups).forEach(group => {
         group.name = coreModule.api.Utils.i18n(group.name)
@@ -42,7 +39,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     { ...groups.abilities, nestId: 'abilities_abilities' },
                 ]
             },
-            // ,
             // {
             //     nestId: 'utility',
             //     id: 'utility',

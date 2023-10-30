@@ -8,7 +8,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     /**
      * Extends Token Action HUD Core's ActionHandler class and builds system-defined actions for the HUD
      */
-    //console.log("Hello!")
     ActionHandler = class ActionHandler extends coreModule.api.ActionHandler {
         // Initialize actor and token variables
         actors = null
@@ -38,15 +37,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {array} groupIds
          */a
         async buildSystemActions(groupIds) {
-            //console.log('~~~~~~building system actions...')
             // Set actor and token variables
             this.actors = (!this.actor) ? this._getActors() : [this.actor]
             this.actorType = this.actor?.type
-            //console.log(`actor: ${this.actor.name}`)
 
             // Exit if actor is not a known type
             const knownActors = ['Player', 'NPC', 'Light']
-            //console.log(`actorType = ${this.actorType}`)
             if (this.actorType && !knownActors.includes(this.actorType)) return
 
             // Settings
@@ -91,7 +87,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @private
          */
         async #buildCharacterActions() {
-            //console.log('building player actions')
+            if (!this.actor.backgroundItems?.class) {
+                this.actor._populateBackgroundItems()
+            }
             await Promise.all([
                 // this.#buildCombat(),
                 // this.#buildConditions(),
@@ -118,7 +116,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build strikes
          */
         async #buildStrikes() {
-            //console.log('building strikes')
             // Get strikes
             const attacks = this.actor.itemTypes.Weapon;
             // Exit if no strikes exist
@@ -153,7 +150,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                  * Build abilities
                  */
         async #buildAbilities() {
-            //console.log('building abilities')
             const actionType = 'ability'
             const groupId = 'abilities'
             const abilities = Object.keys(this.actor.system.abilities)
@@ -163,11 +159,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const actions = await Promise.all(
                 abilities.map(async (ability) => {
                     const id = ability
-                    // const label = coreModule.api.Utils.i18n(ABILITY[ability].name)
                     const name = coreModule.api.Utils.i18n(ABILITY[ability].name)
-                    // const fullName = label
-                    // const actionTypeName = `${coreModule.api.Utils.i18n(ACTION_TYPE[actionType])}: ` ?? ''
-                    // const listName = `${actionTypeName}${name}`
                     const encodedValue = [actionType, id].join(this.delimiter)
 
                     return {
@@ -177,12 +169,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
                 })
             )
-            //console.log(actions)
             this.addActions(actions, groupData)
         }
 
         async #buildSpells() {
-                               //console.log('building strikes')
             // Get strikes
             const spells = this.actor.itemTypes.Spell;
             // Exit if no strikes exist
@@ -240,8 +230,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         name: attack.name,
                         encodedValue: ['attack', attack.id].join(this.delimiter)
                     }
-                    //console.log(`encodedValue: ${actionData.encodedValue}`)
-                    //console.log(actionData)
                     this.addActions([actionData], groupData)
                 }
             }
@@ -252,8 +240,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     name: spell.name,
                     encodedValue: ['spell', spell.id].join(this.delimiter)
                 }
-                //console.log(`encodedValue: ${actionData.encodedValue}`)
-                //console.log(actionData)
                 this.addActions([actionData], groupData)
             }
         }
