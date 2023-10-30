@@ -22,7 +22,8 @@ export const REQUIRED_CORE_MODULE_VERSION = '1.5'
  */
 export const ACTION_TYPE = {
     attack: 'SHADOWDARK.sheet.npc.attacks_label',
-    ability: 'SHADOWDARK.class-ability.ability.label'
+    ability: 'SHADOWDARK.class-ability.ability.label',
+    spell: 'SHADOWDARK.item_type.spell'
     // item: 'tokenActionHud.template.item',
     // utility: 'tokenActionHud.utility'
 }
@@ -37,7 +38,8 @@ export const GROUP = {
     // containers: { id: 'containers', name: 'tokenActionHud.template.containers', type: 'system' },
     // treasure: { id: 'treasure', name: 'SHADOWDARK.inventory.section.treasure', type: 'system' },
     attacks: { id: 'attacks', name: 'SHADOWDARK.sheet.npc.attacks_label', type: 'system' },
-    abilities: {id: 'abilities', name: 'SHADOWDARK.sheet.abilities.label', type: 'system'}
+    abilities: { id: 'abilities', name: 'SHADOWDARK.sheet.abilities.label', type: 'system' },
+    spells: { id: 'spells', name: 'SHADOWDARK.sheet.player.spells', type: 'system'}
     // combat: { id: 'combat', name: 'tokenActionHud.combat', type: 'system' },
     // token: { id: 'token', name: 'tokenActionHud.token', type: 'system' },
     // utility: { id: 'utility', name: 'tokenActionHud.utility', type: 'system' }
@@ -46,14 +48,14 @@ export const GROUP = {
 /**
  * Item types
  */
-export const ITEM_TYPE = {
-    // armor: { groupId: 'armor' },
-    // backpack: { groupId: 'containers' },
-    // consumable: { groupId: 'consumables' },
-    // equipment: { groupId: 'equipment' },
-    // treasure: { groupId: 'treasure' },
-    weapon: { groupId: 'SHADOWDARK.inventory.section.weapon' }
-}
+// export const ITEM_TYPE = {
+//     // armor: { groupId: 'armor' },
+//     // backpack: { groupId: 'containers' },
+//     // consumable: { groupId: 'consumables' },
+//     // equipment: { groupId: 'equipment' },
+//     // treasure: { groupId: 'treasure' },
+//     weapon: { groupId: 'SHADOWDARK.inventory.section.weapon' }
+// }
 
 export const COMPENDIUM_ID = {
     thrown: 'Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC'

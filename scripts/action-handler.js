@@ -1,5 +1,5 @@
 // System Module Imports
-import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY } from './constants.js'
+import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP} from './constants.js'
 import { Utils } from './utils.js'
 
 export let ActionHandler = null
@@ -108,7 +108,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 // this.#buildSaves(),
                 // this.#buildSkillActions(),
                 this.#buildAbilities(),
-                // this.#buildSpells(),
+                this.#buildSpells(),
                 this.#buildStrikes(),
                 // this.#buildToggles()
             ])
@@ -186,6 +186,45 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(actions, groupData)
         }
 
+        async #buildSpells() {
+            console.log('building spells')
+            const actionType = 'spell'
+            const groupId = 'spells'
+            const groupName = 'Spells'//coreModule.api.Utils.i18n(GROUP[groupId].name)
+
+            const spells = this.actor.itemTypes.Spell
+
+            const spellGroupData = {
+                id: groupId,
+                name: groupName,
+                type: 'system'
+            }
+
+            const activeTiers = []
+            for (const spell of spells) {
+                if (!activeTiers.includes(spell.system.tier)) {
+                    activeTiers.push(spell.system.tier)
+                }
+            }
+
+            for (const tier of activeTiers) {
+                const tierGroupId = `tier${tier}`
+                const tierGroupName = `Tier ${tier}`
+
+                const tierGroupData = {
+                    id: tierGroupId,
+                    name: tierGroupName,
+                    type: 'system-derived'
+                }
+
+                await this.addGroup(tierGroupData, spellGroupData)
+
+                //get available spells of this tier
+                const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
+                console.log(`active spells of tier ${tier}:`)
+                console.log(activeSpells)
+            }
+        }
         /**
          * Get tooltip data
          * @param {string} actionType The action type
@@ -193,8 +232,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @returns {object}          The tooltip data
          */
         async #getTooltipData(actionType, entity) {
-            return ''
-        }
+                return ''
+            }
 
         /**
          * Get tooltip
@@ -204,26 +243,26 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @returns {string}           The tooltip
          */
         async #getTooltip(actionType, tooltipData) {
-            return ''
-        }
+                return ''
+            }
 
         async #addAttacks(attacks, groupData) {
-            for (const attack of attacks) {
-                const actionData = {
-                    id: encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type),
-                    name: attack.name,
-                    encodedValue: ['attack', attack.id].join(this.delimiter)
+                for (const attack of attacks) {
+                    const actionData = {
+                        id: encodeURIComponent(`${attack.id}>${attack.name.slugify()}>0>` + attack.system.type),
+                        name: attack.name,
+                        encodedValue: ['attack', attack.id].join(this.delimiter)
+                    }
+                    console.log(`encodedValue: ${actionData.encodedValue}`)
+                    console.log(actionData)
+                    this.addActions([actionData], groupData)
                 }
-                console.log(`encodedValue: ${actionData.encodedValue}`)
-                console.log(actionData)
-                this.addActions([actionData], groupData)
             }
-        }
         async #getActionName(entity) {
-            return entity?.name ?? entity?.label ?? ''
-        }
+                return entity?.name ?? entity?.label ?? ''
+            }
         async #buildNpcActions() { }
         async #buildLightActions() { }
         async #buildMultipleTokenActions() { }
-    }
-})
+        }
+    })

@@ -31,7 +31,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'spells',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.spells'),
                 groups: [
-                    { ...groups.spells, nestId: 'spells_spells' },
+                    { ...groups.spells, nestId: 'spells' },
                 ]
             },
             {
@@ -39,7 +39,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'abilities',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.tab.abilities'),
                 groups: [
-                    { ...groups.abilities, nestId: 'abilities_abilities' },
+                    { ...groups.abilities, nestId: 'abilities' },
                 ]
             },
             // ,
