@@ -1,14 +1,14 @@
 ![Downloads](https://img.shields.io/github/downloads/Larkinabout/fvtt-token-action-hud-template/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Ftoken-action-hud-template&colorB=448d34&style=for-the-badge)](https://forge-vtt.com/bazaar#package=token-action-hud-template)
 
-# Token Action HUD Template
+# Token Action HUD Shadowdark
 
-Token Action HUD is a repositionable HUD of actions for a selected token.
+Token Action HUD Shadowdark is a repositionable HUD of actions for a selected token.
 
+This is an add-on module to [Larkinabout's Token Action HUD Core](https://github.com/Larkinabout/fvtt-token-action-hud-core/). 
 ![Token Action HUD](.github/readme/token-action-hud.gif)
 
 # Features
 - Make rolls directly from the HUD instead of opening your character sheet.
-- Use items from the HUD or right-click an item to open its sheet.
 - Move the HUD and choose to expand the menus up or down.
 - Unlock the HUD to customise layout and groups per user, and actions per actor.
 - Add your own macros, journal entries and roll table compendiums.
@@ -24,7 +24,7 @@ Token Action HUD is a repositionable HUD of actions for a selected token.
 ## Method 2
 1. On Foundry VTT's **Configuration and Setup** screen, go to **Add-on Modules**
 2. Click **Install Module**
-3. In the Manifest URL field, paste: `https://github.com/Larkinabout/fvtt-token-action-hud-template/releases/latest/download/module.json`
+3. In the Manifest URL field, paste: `https://github.com/chrpow/fvtt-token-action-hud-shadowdark/releases/latest/download/module.json`
 4. Click **Install** next to the pasted Manifest URL
 
 ## Required Modules
@@ -38,7 +38,8 @@ Token Action HUD uses the [Color Picker](https://foundryvtt.com/packages/color-p
 
 For a guide on using Token Action HUD, go to: [How to Use Token Action HUD](https://github.com/Larkinabout/fvtt-token-action-hud-core/wiki/How-to-Use-Token-Action-HUD)
 
-For questions, feature requests or bug reports, please open an issue [here](https://github.com/Larkinabout/fvtt-token-action-hud-core/issues).
+For questions, feature requests or bug reports, please open an issue.
+Issues specific to the Shadowdark Hud should be submitted [here](https://github.com/chrpow/fvtt-token-action-hud-shadowdark/issues).
 
 Pull requests are welcome. Please include a reason for the request or create an issue before starting one.
 
