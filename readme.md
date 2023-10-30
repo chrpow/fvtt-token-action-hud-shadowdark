@@ -1,17 +1,22 @@
-![Downloads](https://img.shields.io/github/downloads/Larkinabout/fvtt-token-action-hud-template/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Ftoken-action-hud-template&colorB=448d34&style=for-the-badge)](https://forge-vtt.com/bazaar#package=token-action-hud-template)
-
 # Token Action HUD Shadowdark
 
 Token Action HUD Shadowdark is a repositionable HUD of actions for a selected token.
 
 This is an add-on module to [Larkinabout's Token Action HUD Core](https://github.com/Larkinabout/fvtt-token-action-hud-core/). 
-![Token Action HUD](.github/readme/token-action-hud.gif)
 
-# Features
+# Current Features
 - Make rolls directly from the HUD instead of opening your character sheet.
 - Move the HUD and choose to expand the menus up or down.
 - Unlock the HUD to customise layout and groups per user, and actions per actor.
 - Add your own macros, journal entries and roll table compendiums.
+
+# Planned Features
+- Access inventory and manage torches from the HUD.
+- Add icons to actions.
+- Full localization to languages supported by the FoundryVTT system.
+- Add utilities group.
+- Add support for selecting multiple tokens (group ability checks)
+- Modularize code to accomodate for spells higher than tier 2 (not implemented in the game system yet.
 
 # Installation
 
