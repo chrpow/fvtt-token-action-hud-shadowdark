@@ -14,7 +14,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async doHandleActionEvent (event, encodedValue) {
             const payload = encodedValue.split('|')
-            console.log(`Handling: ${payload}`)
 
             if (payload.length !== 2) {
                 super.throwInvalidValueErr()
@@ -68,9 +67,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             case 'spell':
                 await this.#handleSpellAction(event, actor, actionId)
                 break
-            // case 'item':
-            //     this.#handleItemAction(event, actor, actionId)
-            //     break
+            case 'item':
+                this.#handleItemAction(event, actor, actionId)
+                break
             // case 'utility':
             //     this.#handleUtilityAction(token, actionId)
             //     break
@@ -119,7 +118,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         #handleItemAction (event, actor, actionId) {
             const item = actor.items.get(actionId)
-            item.toChat(event)
+            item.displayCard()
         }
 
         /**
