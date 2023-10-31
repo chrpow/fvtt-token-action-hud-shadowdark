@@ -23,8 +23,8 @@ export const REQUIRED_CORE_MODULE_VERSION = '1.5'
 export const ACTION_TYPE = {
     attack: 'SHADOWDARK.sheet.npc.attacks_label',
     ability: 'SHADOWDARK.class-ability.ability.label',
-    spell: 'SHADOWDARK.item_type.spell'
-    // item: 'tokenActionHud.template.item',
+    spell: 'SHADOWDARK.item_type.spell',
+    item: 'tokenActionHud.template.item'
     // utility: 'tokenActionHud.utility'
 }
 
@@ -33,7 +33,7 @@ export const ACTION_TYPE = {
  */
 export const GROUP = {
     // armor: { id: 'armor', name: 'SHADOWDARK.inventory.section.armor', type: 'system' },
-    // equipment: { id: 'equipment', name: 'SHADOWDARK.inventory.section.basic', type: 'system' },
+    inventory: { id: 'inventory', name: 'SHADOWDARK.sheet.player.tab.inventory', type: 'system' },
     // consumables: { id: 'consumables', name: 'SHADOWDARK.inventory.section.potions', type: 'system' },
     // containers: { id: 'containers', name: 'tokenActionHud.template.containers', type: 'system' },
     // treasure: { id: 'treasure', name: 'SHADOWDARK.inventory.section.treasure', type: 'system' },

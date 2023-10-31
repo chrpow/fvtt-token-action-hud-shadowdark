@@ -98,7 +98,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 // this.#buildHeroActions(),
                 // this.#buildHeroPoints(),
                 // this.#buildInitiative(),
-                // this.#buildInventory(),
+
                 // this.#buildPerceptionCheck(),
                 // this.#buildRecoveryCheck(),
                 // this.#buildRests(),
@@ -107,6 +107,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.#buildAbilities(),
                 this.#buildSpells(),
                 this.#buildAttacks(),
+                this.#buildInventory(),
                 // this.#buildToggles()
             ])
         }
@@ -151,7 +152,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildAbilities() {
             const actionType = 'ability'
             const groupId = 'abilities'
-            const abilities = Object.keys(this.actor.system.abilities)
+            const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
 
             const groupData = { id: groupId, name: 'Abilities', type: 'system' }
 
@@ -176,7 +177,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const groupId = 'spells'
             const groupName = 'Spells'//coreModule.api.Utils.i18n(GROUP[groupId].name)
 
-            const spellGroupData = {
+            const parentGroupData = {
                 id: groupId,
                 name: groupName,
                 type: 'system'
@@ -201,7 +202,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                 const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
 
-                this.addGroup(tierGroupData, spellGroupData, { update: true })
+                this.addGroup(tierGroupData, parentGroupData, { update: true })
                 this.#addActions(activeSpells, tierGroupData, actionType)
             }
 
@@ -214,7 +215,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     name: `Wands`,
                     type: `system-derived`
                 }
-                this.addGroup(wandGroupData, spellGroupData)
+                this.addGroup(wandGroupData, parentGroupData)
                 this.#addActions(usableWands, wandGroupData, actionType)
             }
 
@@ -228,8 +229,75 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     type: `system-derived`
                 }
 
-                this.addGroup(scrollGroupData, spellGroupData)
+                this.addGroup(scrollGroupData, parentGroupData)
                 this.#addActions(usableScrolls, scrollGroupData, actionType)
+            }
+        }
+
+        async #buildInventory() {
+            console.log('building inventory')
+            const actionType = 'inventory'
+            const groupId = 'inventory'
+            const groupName = 'Inventory'
+
+            // The types of items shown in the inventory menu
+            const itemTypes = [
+                'Armor',
+                'Basic',
+                'Potion',
+                'Scroll',
+                'Wand',
+                'Weapon'
+            ]
+
+            const treasureGroupName = 'Gems and Treasure'
+            const treasureTypes = [
+                'Gem'
+            ]
+
+            const parentGroupData = {
+                id: groupId,
+                name: groupName,
+                type: 'system'
+            }
+
+            const treasure = [];
+
+            for (const itemType of itemTypes) {
+
+                const itemArray = this.actor.itemTypes[itemType].filter(item => !item.system.stashed)
+                if (itemArray.length > 0) {
+                    const items = []
+                    for (const item of itemArray) {
+                        item.system.treasure ? treasure.push(item) : items.push(item)
+                    }
+                    const itemTypeGroupData = {
+                        id: `inventory_${itemType.slugify()}`,
+                        name: itemType,
+                        type: 'system-derived'
+                    }
+                    if (items.length > 1) {
+                        this.addGroup(itemTypeGroupData, parentGroupData)
+                        this.#addActions(items, itemTypeGroupData, actionType)
+                    }
+                }
+            }
+
+
+            for (const itemType of treasureTypes) {
+                for (const item of this.actor.itemTypes[itemType]) {
+                    treasure.push(item)
+                }
+                const itemTypeGroupData = {
+                    id: `inventory_treasure`,
+                    name: treasureGroupName,
+                    type: 'system-derived'
+                }
+                console.log(`treasure has ${items.length} items`)
+                if (treasure.length > 0) {
+                    this.addGroup(itemTypeGroupData, parentGroupData)
+                    this.#addActions(treasure, itemTypeGroupData, actionType)
+                }
             }
         }
 
