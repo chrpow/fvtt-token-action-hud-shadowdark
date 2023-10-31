@@ -63,9 +63,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addUnequippedItems = Utils.getSetting('addUnequippedItems')
             this.calculateAttackPenalty = Utils.getSetting('calculateAttackPenalty')
             this.colorSkills = Utils.getSetting('colorSkills')
-            this.showStrikeImages = Utils.getSetting('showStrikeImages')
-            this.showStrikeNames = Utils.getSetting('showStrikeNames')
-            this.splitStrikes = Utils.getSetting('splitStrikes')
+            this.showAttackImages = Utils.getSetting('showAttackImages')
+            this.showAttackNames = Utils.getSetting('showAttackNames')
+            this.splitAttacks = Utils.getSetting('splitAttacks')
 
             // Set group variables
             this.groupIds = groupIds
@@ -106,23 +106,23 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 // this.#buildSkillActions(),
                 this.#buildAbilities(),
                 this.#buildSpells(),
-                this.#buildStrikes(),
+                this.#buildAttacks(),
                 // this.#buildToggles()
             ])
         }
 
         /**
-         * Build strikes
+         * Build attacks
          */
-        async #buildStrikes() {
-            // Get strikes
-            const attacks = this.actor.itemTypes.Weapon;
-            // Exit if no strikes exist
+        async #buildAttacks() {
+            const actionType = 'attack'
+            // Get attacks
+            const attacks = this.actor.itemTypes.Weapon
+            // Exit if no attacks exist
             if (!attacks) return
 
-            const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee')
-            const rangedAttacks = attacks.filter((attack) => attack.system.type === 'ranged'
-                || attack.system.properties.some(p => p === COMPENDIUM_ID.thrown))
+            const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee' && !attack.system.stashed)
+            const rangedAttacks = attacks.filter((attack) => (attack.system.type === 'ranged' || attack.system.properties.some(p => p === COMPENDIUM_ID.thrown) && !attack.system.stashed))
 
             // Create group data
             const parentGroupData = {
@@ -142,8 +142,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addGroup(meleeGroupData, parentGroupData)
             this.addGroup(rangedGroupData, parentGroupData)
 
-            this.#addAttacks(meleeAttacks, meleeGroupData)
-            this.#addAttacks(rangedAttacks, rangedGroupData)
+            this.#addActions(meleeAttacks, meleeGroupData, actionType)
+            this.#addActions(rangedAttacks, rangedGroupData, actionType)
         }
         /**
                  * Build abilities
@@ -168,10 +168,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
                 })
             )
-            this.addActions(actions, groupData)
+            this.#addActions(actions, groupData, actionType)
         }
 
         async #buildSpells() {
+            const actionType = 'spell'
             const groupId = 'spells'
             const groupName = 'Spells'//coreModule.api.Utils.i18n(GROUP[groupId].name)
 
@@ -201,7 +202,34 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
 
                 this.addGroup(tierGroupData, spellGroupData, { update: true })
-                this.#addSpells(activeSpells, tierGroupData)
+                this.#addActions(activeSpells, tierGroupData, actionType)
+            }
+
+            const wands = this.actor.itemTypes.Wand
+            const usableWands = wands.filter(wand => wand.system.class.includes(this.actor.system.class) && !wand.system.lost && !wand.system.stashed)
+            console.log(usableWands)
+            if (usableWands.length > 0) {
+                const wandGroupData = {
+                    id: `spells_wands`,
+                    name: `Wands`,
+                    type: `system-derived`
+                }
+                this.addGroup(wandGroupData, spellGroupData)
+                this.#addActions(usableWands, wandGroupData, actionType)
+            }
+
+            const scrolls = this.actor.itemTypes.Scroll
+            const usableScrolls = scrolls.filter(scroll => scroll.system.class.includes(this.actor.system.class) && !scroll.system.stashed)
+            console.log(usableScrolls)
+            if (usableScrolls.length > 0) {
+                const scrollGroupData = {
+                    id: `spells_scrolls`,
+                    name: `Scrolls`,
+                    type: `system-derived`
+                }
+
+                this.addGroup(scrollGroupData, spellGroupData)
+                this.#addActions(usableScrolls, scrollGroupData, actionType)
             }
         }
 
@@ -226,22 +254,32 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             return ''
         }
 
-        async #addAttacks(attacks, groupData) {
-            for (const attack of attacks) {
+        // async #addAttacks(attacks, groupData) {
+        //     for (const attack of attacks) {
+        //         const actionData = {
+        //             id: attack.id,
+        //             name: attack.name,
+        //             encodedValue: ['attack', attack.id].join(this.delimiter)
+        //         }
+        //         this.addActions([actionData], groupData)
+        //     }
+        // }
+        // async #addSpells(spells, groupData) {
+        //     for (const spell of spells) {
+        //         const actionData = {
+        //             id: spell.id,
+        //             name: spell.name,
+        //             encodedValue: ['spell', spell.id].join(this.delimiter)
+        //         }
+        //         this.addActions([actionData], groupData)
+        //     }
+        // }
+        async #addActions(actions, groupData, actionType) {
+            for (const action of actions) {
                 const actionData = {
-                    id: attack.id,
-                    name: attack.name,
-                    encodedValue: ['attack', attack.id].join(this.delimiter)
-                }
-                this.addActions([actionData], groupData)
-            }
-        }
-        async #addSpells(spells, groupData) {
-            for (const spell of spells) {
-                const actionData = {
-                    id: spell.id,
-                    name: spell.name,
-                    encodedValue: ['spell', spell.id].join(this.delimiter)
+                    id: action.id,
+                    name: action.name,
+                    encodedValue: [actionType, action.id].join(this.delimiter)
                 }
                 this.addActions([actionData], groupData)
             }

@@ -14,6 +14,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async doHandleActionEvent (event, encodedValue) {
             const payload = encodedValue.split('|')
+            console.log(`Handling: ${payload}`)
 
             if (payload.length !== 2) {
                 super.throwInvalidValueErr()
