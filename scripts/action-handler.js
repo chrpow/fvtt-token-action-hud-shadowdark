@@ -153,7 +153,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const actionType = 'ability'
             const groupId = 'abilities'
             const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
-
             const groupData = { id: groupId, name: 'Abilities', type: 'system' }
 
             const actions = await Promise.all(
@@ -208,7 +207,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const wands = this.actor.itemTypes.Wand
             const usableWands = wands.filter(wand => wand.system.class.includes(this.actor.system.class) && !wand.system.lost && !wand.system.stashed)
-            console.log(usableWands)
             if (usableWands.length > 0) {
                 const wandGroupData = {
                     id: `spells_wands`,
@@ -221,7 +219,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const scrolls = this.actor.itemTypes.Scroll
             const usableScrolls = scrolls.filter(scroll => scroll.system.class.includes(this.actor.system.class) && !scroll.system.stashed)
-            console.log(usableScrolls)
             if (usableScrolls.length > 0) {
                 const scrollGroupData = {
                     id: `spells_scrolls`,
@@ -235,8 +232,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         async #buildInventory() {
-            console.log('building inventory')
-            const actionType = 'inventory'
+            const actionType = 'item'
             const groupId = 'inventory'
             const groupName = 'Inventory'
 
@@ -293,7 +289,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     name: treasureGroupName,
                     type: 'system-derived'
                 }
-                console.log(`treasure has ${items.length} items`)
                 if (treasure.length > 0) {
                     this.addGroup(itemTypeGroupData, parentGroupData)
                     this.#addActions(treasure, itemTypeGroupData, actionType)
