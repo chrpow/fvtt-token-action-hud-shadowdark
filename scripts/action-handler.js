@@ -342,7 +342,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const actionData = {
                     id: action.id,
                     name: action.name,
-                    encodedValue: [actionType, action.id].join(this.delimiter)
+                    encodedValue: [actionType, action.id].join(this.delimiter),
+                    icon: 'ADFSDF',
+                    img: coreModule.api.Utils.getImage(action)
                 }
                 this.addActions([actionData], groupData)
             }
