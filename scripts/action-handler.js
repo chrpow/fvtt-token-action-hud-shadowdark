@@ -1,5 +1,5 @@
 // System Module Imports
-import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP } from './constants.js'
+import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP, ICON } from './constants.js'
 import { Utils } from './utils.js'
 
 export let ActionHandler = null
@@ -118,12 +118,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildAttacks() {
             const actionType = 'attack'
             // Get attacks
-            const attacks = this.actor.itemTypes.Weapon
+            const attacks = this.actor.itemTypes.Weapon.filter((attack) => !attack.system.stashed)
             // Exit if no attacks exist
             if (!attacks) return
 
-            const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee' && !attack.system.stashed)
-            const rangedAttacks = attacks.filter((attack) => (attack.system.type === 'ranged' || attack.system.properties.some(p => p === COMPENDIUM_ID.thrown) && !attack.system.stashed))
+            const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee')
+            const rangedAttacks = attacks.filter((attack) => (attack.system.type === 'ranged'))
+            const thrownAttacks = attacks.filter((attack) => (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)))
 
             // Create group data
             const parentGroupData = {
@@ -145,6 +146,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             this.#addActions(meleeAttacks, meleeGroupData, actionType)
             this.#addActions(rangedAttacks, rangedGroupData, actionType)
+            this.#addActions(thrownAttacks, rangedGroupData, actionType, {icon: ICON.thrown})
         }
         /**
                  * Build abilities
@@ -296,6 +298,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
+        async #addActions(actions, groupData, actionType, options) {
+            for (const action of actions) {
+                const actionData = {
+                    id: action.id,
+                    name: action.name,
+                    encodedValue: [actionType, action.id].join(this.delimiter),
+                    img: coreModule.api.Utils.getImage(action),
+                    icon1: options?.icon
+                }
+                this.addActions([actionData], groupData)
+            }
+        }
+
         /**
          * Get tooltip data
          * @param {string} actionType The action type
@@ -315,39 +330,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #getTooltip(actionType, tooltipData) {
             return ''
-        }
-
-        // async #addAttacks(attacks, groupData) {
-        //     for (const attack of attacks) {
-        //         const actionData = {
-        //             id: attack.id,
-        //             name: attack.name,
-        //             encodedValue: ['attack', attack.id].join(this.delimiter)
-        //         }
-        //         this.addActions([actionData], groupData)
-        //     }
-        // }
-        // async #addSpells(spells, groupData) {
-        //     for (const spell of spells) {
-        //         const actionData = {
-        //             id: spell.id,
-        //             name: spell.name,
-        //             encodedValue: ['spell', spell.id].join(this.delimiter)
-        //         }
-        //         this.addActions([actionData], groupData)
-        //     }
-        // }
-        async #addActions(actions, groupData, actionType) {
-            for (const action of actions) {
-                const actionData = {
-                    id: action.id,
-                    name: action.name,
-                    encodedValue: [actionType, action.id].join(this.delimiter),
-                    icon: 'ADFSDF',
-                    img: coreModule.api.Utils.getImage(action)
-                }
-                this.addActions([actionData], groupData)
-            }
         }
         async #getActionName(entity) {
             return entity?.name ?? entity?.label ?? ''

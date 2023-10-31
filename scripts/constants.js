@@ -69,3 +69,7 @@ export const ABILITY = {
     wis: { name: 'SHADOWDARK.ability_wisdom' },
     cha: { name: 'SHADOWDARK.ability_charisma' }
 }
+
+export const ICON = {
+    thrown: '<i class="fa-solid fa-share"></i>'
+}
