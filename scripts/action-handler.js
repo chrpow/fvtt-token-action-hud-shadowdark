@@ -93,26 +93,23 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.actor._populateBackgroundItems()
             }
             await Promise.all([
-                // this.#buildCombat(),
-                // this.#buildConditions(),
-                // this.#buildEffects(),
-                // this.#buildElementalBlasts(),
-                // this.#buildFeats(),
-                // this.#buildHeroActions(),
-                // this.#buildHeroPoints(),
-                // this.#buildInitiative(),
-
-                // this.#buildPerceptionCheck(),
-                // this.#buildRecoveryCheck(),
-                // this.#buildRests(),
-                // this.#buildSaves(),
-                // this.#buildSkillActions(),
                 this.#buildAbilities(),
                 this.#buildSpells(),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildLight()
-                // this.#buildToggles()
+            ])
+        }
+
+        /**
+         * Build NPC actions
+         * @private
+         */
+        async #buildNpcActions() {
+            await Promise.all([
+                this.#buildAbilities(),
+                this.#buildNPCAttacks(),
+                // this.#buildNPCFeatures(),
             ])
         }
 
@@ -120,11 +117,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Build attacks
          */
         async #buildAttacks() {
-            const actionType = 'attack'
             // Get attacks
             const attacks = this.actor.itemTypes.Weapon.filter((attack) => !attack.system.stashed)
             // Exit if no attacks exist
             if (!attacks) return
+
+            const actionType = 'attack'
 
             const meleeAttackActions = []
             const rangedAttackActions = []
@@ -133,11 +131,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             for (const attack of attacks) {
                 if (attack.system.type === 'melee') {
                     meleeAttackActions.push(new Action(attack, actionType))
+                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                    if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
+                        rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
+                        continue
                 }
-                // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
-                    rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
-                    continue
                 } else if (attack.system.type === 'ranged') {
                     rangedAttackActions.push(new Action(attack, actionType))
                 }
@@ -349,10 +347,61 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const lightActions = await Promise.all(
                 lights.map(async (light) => {
                     console.log(light)
-                    return (light.system.light.active ? new Action(light, actionType, {icon1: '<i class="fa-solid fa-fire-flame-curved"></i>'}) : new Action(light, actionType))
+                    return (light.system.light.active ? new Action(light, actionType, {icon1: ICON.flame}) : new Action(light, actionType))
                 })
             )
             this.addActions(lightActions, groupData)
+        }
+
+        async #buildNPCAttacks() {
+            const attacks = this.actor.itemTypes['NPC Attack']
+
+            // Exit if no attacks exist
+            if (!attacks) return
+
+            const actionType = 'attack'
+
+            const meleeAttackActions = []
+            const rangedAttackActions = []
+
+            // Sort attacks by type
+            for (const attack of attacks) {
+                const ranges = attack.system.ranges
+                if (ranges.includes('close')) {
+                    meleeAttackActions.push(new Action(attack, actionType))
+                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                    if (ranges.includes('near') || ranges.includes('far')) {
+                        rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
+                        continue
+                    }
+                } else if (ranges.includes('near') || ranges.includes('far')) {
+                    rangedAttackActions.push(new Action(attack, actionType))
+                }
+            }
+
+            // Create group data
+            const parentGroupData = {
+                id: 'attacks',
+                type: 'system'
+            }
+            if (meleeAttackActions.length > 0) {
+                const meleeGroupData = {
+                    id: 'melee',
+                    name: 'Melee',
+                    type: 'system-derived'
+                }
+                this.addGroup(meleeGroupData, parentGroupData)
+                this.addActions(meleeAttackActions, meleeGroupData)
+            }
+            if (rangedAttackActions.length > 0) {
+                const rangedGroupData = {
+                    id: 'ranged',
+                    name: 'Ranged',
+                    type: 'system-derived'
+                }
+                this.addGroup(rangedGroupData, parentGroupData)
+                this.addActions(rangedAttackActions, rangedGroupData)
+            }
         }
 
         /**
@@ -378,7 +427,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #getActionName(entity) {
             return entity?.name ?? entity?.label ?? ''
         }
-        async #buildNpcActions() { }
+
         async #buildLightActions() { }
         async #buildMultipleTokenActions() { }
     }
