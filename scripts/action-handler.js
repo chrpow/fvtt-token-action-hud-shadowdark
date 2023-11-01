@@ -111,6 +111,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.#buildSpells(),
                 this.#buildAttacks(),
                 this.#buildInventory(),
+                this.#buildLight()
                 // this.#buildToggles()
             ])
         }
@@ -336,6 +337,22 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.addGroup(itemTypeGroupData, parentGroupData)
                 this.addActions(treasureActions, itemTypeGroupData)
             }
+        }
+        
+        async #buildLight() {
+            const actionType = 'light'
+            const groupId = 'light'
+            const groupData = { id: groupId, name: 'Light', type: 'system' }
+
+            const lights = this.actor.itemTypes.Basic.filter(item => item.system.light.isSource)
+
+            const lightActions = await Promise.all(
+                lights.map(async (light) => {
+                    console.log(light)
+                    return (light.system.light.active ? new Action(light, actionType, {icon1: '<i class="fa-solid fa-fire-flame-curved"></i>'}) : new Action(light, actionType))
+                })
+            )
+            this.addActions(lightActions, groupData)
         }
 
         /**
