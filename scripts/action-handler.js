@@ -2,6 +2,7 @@
 import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP, ICON } from './constants.js'
 import { Utils } from './utils.js'
 
+
 export let ActionHandler = null
 
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
@@ -122,31 +123,47 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             // Exit if no attacks exist
             if (!attacks) return
 
-            const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee')
-            const rangedAttacks = attacks.filter((attack) => (attack.system.type === 'ranged'))
-            const thrownAttacks = attacks.filter((attack) => (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)))
+            const meleeAttackActions = []
+            const rangedAttackActions = []
+
+            // Sort attacks by type
+            for (const attack of attacks) {
+                if (attack.system.type === 'melee') {
+                    meleeAttackActions.push(new Action(attack, actionType))
+                }
+                // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
+                    rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
+                    continue
+                } else if (attack.system.type === 'ranged') {
+                    rangedAttackActions.push(new Action(attack, actionType))
+                }
+            }
 
             // Create group data
             const parentGroupData = {
                 id: 'attacks',
                 type: 'system'
             }
-            const meleeGroupData = {
-                id: 'melee',
-                name: 'Melee',
-                type: 'system-derived'
+            if (meleeAttackActions.length > 0) {
+                const meleeGroupData = {
+                    id: 'melee',
+                    name: 'Melee',
+                    type: 'system-derived'
+                }
+                this.addGroup(meleeGroupData, parentGroupData)
+                this.addActions(meleeAttackActions, meleeGroupData)
             }
-            const rangedGroupData = {
-                id: 'ranged',
-                name: 'Ranged',
-                type: 'system-derived'
+            if (rangedAttackActions.length > 0) {
+                const rangedGroupData = {
+                    id: 'ranged',
+                    name: 'Ranged',
+                    type: 'system-derived'
+                }
+                this.addGroup(rangedGroupData, parentGroupData)
+                this.addActions(rangedAttackActions, rangedGroupData)
             }
-            this.addGroup(meleeGroupData, parentGroupData)
-            this.addGroup(rangedGroupData, parentGroupData)
 
-            this.#addActions(meleeAttacks, meleeGroupData, actionType)
-            this.#addActions(rangedAttacks, rangedGroupData, actionType)
-            this.#addActions(thrownAttacks, rangedGroupData, actionType, {icon: ICON.thrown})
         }
         /**
                  * Build abilities
@@ -157,7 +174,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
             const groupData = { id: groupId, name: 'Abilities', type: 'system' }
 
-            const actions = await Promise.all(
+            const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
                     const id = ability
                     const name = coreModule.api.Utils.i18n(ABILITY[ability].name)
@@ -170,7 +187,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
                 })
             )
-            this.#addActions(actions, groupData, actionType)
+            this.addActions(abilityActions, groupData)
         }
 
         async #buildSpells() {
@@ -185,26 +202,33 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
 
             const spells = this.actor.itemTypes.Spell
-            const activeTiers = []
-            for (const spell of spells) {
-                if (!activeTiers.includes(spell.system.tier)) {
-                    activeTiers.push(spell.system.tier)
+
+            // Exit if no spells exist
+            if (spells.length > 0) {
+
+                const activeTiers = []
+                for (const spell of spells) {
+                    if (!activeTiers.includes(spell.system.tier)) {
+                        activeTiers.push(spell.system.tier)
+                    }
                 }
-            }
-            for (const tier of activeTiers) {
-                const tierGroupId = `tier${tier}`
-                const tierGroupName = `Tier ${tier}`
+                for (const tier of activeTiers) {
+                    const tierGroupId = `tier${tier}`
+                    const tierGroupName = `Tier ${tier}`
 
-                const tierGroupData = {
-                    id: tierGroupId,
-                    name: tierGroupName,
-                    type: 'system-derived'
+                    const tierGroupData = {
+                        id: tierGroupId,
+                        name: tierGroupName,
+                        type: 'system-derived'
+                    }
+
+                    const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
+                    const spellActions = activeSpells.map(spell => {
+                        return new Action(spell, actionType)
+                    })
+                    this.addGroup(tierGroupData, parentGroupData)
+                    this.addActions(spellActions, tierGroupData)
                 }
-
-                const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
-
-                this.addGroup(tierGroupData, parentGroupData, { update: true })
-                this.#addActions(activeSpells, tierGroupData, actionType)
             }
 
             const wands = this.actor.itemTypes.Wand
@@ -215,8 +239,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     name: `Wands`,
                     type: `system-derived`
                 }
+
+                const wandActions = usableWands.map(wand => {
+                    return new Action(wand, actionType)
+                })
                 this.addGroup(wandGroupData, parentGroupData)
-                this.#addActions(usableWands, wandGroupData, actionType)
+                this.addActions(wandActions, wandGroupData)
             }
 
             const scrolls = this.actor.itemTypes.Scroll
@@ -228,8 +256,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     type: `system-derived`
                 }
 
+                const scrollActions = usableScrolls.map(scroll => {
+                    return new Action(scroll, actionType)
+                })
+
                 this.addGroup(scrollGroupData, parentGroupData)
-                this.#addActions(usableScrolls, scrollGroupData, actionType)
+                this.addActions(scrollActions, scrollGroupData)
             }
         }
 
@@ -262,8 +294,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const treasure = [];
 
             for (const itemType of itemTypes) {
-
                 const itemArray = this.actor.itemTypes[itemType].filter(item => !item.system.stashed)
+
                 if (itemArray.length > 0) {
                     const items = []
                     for (const item of itemArray) {
@@ -274,9 +306,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         name: itemType,
                         type: 'system-derived'
                     }
-                    if (items.length > 1) {
+                    if (items.length > 0) {
                         this.addGroup(itemTypeGroupData, parentGroupData)
-                        this.#addActions(items, itemTypeGroupData, actionType)
+                        const itemActions = items.map(item => {
+                            return new Action(item, actionType)
+                        })
+                        this.addActions(itemActions, itemTypeGroupData)
                     }
                 }
             }
@@ -286,28 +321,18 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 for (const item of this.actor.itemTypes[itemType]) {
                     treasure.push(item)
                 }
+            }
+            if (treasure.length > 0) {
                 const itemTypeGroupData = {
                     id: `inventory_treasure`,
                     name: treasureGroupName,
                     type: 'system-derived'
                 }
-                if (treasure.length > 0) {
-                    this.addGroup(itemTypeGroupData, parentGroupData)
-                    this.#addActions(treasure, itemTypeGroupData, actionType)
-                }
-            }
-        }
-
-        async #addActions(actions, groupData, actionType, options) {
-            for (const action of actions) {
-                const actionData = {
-                    id: action.id,
-                    name: action.name,
-                    encodedValue: [actionType, action.id].join(this.delimiter),
-                    img: coreModule.api.Utils.getImage(action),
-                    icon1: options?.icon
-                }
-                this.addActions([actionData], groupData)
+                const treasureActions = treasure.map(treasure => {
+                    return new Action(treasure, actionType)
+                })
+                this.addGroup(itemTypeGroupData, parentGroupData)
+                this.addActions(treasureActions, itemTypeGroupData)
             }
         }
 
@@ -337,5 +362,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildNpcActions() { }
         async #buildLightActions() { }
         async #buildMultipleTokenActions() { }
+    }
+    class Action {
+        constructor(item, actionType, options) {
+            this.id = item.id,
+                this.name = (options?.name || item.name)
+                this.encodedValue = [actionType, item.id].join('|'),
+                this.img = coreModule.api.Utils.getImage(item),
+                this.icon1 = options?.icon1
+        }
     }
 })
