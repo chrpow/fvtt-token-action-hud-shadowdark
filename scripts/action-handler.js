@@ -123,8 +123,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (!attacks) return
 
             const meleeAttacks = attacks.filter((attack) => attack.system.type === 'melee')
-            const rangedAttacks = attacks.filter((attack) => (attack.system.type === 'ranged'))
-            const thrownAttacks = attacks.filter((attack) => (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)))
+            const rangedAttacks = attacks.filter((attack) => (attack.system.type === 'ranged') || (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)))
+
+            for (const attack of rangedAttacks) {
+                if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
+                    attack.icon1 = ICON.thrown
+                    console.log(attack)
+                }
+            }
 
             // Create group data
             const parentGroupData = {
@@ -146,7 +152,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             this.#addActions(meleeAttacks, meleeGroupData, actionType)
             this.#addActions(rangedAttacks, rangedGroupData, actionType)
-            this.#addActions(thrownAttacks, rangedGroupData, actionType, {icon: ICON.thrown})
         }
         /**
                  * Build abilities
@@ -298,18 +303,17 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
-        async #addActions(actions, groupData, actionType, options) {
-            for (const action of actions) {
-                const actionData = {
+        async #addActions(actions, groupData, actionType) {
+            const actionData = actions.map((action) => new Object({
                     id: action.id,
                     name: action.name,
                     encodedValue: [actionType, action.id].join(this.delimiter),
                     img: coreModule.api.Utils.getImage(action),
-                    icon1: options?.icon
-                }
-                this.addActions([actionData], groupData)
-            }
+                    icon1: action?.icon
+              }))
+                this.addActions(actionData, groupData)
         }
+        
 
         /**
          * Get tooltip data
