@@ -68,6 +68,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.showAttackNames = Utils.getSetting('showAttackNames')
             this.splitAttacks = Utils.getSetting('splitAttacks')
 
+            this.wandScrollIcon = Utils.getSetting('wandScrollIcon')
+
             // Set group variables
             this.groupIds = groupIds
 
@@ -241,7 +243,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
 
                 const wandActions = usableWands.map(wand => {
-                    return new Action(wand, actionType)
+                    return (this.wandScrollIcon ? new Action(wand, actionType, {name: wand.system.spellName, icon1: ICON.wand}) : new Action(wand, actionType))
                 })
                 this.addGroup(wandGroupData, parentGroupData)
                 this.addActions(wandActions, wandGroupData)
@@ -257,7 +259,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
 
                 const scrollActions = usableScrolls.map(scroll => {
-                    return new Action(scroll, actionType)
+                    return (this.wandScrollIcon ? new Action(scroll, actionType, {name: scroll.system.spellName, icon1: ICON.scroll}) : new Action(scroll, actionType))
                 })
 
                 this.addGroup(scrollGroupData, parentGroupData)

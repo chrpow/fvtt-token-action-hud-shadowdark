@@ -71,5 +71,7 @@ export const ABILITY = {
 }
 
 export const ICON = {
-    thrown: '<i class="fa-solid fa-share"></i>'
+    thrown: '<i class="fa-solid fa-share"></i>',
+    wand: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
+    scroll: '<i class="fa-solid fa-scroll"></i>'
 }

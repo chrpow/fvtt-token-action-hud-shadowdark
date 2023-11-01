@@ -18,4 +18,16 @@ export function register (coreUpdate) {
             coreUpdate(value)
         }
     })
+
+    game.settings.register(MODULE.ID, 'wandScrollIcon', {
+        name: 'Show Icon for wands and scrolls',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.name'),
+        hint: 'Show icon for wands and scrolls',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.hint'),
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: (value) => {
+            coreUpdate(value)
+        }
+    })
 }
