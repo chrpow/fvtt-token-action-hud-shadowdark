@@ -74,9 +74,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.groupIds = groupIds
 
             if (this.actorType === 'Player') {
-                this.#buildCharacterActions()
+                await this.#buildCharacterActions()
             } else if (this.actorType === 'NPC') {
-                this.#buildNpcActions()
+                await this.#buildNpcActions()
                 // } else if (this.actorType === 'Light') {
                 //     this.#buildLightActions()
                 // } else if (!this.actor) {
@@ -120,7 +120,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             // Get attacks
             const attacks = this.actor.itemTypes.Weapon.filter((attack) => !attack.system.stashed)
             // Exit if no attacks exist
-            if (!attacks) return
+            if (attacks.length === 0) return
 
             const actionType = 'attack'
 
@@ -216,6 +216,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     this.addActions(spellActions, tierGroupData)
                 }
             }
+        
 
             const wands = this.actor.itemTypes.Wand
             const usableWands = wands.filter(wand => wand.system.class.includes(this.actor.system.class) && !wand.system.lost && !wand.system.stashed)
@@ -275,24 +276,23 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             for (const itemType of itemTypes) {
                 const itemArray = this.actor.itemTypes[itemType].filter(item => !item.system.stashed)
+                if (itemArray.length === 0) continue
 
-                if (itemArray.length > 0) {
-                    const items = []
-                    for (const item of itemArray) {
-                        item.system.treasure ? treasure.push(item) : items.push(item)
-                    }
-                    const itemTypeGroupData = {
-                        id: `inventory_${itemType.slugify()}`,
-                        name: itemType,
-                        type: 'system-derived'
-                    }
-                    if (items.length > 0) {
-                        this.addGroup(itemTypeGroupData, GROUP.inventory)
-                        const itemActions = items.map(item => {
-                            return new Action(item, actionType)
-                        })
-                        this.addActions(itemActions, itemTypeGroupData)
-                    }
+                const items = []
+                for (const item of itemArray) {
+                    item.system.treasure ? treasure.push(item) : items.push(item)
+                }
+                const itemTypeGroupData = {
+                    id: `inventory_${itemType.slugify()}`,
+                    name: itemType,
+                    type: 'system-derived'
+                }
+                if (items.length > 0) {
+                    this.addGroup(itemTypeGroupData, GROUP.inventory)
+                    const itemActions = items.map(item => {
+                        return new Action(item, actionType)
+                    })
+                    this.addActions(itemActions, itemTypeGroupData)
                 }
             }
 
@@ -302,18 +302,17 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     treasure.push(item)
                 }
             }
-            if (treasure.length > 0) {
-                const itemTypeGroupData = {
-                    id: `inventory_treasure`,
-                    name: treasureGroupName,
-                    type: 'system-derived'
-                }
-                const treasureActions = treasure.map(treasure => {
-                    return new Action(treasure, actionType)
-                })
-                this.addGroup(itemTypeGroupData, GROUP.inventory)
-                this.addActions(treasureActions, itemTypeGroupData)
+            if (treasure.length === 0) return
+            const itemTypeGroupData = {
+                id: `inventory_treasure`,
+                name: treasureGroupName,
+                type: 'system-derived'
             }
+            const treasureActions = treasure.map(treasure => {
+                return new Action(treasure, actionType)
+            })
+            this.addGroup(itemTypeGroupData, GROUP.inventory)
+            this.addActions(treasureActions, itemTypeGroupData)   
         }
         
         async #buildLight() {
@@ -333,7 +332,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const attacks = this.actor.itemTypes['NPC Attack']
 
             // Exit if no attacks exist
-            if (!attacks) return
+            if (attacks.length === 0 ) return
 
             const actionType = 'attack'
 
@@ -379,7 +378,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildNPCFeatures() {
             const features = this.actor.itemTypes['NPC Feature']
             // Exit if no features exist
-            if (!features) return
+            if (features.length === 0) return
 
             const actionType = 'feature'
 
@@ -391,32 +390,31 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(featureActions, GROUP.features)
         }
 
-        /**
-         * Get tooltip data
-         * @param {string} actionType The action type
-         * @param {object} entity     The entity
-         * @returns {object}          The tooltip data
-         */
-        async #getTooltipData(actionType, entity) {
-            return ''
-        }
+        // /**
+        //  * Get tooltip data
+        //  * @param {string} actionType The action type
+        //  * @param {object} entity     The entity
+        //  * @returns {object}          The tooltip data
+        //  */
+        // async #getTooltipData(actionType, entity) {
+        //     return ''
+        // }
 
-        /**
-         * Get tooltip
-         * @private
-         * @param {string} actionType  The action type
-         * @param {object} tooltipData The tooltip data
-         * @returns {string}           The tooltip
-         */
-        async #getTooltip(actionType, tooltipData) {
-            return ''
-        }
-        async #getActionName(entity) {
-            return entity?.name ?? entity?.label ?? ''
-        }
+        // /**
+        //  * Get tooltip
+        //  * @private
+        //  * @param {string} actionType  The action type
+        //  * @param {object} tooltipData The tooltip data
+        //  * @returns {string}           The tooltip
+        //  */
+        // async #getTooltip(actionType, tooltipData) {
+        //     return ''
+        // }
+        // async #getActionName(entity) {
+        //     return entity?.name ?? entity?.label ?? ''
+        // }
 
-        async #buildLightActions() { }
-        async #buildMultipleTokenActions() { }
+        // async #buildMultipleTokenActions() { }
     }
 
     class Action {
