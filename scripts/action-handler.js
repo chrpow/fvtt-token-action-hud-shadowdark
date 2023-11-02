@@ -1,5 +1,5 @@
 // System Module Imports
-import { ACTION_TYPE, ITEM_TYPE, COMPENDIUM_ID, ABILITY, GROUP, ICON } from './constants.js'
+import { COMPENDIUM_ID, ABILITY, GROUP, ICON } from './constants.js'
 import { Utils } from './utils.js'
 
 
@@ -141,18 +141,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
             }
 
-            // Create group data
-            const parentGroupData = {
-                id: 'attacks',
-                type: 'system'
-            }
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
                     id: 'melee',
                     name: 'Melee',
                     type: 'system-derived'
                 }
-                this.addGroup(meleeGroupData, parentGroupData)
+                this.addGroup(meleeGroupData, GROUP.attacks)
                 this.addActions(meleeAttackActions, meleeGroupData)
             }
             if (rangedAttackActions.length > 0) {
@@ -161,19 +156,17 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     name: 'Ranged',
                     type: 'system-derived'
                 }
-                this.addGroup(rangedGroupData, parentGroupData)
+                this.addGroup(rangedGroupData, GROUP.attacks)
                 this.addActions(rangedAttackActions, rangedGroupData)
             }
-
         }
         /**
-                 * Build abilities
-                 */
+         * Build abilities
+         */
         async #buildAbilities() {
             const actionType = 'ability'
             const groupId = 'abilities'
             const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
-            const groupData = { id: groupId, name: 'Abilities', type: 'system' }
 
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
@@ -188,19 +181,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     }
                 })
             )
-            this.addActions(abilityActions, groupData)
+            this.addActions(abilityActions, GROUP.abilities)
         }
 
         async #buildSpells() {
             const actionType = 'spell'
-            const groupId = 'spells'
-            const groupName = 'Spells'//coreModule.api.Utils.i18n(GROUP[groupId].name)
-
-            const parentGroupData = {
-                id: groupId,
-                name: groupName,
-                type: 'system'
-            }
 
             const spells = this.actor.itemTypes.Spell
 
@@ -227,7 +212,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     const spellActions = activeSpells.map(spell => {
                         return new Action(spell, actionType)
                     })
-                    this.addGroup(tierGroupData, parentGroupData)
+                    this.addGroup(tierGroupData, GROUP.spells)
                     this.addActions(spellActions, tierGroupData)
                 }
             }
@@ -244,7 +229,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const wandActions = usableWands.map(wand => {
                     return (this.wandScrollIcon ? new Action(wand, actionType, {name: wand.system.spellName, icon1: ICON.wand}) : new Action(wand, actionType))
                 })
-                this.addGroup(wandGroupData, parentGroupData)
+                this.addGroup(wandGroupData, GROUP.spells)
                 this.addActions(wandActions, wandGroupData)
             }
 
@@ -261,7 +246,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return (this.wandScrollIcon ? new Action(scroll, actionType, {name: scroll.system.spellName, icon1: ICON.scroll}) : new Action(scroll, actionType))
                 })
 
-                this.addGroup(scrollGroupData, parentGroupData)
+                this.addGroup(scrollGroupData, GROUP.spells)
                 this.addActions(scrollActions, scrollGroupData)
             }
         }
@@ -286,12 +271,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 'Gem'
             ]
 
-            const parentGroupData = {
-                id: groupId,
-                name: groupName,
-                type: 'system'
-            }
-
             const treasure = [];
 
             for (const itemType of itemTypes) {
@@ -308,7 +287,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         type: 'system-derived'
                     }
                     if (items.length > 0) {
-                        this.addGroup(itemTypeGroupData, parentGroupData)
+                        this.addGroup(itemTypeGroupData, GROUP.inventory)
                         const itemActions = items.map(item => {
                             return new Action(item, actionType)
                         })
@@ -332,15 +311,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const treasureActions = treasure.map(treasure => {
                     return new Action(treasure, actionType)
                 })
-                this.addGroup(itemTypeGroupData, parentGroupData)
+                this.addGroup(itemTypeGroupData, GROUP.inventory)
                 this.addActions(treasureActions, itemTypeGroupData)
             }
         }
         
         async #buildLight() {
             const actionType = 'light'
-            const groupId = 'light'
-            const groupData = { id: groupId, name: 'Light', type: 'system' }
 
             const lights = this.actor.itemTypes.Basic.filter(item => item.system.light.isSource)
 
@@ -349,7 +326,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return (light.system.light.active ? new Action(light, actionType, {icon1: ICON.flame}) : new Action(light, actionType))
                 })
             )
-            this.addActions(lightActions, groupData)
+            this.addActions(lightActions, GROUP.light)
         }
 
         async #buildNPCAttacks() {
@@ -378,18 +355,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
             }
 
-            // Create group data
-            const parentGroupData = {
-                id: 'attacks',
-                type: 'system'
-            }
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
                     id: 'melee',
                     name: 'Melee',
                     type: 'system-derived'
                 }
-                this.addGroup(meleeGroupData, parentGroupData)
+                this.addGroup(meleeGroupData, GROUP.attacks)
                 this.addActions(meleeAttackActions, meleeGroupData)
             }
             if (rangedAttackActions.length > 0) {
@@ -398,7 +370,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     name: 'Ranged',
                     type: 'system-derived'
                 }
-                this.addGroup(rangedGroupData, parentGroupData)
+                this.addGroup(rangedGroupData, GROUP.attacks)
                 this.addActions(rangedAttackActions, rangedGroupData)
             }
         }
@@ -408,9 +380,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const features = this.actor.itemTypes['NPC Feature']
             // Exit if no features exist
             if (!features) return
-            
-            const groupId = 'features'
-            const groupData = { id: groupId, name: 'Features', type: 'system' }
 
             const actionType = 'feature'
 
@@ -419,7 +388,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return (new Action(feature, actionType))
                 })
             )
-            this.addActions(featureActions, groupData)
+            this.addActions(featureActions, GROUP.features)
         }
 
         /**
