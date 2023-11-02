@@ -106,6 +106,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @private
          */
         async #buildNpcActions() {
+            if (!this.actor.backgroundItems?.class) {
+                this.actor._populateBackgroundItems()
+            }
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildNPCAttacks(),

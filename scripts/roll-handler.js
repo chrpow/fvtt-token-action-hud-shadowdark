@@ -74,6 +74,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 case 'light':
                     this.#handleLightAction(event, actor, actionId)
                     break
+                case 'feature':
+                    this.#handleItemAction(event, actor, actionId)
+                    break
                 // case 'utility':
                 //     this.#handleUtilityAction(token, actionId)
                 //     break
