@@ -25,7 +25,8 @@ export const ACTION_TYPE = {
     ability: 'SHADOWDARK.class-ability.ability.label',
     spell: 'SHADOWDARK.item_type.spell',
     item: 'tokenActionHud.template.item',
-    light: 'SHADOWDARK.sheet.item.tab.light'
+    light: 'SHADOWDARK.sheet.item.tab.light',
+    feature: 'SHADOWDARK.sheet.npc.features_label'
     // utility: 'tokenActionHud.utility'
 }
 
@@ -41,7 +42,8 @@ export const GROUP = {
     attacks: { id: 'attacks', name: 'SHADOWDARK.sheet.npc.attacks_label', type: 'system' },
     abilities: { id: 'abilities', name: 'SHADOWDARK.sheet.abilities.label', type: 'system' },
     spells: { id: 'spells', name: 'SHADOWDARK.sheet.player.spells', type: 'system'},
-    light: {id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system'}
+    light: {id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system'},
+    features: {id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system'}
     // combat: { id: 'combat', name: 'tokenActionHud.combat', type: 'system' },
     // token: { id: 'token', name: 'tokenActionHud.token', type: 'system' },
     // utility: { id: 'utility', name: 'tokenActionHud.utility', type: 'system' }

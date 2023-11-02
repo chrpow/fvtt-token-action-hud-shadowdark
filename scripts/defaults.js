@@ -54,6 +54,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 groups: [
                     { ...groups.light, nestId: 'light_light'}
                 ]
+            },
+            {
+                nestId: 'features',
+                id: 'features',
+                name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.npc.features_label'),
+                groups: [
+                    { ...groups.features, nestId: 'features_features' }
+                ]
             }
             // {
             //     nestId: 'utility',

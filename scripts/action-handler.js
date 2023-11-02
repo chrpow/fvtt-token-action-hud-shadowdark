@@ -109,7 +109,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildNPCAttacks(),
-                // this.#buildNPCFeatures(),
+                this.#buildNPCFeatures(),
             ])
         }
 
@@ -346,7 +346,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const lightActions = await Promise.all(
                 lights.map(async (light) => {
-                    console.log(light)
                     return (light.system.light.active ? new Action(light, actionType, {icon1: ICON.flame}) : new Action(light, actionType))
                 })
             )
@@ -404,6 +403,25 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
+        
+        async #buildNPCFeatures() {
+            const features = this.actor.itemTypes['NPC Feature']
+            // Exit if no features exist
+            if (!features) return
+            
+            const groupId = 'features'
+            const groupData = { id: groupId, name: 'Features', type: 'system' }
+
+            const actionType = 'feature'
+
+            const featureActions = await Promise.all(
+                features.map(async (feature) => {
+                    return (new Action(feature, actionType))
+                })
+            )
+            this.addActions(featureActions, groupData)
+        }
+
         /**
          * Get tooltip data
          * @param {string} actionType The action type
@@ -431,6 +449,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildLightActions() { }
         async #buildMultipleTokenActions() { }
     }
+
     class Action {
         constructor(item, actionType, options) {
             this.id = item.id,
