@@ -18,6 +18,30 @@ export function register (coreUpdate) {
             coreUpdate(value)
         }
     })
+    
+    game.settings.register(MODULE.ID, 'showAttackBonus', {
+        name: 'Show Roll Bonus on Attacks',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.name'),
+        hint: 'Show roll bonus on attacks',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.hint'),
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: (value) => {
+            coreUpdate(value)
+        }
+    })
+
+    game.settings.register(MODULE.ID, 'showAbilityBonus', {
+        name: 'Show Roll Bonus on Abilities',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.name'),
+        hint: 'Show roll bonus on abilities',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.hint'),
+        scope: 'client',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: (value) => {
+            coreUpdate(value)
+        }
+    })
 
     game.settings.register(MODULE.ID, 'wandScrollIcon', {
         name: 'Show Icon for Wands and Scrolls',//game.i18n.localize('tokenActionHud.template.settings.displayUnequipped.name'),

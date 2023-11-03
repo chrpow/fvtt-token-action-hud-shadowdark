@@ -68,6 +68,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.showAttackNames = Utils.getSetting('showAttackNames')
             this.splitAttacks = Utils.getSetting('splitAttacks')
 
+            this.showAttackBonus = Utils.getSetting('showAttackBonus')
+            this.showAbilityBonus = Utils.getSetting('showAbilityBonus')
             this.wandScrollIcon = Utils.getSetting('wandScrollIcon')
             this.hideLantern = Utils.getSetting('hideLantern')
 
@@ -131,17 +133,55 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const meleeAttackActions = []
             const rangedAttackActions = []
 
-            // Sort attacks by type
-            for (const attack of attacks) {
-                if (attack.system.type === 'melee') {
-                    meleeAttackActions.push(new Action(attack, actionType))
-                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                    if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
-                        rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
-                        continue
+            const weaponOptions = {}
+
+            if (this.showAttackBonus) {
+                // Sort attacks by type
+                for (const attack of attacks) {
+                    const weaponMasterBonus = this.actor.calcWeaponMasterBonus(attack)
+                    const baseAttackBonus = await attack.isFinesseWeapon()
+                    ? Math.max(this.actor.attackBonus('melee'), this.actor.attackBonus('ranged'))
+                    : this.actor.attackBonus(attack.system.type);
+
+                    if (attack.system.type === 'melee') {
+                        const meleeAttackBonus = baseAttackBonus
+                            + this.actor.system.bonuses.meleeAttackBonus
+                            + attack.system.bonuses.attackBonus
+                            + weaponMasterBonus
+                        meleeAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(meleeAttackBonus)}))
+
+                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                        if (await attack.hasProperty('thrown')) {
+                            const thrownAttackBonus = baseAttackBonus
+                                + parseInt(this.actor.system.bonuses.rangedAttackBonus, 10)
+                                + parseInt(attack.system.bonuses.attackBonus, 10)
+                                + weaponMasterBonus
+
+                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown, name: attack.name + this.#getBonusString(thrownAttackBonus) }))
+                            continue
+                        }
+                    } else if (attack.system.type === 'ranged') {
+                        const rangedAttackBonus = baseAttackBonus
+                            + this.actor.system.bonuses.rangedAttackBonus
+                            + attack.system.bonuses.attackBonus
+                            + weaponMasterBonus
+
+                        rangedAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(rangedAttackBonus)}))
+                    }
                 }
-                } else if (attack.system.type === 'ranged') {
-                    rangedAttackActions.push(new Action(attack, actionType))
+            } else {
+                // Sort attacks by type
+                for (const attack of attacks) {
+                    if (attack.system.type === 'melee') {
+                        meleeAttackActions.push(new Action(attack, actionType, {bonus: attack.attackBonus}))
+                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                        if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
+                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
+                            continue
+                    }
+                    } else if (attack.system.type === 'ranged') {
+                        rangedAttackActions.push(new Action(attack, actionType, {bonus: attack.attackBonus}))
+                    }
                 }
             }
 
@@ -169,13 +209,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #buildAbilities() {
             const actionType = 'ability'
-            const groupId = 'abilities'
             const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
 
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
                     const id = ability
-                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name)
+                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name)+ (this.showAbilityBonus ?  this.#getBonusString(this.actor.system.abilities[ability].mod) : '')
                     const encodedValue = [actionType, id].join(this.delimiter)
 
                     return {
@@ -405,16 +444,21 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(featureActions, GROUP.features)
         }
 
+        #getBonusString(bonus) {
+            return ` (${bonus >= 0 ? '+' : ''}${bonus})`
+        }
+
         // async #buildMultipleTokenActions() { }
     }
 
     class Action {
         constructor(item, actionType, options) {
-            this.id = item.id,
-                this.name = (options?.name || item.name)
-                this.encodedValue = [actionType, item.id].join('|'),
-                this.img = coreModule.api.Utils.getImage(item),
-                this.icon1 = options?.icon1
+            this.id = item.id
+            this.name = (options?.name || item.name)
+            this.encodedValue = [actionType, item.id].join('|')
+            this.img = coreModule.api.Utils.getImage(item)
+            this.icon1 = options?.icon1
+            this.bonus = options?.bonus
         }
     }
 })
