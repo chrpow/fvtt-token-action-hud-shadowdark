@@ -72,6 +72,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.showAbilityBonus = Utils.getSetting('showAbilityBonus')
             this.wandScrollIcon = Utils.getSetting('wandScrollIcon')
             this.hideLantern = Utils.getSetting('hideLantern')
+            this.showAttackRanges = Utils.getSetting('showAttackRanges')
+            this.showSpellRanges = Utils.getSetting('showSpellRanges')
 
             // Set group variables
             this.groupIds = groupIds
@@ -148,7 +150,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             + this.actor.system.bonuses.meleeAttackBonus
                             + attack.system.bonuses.attackBonus
                             + weaponMasterBonus
-                        meleeAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(meleeAttackBonus)}))
+                        meleeAttackActions.push(new Action(attack, actionType, {
+                            name: attack.name + this.#getBonusString(meleeAttackBonus),
+                            range: (this.showAttackRanges) ? 'close' : undefined})
+                        )
 
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
                         if (await attack.hasProperty('thrown')) {
@@ -157,7 +162,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                                 + parseInt(attack.system.bonuses.attackBonus, 10)
                                 + weaponMasterBonus
 
-                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown, name: attack.name + this.#getBonusString(thrownAttackBonus) }))
+                            rangedAttackActions.push(new Action(attack, actionType, {
+                                icon2: ICON.thrown,
+                                name: attack.name + this.#getBonusString(thrownAttackBonus),
+                                range: (this.showAttackRanges) ? attack.system.range : undefined })
+                            )
                             continue
                         }
                     } else if (attack.system.type === 'ranged') {
@@ -166,21 +175,24 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             + attack.system.bonuses.attackBonus
                             + weaponMasterBonus
 
-                        rangedAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(rangedAttackBonus)}))
+                        rangedAttackActions.push(new Action(attack, actionType, {
+                            name: attack.name + this.#getBonusString(rangedAttackBonus),
+                            range: (this.showAttackRanges) ? attack.system.range : undefined})
+                        )
                     }
                 }
             } else {
                 // Sort attacks by type
                 for (const attack of attacks) {
                     if (attack.system.type === 'melee') {
-                        meleeAttackActions.push(new Action(attack, actionType, {bonus: attack.attackBonus}))
+                        meleeAttackActions.push(new Action(attack, actionType, {range: (this.showAttackRanges) ? attack.system.range : undefined}))
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
                         if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
-                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
+                            rangedAttackActions.push(new Action(attack, actionType, { icon2: ICON.thrown }))
                             continue
                     }
                     } else if (attack.system.type === 'ranged') {
-                        rangedAttackActions.push(new Action(attack, actionType, {bonus: attack.attackBonus}))
+                        rangedAttackActions.push(new Action(attack, actionType, {range: (this.showAttackRanges) ? attack.system.range : undefined}))
                     }
                 }
             }
@@ -253,7 +265,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                     const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
                     const spellActions = activeSpells.map(spell => {
-                        return new Action(spell, actionType)
+                        return new Action(spell, actionType, {range: (this.showSpellRanges) ? spell.system.range : undefined})
                     })
                     this.addGroup(tierGroupData, GROUP.spells)
                     this.addActions(spellActions, tierGroupData)
@@ -271,7 +283,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
 
                 const wandActions = usableWands.map(wand => {
-                    return (this.wandScrollIcon ? new Action(wand, actionType, {name: wand.system.spellName, icon1: ICON.wand}) : new Action(wand, actionType))
+                    return new Action(wand, actionType, {
+                        name: wand.system.spellName,
+                        icon2: this.wandScrollIcon ? ICON.wand : undefined,
+                        range: this.showSpellRanges ? wand.system.range : undefined})
                 })
                 this.addGroup(wandGroupData, GROUP.spells)
                 this.addActions(wandActions, wandGroupData)
@@ -287,9 +302,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
 
                 const scrollActions = usableScrolls.map(scroll => {
-                    return (this.wandScrollIcon ? new Action(scroll, actionType, {name: scroll.system.spellName, icon1: ICON.scroll}) : new Action(scroll, actionType))
+                    return new Action(scroll, actionType, {
+                        name: scroll.system.spellName,
+                        icon2: this.wandScrollIcon ? ICON.scroll : undefined,
+                        range: this.showSpellRanges ? scroll.system.range : undefined})
                 })
-
+                
                 this.addGroup(scrollGroupData, GROUP.spells)
                 this.addActions(scrollActions, scrollGroupData)
             }
@@ -376,7 +394,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const lightActions = await Promise.all(
                 lights.map(async (light) => {
-                    return (light.system.light.active ? new Action(light, actionType, {icon1: ICON.flame}) : new Action(light, actionType))
+                    return (light.system.light.active ? new Action(light, actionType, {icon2: ICON.flame}) : new Action(light, actionType))
                 })
             )
             this.addActions(lightActions, GROUP.light)
@@ -393,38 +411,32 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const meleeAttackActions = []
             const rangedAttackActions = []
 
-            if (this.showAttackBonus) {
                  // Sort attacks by type
                  for (const attack of attacks) {
                     const ranges = attack.system.ranges
                     if (ranges.includes('close')) {
-                        meleeAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(attack.system.bonuses.attackBonus)}))
+                        meleeAttackActions.push(new Action(attack, actionType, { 
+                            name: attack.name + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                            range: this.showAttackRanges ? 'close' : undefined}))
 
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
                         if (ranges.includes('near') || ranges.includes('far')) {
-                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown, name: attack.name + this.#getBonusString(attack.system.bonuses.attackBonus) }))
+                            const maxRange = ranges.includes('far') ? 'far' : 'near'
+                            rangedAttackActions.push(new Action(attack, actionType, {
+                                icon2: ICON.thrown,
+                                name: attack.name + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                                range: this.showAttackRanges ? maxRange : undefined
+                            }))
                             continue
                         }
                     } else if (ranges.includes('near') || ranges.includes('far')) {
-                        rangedAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(attack.system.bonuses.attackBonus)}))
+                        const maxRange = ranges.includes('far') ? 'far' : 'near'
+                        rangedAttackActions.push(new Action(attack, actionType, {
+                            name: attack.name + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                            range: this.showAttackRanges ? maxRange : undefined
+                        }))
                     }
                 }
-            } else {
-                 // Sort attacks by type
-                for (const attack of attacks) {
-                    const ranges = attack.system.ranges
-                    if (ranges.includes('close')) {
-                        meleeAttackActions.push(new Action(attack, actionType))
-                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                        if (ranges.includes('near') || ranges.includes('far')) {
-                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
-                            continue
-                        }
-                    } else if (ranges.includes('near') || ranges.includes('far')) {
-                        rangedAttackActions.push(new Action(attack, actionType))
-                    }
-                }
-            }
                     
 
             if (meleeAttackActions.length > 0) {
@@ -475,8 +487,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.name = (options?.name || item.name)
             this.encodedValue = [actionType, item.id].join('|')
             this.img = coreModule.api.Utils.getImage(item)
-            this.icon1 = options?.icon1
-            this.bonus = options?.bonus
+            this.icon1 = ICON[options?.range],
+            this.icon2 = options?.icon2
         }
     }
 })
