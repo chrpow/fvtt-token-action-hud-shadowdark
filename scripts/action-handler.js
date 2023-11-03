@@ -383,30 +383,49 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         async #buildNPCAttacks() {
+            // Get attacks
             const attacks = this.actor.itemTypes['NPC Attack']
-
             // Exit if no attacks exist
-            if (attacks.length === 0 ) return
+            if (attacks.length === 0) return
 
             const actionType = 'attack'
 
             const meleeAttackActions = []
             const rangedAttackActions = []
 
-            // Sort attacks by type
-            for (const attack of attacks) {
-                const ranges = attack.system.ranges
-                if (ranges.includes('close')) {
-                    meleeAttackActions.push(new Action(attack, actionType))
-                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                    if (ranges.includes('near') || ranges.includes('far')) {
-                        rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
-                        continue
+            if (this.showAttackBonus) {
+                 // Sort attacks by type
+                 for (const attack of attacks) {
+                    const ranges = attack.system.ranges
+                    if (ranges.includes('close')) {
+                        meleeAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(attack.system.bonuses.attackBonus)}))
+
+                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                        if (ranges.includes('near') || ranges.includes('far')) {
+                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown, name: attack.name + this.#getBonusString(attack.system.bonuses.attackBonus) }))
+                            continue
+                        }
+                    } else if (ranges.includes('near') || ranges.includes('far')) {
+                        rangedAttackActions.push(new Action(attack, actionType, {name: attack.name + this.#getBonusString(attack.system.bonuses.attackBonus)}))
                     }
-                } else if (ranges.includes('near') || ranges.includes('far')) {
-                    rangedAttackActions.push(new Action(attack, actionType))
+                }
+            } else {
+                 // Sort attacks by type
+                for (const attack of attacks) {
+                    const ranges = attack.system.ranges
+                    if (ranges.includes('close')) {
+                        meleeAttackActions.push(new Action(attack, actionType))
+                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                        if (ranges.includes('near') || ranges.includes('far')) {
+                            rangedAttackActions.push(new Action(attack, actionType, { icon1: ICON.thrown }))
+                            continue
+                        }
+                    } else if (ranges.includes('near') || ranges.includes('far')) {
+                        rangedAttackActions.push(new Action(attack, actionType))
+                    }
                 }
             }
+                    
 
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
@@ -427,7 +446,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.addActions(rangedAttackActions, rangedGroupData)
             }
         }
-
         
         async #buildNPCFeatures() {
             const features = this.actor.itemTypes['NPC Feature']
