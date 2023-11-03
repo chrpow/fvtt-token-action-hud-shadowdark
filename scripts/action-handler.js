@@ -69,6 +69,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.splitAttacks = Utils.getSetting('splitAttacks')
 
             this.wandScrollIcon = Utils.getSetting('wandScrollIcon')
+            this.hideLantern = Utils.getSetting('hideLantern')
 
             // Set group variables
             this.groupIds = groupIds
@@ -321,7 +322,18 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildLight() {
             const actionType = 'light'
 
-            const lights = this.actor.itemTypes.Basic.filter(item => item.system.light.isSource)
+            const lights = [];
+            
+            for (const light of this.actor.itemTypes.Basic.filter(item => item.system.light.isSource)) {
+                if (!light.system.light.remainingSecs) continue
+                if (this.hideLantern) {
+                    if (light.name === 'Oil, Flask') {
+                        if (this.actor.itemTypes.Basic.some(item => item.name === 'Lantern')) {
+                            lights.push(light)
+                        }
+                    } else lights.push(light)
+                } else lights.push(light)
+            }
 
             const lightActions = await Promise.all(
                 lights.map(async (light) => {
@@ -392,30 +404,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             )
             this.addActions(featureActions, GROUP.features)
         }
-
-        // /**
-        //  * Get tooltip data
-        //  * @param {string} actionType The action type
-        //  * @param {object} entity     The entity
-        //  * @returns {object}          The tooltip data
-        //  */
-        // async #getTooltipData(actionType, entity) {
-        //     return ''
-        // }
-
-        // /**
-        //  * Get tooltip
-        //  * @private
-        //  * @param {string} actionType  The action type
-        //  * @param {object} tooltipData The tooltip data
-        //  * @returns {string}           The tooltip
-        //  */
-        // async #getTooltip(actionType, tooltipData) {
-        //     return ''
-        // }
-        // async #getActionName(entity) {
-        //     return entity?.name ?? entity?.label ?? ''
-        // }
 
         // async #buildMultipleTokenActions() { }
     }

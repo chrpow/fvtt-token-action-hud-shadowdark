@@ -43,7 +43,9 @@ export const GROUP = {
 }
 
 export const COMPENDIUM_ID = {
-    thrown: 'Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC'
+    thrown: 'Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC',
+    oil: 'Compendium.shadowdark.gear.Item.80bCpXdZcj0Cz1fE',
+    lantern: 'Compendium.shadowdark.gear.Item.lCWOUkVp4N1geMRt'
 }
 
 export const ABILITY = {
