@@ -61,5 +61,9 @@ export const ICON = {
     thrown: '<i class="fa-solid fa-share"></i>',
     wand: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
     scroll: '<i class="fa-solid fa-scroll"></i>',
-    flame: '<i class="fa-solid fa-fire-flame-curved"></i>'
+    flame: '<i class="fa-solid fa-fire-flame-curved"></i>',
+    close: '<i class="fa-solid fa-circle-c"></i>',
+    near: '<i class="fa-solid fa-circle-n"></i>',
+    far: '<i class="fa-solid fa-circle-f"></i>',
+    self: '<i class="fa-solid fa-circle-user"></i>'
 }
