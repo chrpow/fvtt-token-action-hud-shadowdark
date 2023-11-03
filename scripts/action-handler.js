@@ -1,5 +1,5 @@
 // System Module Imports
-import { COMPENDIUM_ID, ABILITY, GROUP, ICON } from './constants.js'
+import { ABILITY, GROUP, ICON } from './constants.js'
 import { Utils } from './utils.js'
 
 
@@ -187,7 +187,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     if (attack.system.type === 'melee') {
                         meleeAttackActions.push(new Action(attack, actionType, {range: (this.showAttackRanges) ? attack.system.range : undefined}))
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                        if (attack.system.properties.some(p => p === COMPENDIUM_ID.thrown)) {
+                        if (await attack.hasProperty('thrown')) {
                             rangedAttackActions.push(new Action(attack, actionType, { icon2: ICON.thrown }))
                             continue
                     }

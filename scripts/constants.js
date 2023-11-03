@@ -42,12 +42,6 @@ export const GROUP = {
     features: {id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system'}
 }
 
-export const COMPENDIUM_ID = {
-    thrown: 'Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC',
-    oil: 'Compendium.shadowdark.gear.Item.80bCpXdZcj0Cz1fE',
-    lantern: 'Compendium.shadowdark.gear.Item.lCWOUkVp4N1geMRt'
-}
-
 export const ABILITY = {
     str: { name: 'SHADOWDARK.ability_strength' },
     dex: { name: 'SHADOWDARK.ability_dexterity' },
