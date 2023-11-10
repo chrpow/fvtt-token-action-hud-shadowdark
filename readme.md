@@ -23,7 +23,7 @@ This is an add-on module to [Larkinabout's Token Action HUD Core](https://github
 
 ## Required Modules
 
-**IMPORTANT** - Token Action HUD Template requires the [Token Action HUD Core](https://foundryvtt.com/packages/token-action-hud-core) module to be installed.
+**IMPORTANT** - Token Action HUD Shadowdark requires the [Token Action HUD Core](https://foundryvtt.com/packages/token-action-hud-core) module to be installed.
 
 ## Recommended Modules
 Token Action HUD uses the [Color Picker](https://foundryvtt.com/packages/color-picker) library module for its color picker settings.
