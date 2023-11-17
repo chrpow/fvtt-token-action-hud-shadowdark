@@ -12,7 +12,6 @@ This is an add-on module to [Larkinabout's Token Action HUD Core](https://github
 
 # Planned Features
 - Full localization to languages supported by the FoundryVTT system.
-- Add support for selecting multiple tokens (group ability checks)
 
 # Installation
 
