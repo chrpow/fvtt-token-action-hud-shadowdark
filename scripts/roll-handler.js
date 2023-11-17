@@ -24,13 +24,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const actionTypeId = payload[0]
             const actionId = payload[1]
 
-            const renderable = ['attack']
+            // const renderable = ['attack', 'ability']
 
-            if (renderable.includes(actionTypeId) && this.isRenderItem()) {
-                return this.doRenderItem(this.actor, actionId)
-            }
+            // if (renderable.includes(actionTypeId) && this.isRenderItem()) {
+            //     return this.doRenderItem(this.actor, actionId)
+            // }
 
-            const knownCharacters = ['character']
+            const knownCharacters = ['Player', 'NPC']
 
             // If single actor is selected
             if (this.actor) {

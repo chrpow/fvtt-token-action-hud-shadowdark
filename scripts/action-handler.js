@@ -39,7 +39,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */a
         async buildSystemActions(groupIds) {
             // Set actor and token variables
-            this.actors = (!this.actor) ? this._getActors() : [this.actor]
+            this.actors = (!this.actor) ? this.#getActors() : [this.actor]
             this.actorType = this.actor?.type
 
             // Exit if actor is not a known type
@@ -51,7 +51,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             // Set items variable
             if (this.actor) {
-                let items = Array.from(this.actor.items)
+                let items = Array.from(this.actor?.items)
                 items = coreModule.api.Utils.sortItemsByName(items)
                 this.items = items
             }
@@ -84,9 +84,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 await this.#buildNpcActions()
                 // } else if (this.actorType === 'Light') {
                 //     this.#buildLightActions()
-                // } else if (!this.actor) {
-                //     this.#buildMultipleTokenActions()
-                // }
+            } else if (!this.actor) {
+                this.#buildGroupActions()
             }
         }
         /**
@@ -94,9 +93,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @private
          */
         async #buildCharacterActions() {
-            if (!this.actor.backgroundItems?.class) {
-                this.actor._populateBackgroundItems()
-            }
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
@@ -111,14 +107,28 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @private
          */
         async #buildNpcActions() {
-            if (!this.actor.backgroundItems?.class) {
-                this.actor._populateBackgroundItems()
+            if (!this.actor?.backgroundItems?.class) {
+                this.actor?._populateBackgroundItems()
             }
             await Promise.all([
-                this.#buildAbilities(),
-                this.#buildNPCAttacks(),
-                this.#buildNPCFeatures(),
+                this.#buildAbilities()                
             ])
+        }
+
+        /**
+         * Build group actions
+         * @private
+         */
+        async #buildGroupActions() {
+            await Promise.all([
+                this.#buildAbilities()
+            ])
+        }
+
+        #getActors () {
+            const allowedTypes = ['Player', 'NPC']
+            const actors = canvas.tokens.controlled.map(token => token.actor)
+            if (actors.every(actor => allowedTypes.includes(actor?.type))) { return actors }
         }
 
         /**
@@ -126,9 +136,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #buildAttacks() {
             // Get attacks
-            const attacks = this.actor.itemTypes.Weapon.filter((attack) => !attack.system.stashed)
+            const attacks = this.actor?.itemTypes.Weapon.filter((attack) => !attack.system.stashed)
             // Exit if no attacks exist
-            if (attacks.length === 0) return
+            if (!attacks || attacks?.length === 0) return
 
             const actionType = 'attack'
 
@@ -140,14 +150,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (this.showAttackBonus) {
                 // Sort attacks by type
                 for (const attack of attacks) {
-                    const weaponMasterBonus = this.actor.calcWeaponMasterBonus(attack)
+                    const weaponMasterBonus = this.actor?.calcWeaponMasterBonus(attack)
                     const baseAttackBonus = await attack.isFinesseWeapon()
-                        ? Math.max(this.actor.attackBonus('melee'), this.actor.attackBonus('ranged'))
-                        : this.actor.attackBonus(attack.system.type);
+                        ? Math.max(this.actor?.attackBonus('melee'), this.actor?.attackBonus('ranged'))
+                        : this.actor?.attackBonus(attack.system.type);
 
                     if (attack.system.type === 'melee') {
                         const meleeAttackBonus = baseAttackBonus
-                            + this.actor.system.bonuses.meleeAttackBonus
+                            + this.actor?.system.bonuses.meleeAttackBonus
                             + attack.system.bonuses.attackBonus
                             + weaponMasterBonus
                         meleeAttackActions.push(new Action(attack, actionType, {
@@ -159,7 +169,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
                         if (await attack.hasProperty('thrown')) {
                             const thrownAttackBonus = baseAttackBonus
-                                + parseInt(this.actor.system.bonuses.rangedAttackBonus, 10)
+                                + parseInt(this.actor?.system.bonuses.rangedAttackBonus, 10)
                                 + parseInt(attack.system.bonuses.attackBonus, 10)
                                 + weaponMasterBonus
 
@@ -173,7 +183,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         }
                     } else if (attack.system.type === 'ranged') {
                         const rangedAttackBonus = baseAttackBonus
-                            + this.actor.system.bonuses.rangedAttackBonus
+                            + this.actor?.system.bonuses.rangedAttackBonus
                             + attack.system.bonuses.attackBonus
                             + weaponMasterBonus
 
@@ -229,7 +239,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
                     const id = ability
-                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name) + (this.showAbilityBonus ? this.#getBonusString(this.actor.system.abilities[ability].mod) : '')
+                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name) + ((this.showAbilityBonus && this.actor) ? this.#getBonusString(this.actor?.system.abilities[ability].mod) : '')
                     const encodedValue = [actionType, id].join(this.delimiter)
 
                     return {
@@ -245,7 +255,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildSpells() {
             const actionType = 'spell'
 
-            const spells = this.actor.itemTypes.Spell
+            const spells = this.actor?.itemTypes.Spell
 
             // Exit if no spells exist
             if (spells.length > 0) {
@@ -276,8 +286,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
 
 
-            const wands = this.actor.itemTypes.Wand
-            const usableWands = wands.filter(wand => wand.system.class.includes(this.actor.system.class) && !wand.system.lost && !wand.system.stashed)
+            const wands = this.actor?.itemTypes.Wand
+            const usableWands = wands.filter(wand => wand.system.class.includes(this.actor?.system.class) && !wand.system.lost && !wand.system.stashed)
             if (usableWands.length > 0) {
                 const wandGroupData = {
                     id: `spells_wands`,
@@ -296,8 +306,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.addActions(wandActions, wandGroupData)
             }
 
-            const scrolls = this.actor.itemTypes.Scroll
-            const usableScrolls = scrolls.filter(scroll => scroll.system.class.includes(this.actor.system.class) && !scroll.system.stashed)
+            const scrolls = this.actor?.itemTypes.Scroll
+            const usableScrolls = scrolls.filter(scroll => scroll.system.class.includes(this.actor?.system.class) && !scroll.system.stashed)
             if (usableScrolls.length > 0) {
                 const scrollGroupData = {
                     id: `spells_scrolls`,
@@ -341,8 +351,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const treasure = [];
 
             for (const itemType of itemTypes) {
-                const itemArray = this.actor.itemTypes[itemType].filter(item => !item.system.stashed)
-                if (itemArray.length === 0) continue
+                const itemArray = this.actor?.itemTypes[itemType].filter(item => !item.system.stashed)
+                if (!itemArray || itemArray?.length === 0) continue
 
                 const items = []
                 for (const item of itemArray) {
@@ -364,11 +374,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
 
             for (const itemType of treasureTypes) {
-                for (const item of this.actor.itemTypes[itemType]) {
+                for (const item of this.actor?.itemTypes[itemType]) {
                     treasure.push(item)
                 }
             }
-            if (treasure.length === 0) return
+            if (!treasure || treasure?.length === 0) return
             const itemTypeGroupData = {
                 id: `inventory_treasure`,
                 name: treasureGroupName,
@@ -386,11 +396,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const lights = [];
 
-            for (const light of this.actor.itemTypes.Basic.filter(item => item.system.light.isSource)) {
+            for (const light of this.actor?.itemTypes.Basic.filter(item => item.system.light.isSource)) {
                 if (!light.system.light.remainingSecs) continue
                 if (this.hideLantern) {
                     if (light.name === 'Oil, Flask') {
-                        if (this.actor.itemTypes.Basic.some(item => item.name === 'Lantern')) {
+                        if (this.actor?.itemTypes.Basic.some(item => item.name === 'Lantern')) {
                             lights.push(light)
                         }
                     } else lights.push(light)
@@ -407,9 +417,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
         async #buildNPCAttacks() {
             // Get attacks
-            const attacks = this.actor.itemTypes['NPC Attack']
+            const attacks = this.actor?.itemTypes['NPC Attack']
             // Exit if no attacks exist
-            if (attacks.length === 0) return
+            if (!attacks || attacks?.length === 0) return
 
             const actionType = 'attack'
 
@@ -466,9 +476,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         async #buildNPCFeatures() {
-            const features = this.actor.itemTypes['NPC Feature']
+            const features = this.actor?.itemTypes['NPC Feature']
             // Exit if no features exist
-            if (features.length === 0) return
+            if (!features || features?.length === 0) return
 
             const actionType = 'feature'
 
