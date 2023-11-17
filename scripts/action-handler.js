@@ -142,8 +142,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 for (const attack of attacks) {
                     const weaponMasterBonus = this.actor.calcWeaponMasterBonus(attack)
                     const baseAttackBonus = await attack.isFinesseWeapon()
-                    ? Math.max(this.actor.attackBonus('melee'), this.actor.attackBonus('ranged'))
-                    : this.actor.attackBonus(attack.system.type);
+                        ? Math.max(this.actor.attackBonus('melee'), this.actor.attackBonus('ranged'))
+                        : this.actor.attackBonus(attack.system.type);
 
                     if (attack.system.type === 'melee') {
                         const meleeAttackBonus = baseAttackBonus
@@ -152,7 +152,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             + weaponMasterBonus
                         meleeAttackActions.push(new Action(attack, actionType, {
                             name: attack.name + this.#getBonusString(meleeAttackBonus),
-                            range: (this.showAttackRanges) ? 'close' : undefined})
+                            range: (this.showAttackRanges) ? 'close' : undefined
+                        })
                         )
 
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
@@ -165,7 +166,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             rangedAttackActions.push(new Action(attack, actionType, {
                                 icon2: ICON.thrown,
                                 name: attack.name + this.#getBonusString(thrownAttackBonus),
-                                range: (this.showAttackRanges) ? attack.system.range : undefined })
+                                range: (this.showAttackRanges) ? attack.system.range : undefined
+                            })
                             )
                             continue
                         }
@@ -177,7 +179,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                         rangedAttackActions.push(new Action(attack, actionType, {
                             name: attack.name + this.#getBonusString(rangedAttackBonus),
-                            range: (this.showAttackRanges) ? attack.system.range : undefined})
+                            range: (this.showAttackRanges) ? attack.system.range : undefined
+                        })
                         )
                     }
                 }
@@ -185,14 +188,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 // Sort attacks by type
                 for (const attack of attacks) {
                     if (attack.system.type === 'melee') {
-                        meleeAttackActions.push(new Action(attack, actionType, {range: (this.showAttackRanges) ? attack.system.range : undefined}))
+                        meleeAttackActions.push(new Action(attack, actionType, { range: (this.showAttackRanges) ? attack.system.range : undefined }))
                         // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
                         if (await attack.hasProperty('thrown')) {
                             rangedAttackActions.push(new Action(attack, actionType, { icon2: ICON.thrown }))
                             continue
-                    }
+                        }
                     } else if (attack.system.type === 'ranged') {
-                        rangedAttackActions.push(new Action(attack, actionType, {range: (this.showAttackRanges) ? attack.system.range : undefined}))
+                        rangedAttackActions.push(new Action(attack, actionType, { range: (this.showAttackRanges) ? attack.system.range : undefined }))
                     }
                 }
             }
@@ -226,7 +229,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
                     const id = ability
-                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name)+ (this.showAbilityBonus ?  this.#getBonusString(this.actor.system.abilities[ability].mod) : '')
+                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name) + (this.showAbilityBonus ? this.#getBonusString(this.actor.system.abilities[ability].mod) : '')
                     const encodedValue = [actionType, id].join(this.delimiter)
 
                     return {
@@ -265,13 +268,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                     const activeSpells = spells.filter(spell => spell.system.tier === tier && !spell.system.lost)
                     const spellActions = activeSpells.map(spell => {
-                        return new Action(spell, actionType, {range: (this.showSpellRanges) ? spell.system.range : undefined})
+                        return new Action(spell, actionType, { range: (this.showSpellRanges) ? spell.system.range : undefined })
                     })
                     this.addGroup(tierGroupData, GROUP.spells)
                     this.addActions(spellActions, tierGroupData)
                 }
             }
-        
+
 
             const wands = this.actor.itemTypes.Wand
             const usableWands = wands.filter(wand => wand.system.class.includes(this.actor.system.class) && !wand.system.lost && !wand.system.stashed)
@@ -286,7 +289,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return new Action(wand, actionType, {
                         name: wand.system.spellName,
                         icon2: this.wandScrollIcon ? ICON.wand : undefined,
-                        range: this.showSpellRanges ? wand.system.range : undefined})
+                        range: this.showSpellRanges ? wand.system.range : undefined
+                    })
                 })
                 this.addGroup(wandGroupData, GROUP.spells)
                 this.addActions(wandActions, wandGroupData)
@@ -305,9 +309,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return new Action(scroll, actionType, {
                         name: scroll.system.spellName,
                         icon2: this.wandScrollIcon ? ICON.scroll : undefined,
-                        range: this.showSpellRanges ? scroll.system.range : undefined})
+                        range: this.showSpellRanges ? scroll.system.range : undefined
+                    })
                 })
-                
+
                 this.addGroup(scrollGroupData, GROUP.spells)
                 this.addActions(scrollActions, scrollGroupData)
             }
@@ -373,14 +378,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 return new Action(treasure, actionType)
             })
             this.addGroup(itemTypeGroupData, GROUP.inventory)
-            this.addActions(treasureActions, itemTypeGroupData)   
+            this.addActions(treasureActions, itemTypeGroupData)
         }
-        
+
         async #buildLight() {
             const actionType = 'light'
 
             const lights = [];
-            
+
             for (const light of this.actor.itemTypes.Basic.filter(item => item.system.light.isSource)) {
                 if (!light.system.light.remainingSecs) continue
                 if (this.hideLantern) {
@@ -394,7 +399,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const lightActions = await Promise.all(
                 lights.map(async (light) => {
-                    return (light.system.light.active ? new Action(light, actionType, {icon2: ICON.flame}) : new Action(light, actionType))
+                    return (light.system.light.active ? new Action(light, actionType, { icon2: ICON.flame }) : new Action(light, actionType))
                 })
             )
             this.addActions(lightActions, GROUP.light)
@@ -411,33 +416,34 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const meleeAttackActions = []
             const rangedAttackActions = []
 
-                 // Sort attacks by type
-                 for (const attack of attacks) {
-                    const ranges = attack.system.ranges
-                    if (ranges.includes('close')) {
-                        meleeAttackActions.push(new Action(attack, actionType, { 
-                            name: attack.name + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
-                            range: this.showAttackRanges ? 'close' : undefined}))
+            // Sort attacks by type
+            for (const attack of attacks) {
+                const ranges = attack.system.ranges
+                if (ranges.includes('close')) {
+                    meleeAttackActions.push(new Action(attack, actionType, {
+                        name: attack.name._toTitleCase() + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                        range: this.showAttackRanges ? 'close' : undefined
+                    }))
 
-                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                        if (ranges.includes('near') || ranges.includes('far')) {
-                            const maxRange = ranges.includes('far') ? 'far' : 'near'
-                            rangedAttackActions.push(new Action(attack, actionType, {
-                                icon2: ICON.thrown,
-                                name: attack.name + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
-                                range: this.showAttackRanges ? maxRange : undefined
-                            }))
-                            continue
-                        }
-                    } else if (ranges.includes('near') || ranges.includes('far')) {
+                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                    if (ranges.includes('near') || ranges.includes('far')) {
                         const maxRange = ranges.includes('far') ? 'far' : 'near'
                         rangedAttackActions.push(new Action(attack, actionType, {
-                            name: attack.name + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                            icon2: ICON.thrown,
+                            name: attack.name._toTitleCase() + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                             range: this.showAttackRanges ? maxRange : undefined
                         }))
+                        continue
                     }
+                } else if (ranges.includes('near') || ranges.includes('far')) {
+                    const maxRange = ranges.includes('far') ? 'far' : 'near'
+                    rangedAttackActions.push(new Action(attack, actionType, {
+                        name: attack.name._toTitleCase() + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                        range: this.showAttackRanges ? maxRange : undefined
+                    }))
                 }
-                    
+            }
+
 
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
@@ -458,7 +464,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.addActions(rangedAttackActions, rangedGroupData)
             }
         }
-        
+
         async #buildNPCFeatures() {
             const features = this.actor.itemTypes['NPC Feature']
             // Exit if no features exist
@@ -481,6 +487,16 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         // async #buildMultipleTokenActions() { }
     }
 
+    // convert a string to titlecase (useful for monsters from monster importer)
+    function _toTitleCase(str) {
+        return str.replace(
+          /\w\S*/g,
+          function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          }
+        );
+      }
+
     class Action {
         constructor(item, actionType, options) {
             this.id = item.id
@@ -488,7 +504,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.encodedValue = [actionType, item.id].join('|')
             this.img = coreModule.api.Utils.getImage(item)
             this.icon1 = ICON[options?.range],
-            this.icon2 = options?.icon2
+                this.icon2 = options?.icon2
         }
     }
 })
