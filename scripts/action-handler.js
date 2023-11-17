@@ -111,6 +111,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.actor?._populateBackgroundItems()
             }
             await Promise.all([
+                this.#buildNPCAttacks(),
+                this.#buildNPCFeatures(),
                 this.#buildAbilities()                
             ])
         }
@@ -431,7 +433,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const ranges = attack.system.ranges
                 if (ranges.includes('close')) {
                     meleeAttackActions.push(new Action(attack, actionType, {
-                        name: attack.name._toTitleCase() + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                        name: _toTitleCase(attack.name) + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                         range: this.showAttackRanges ? 'close' : undefined
                     }))
 
@@ -440,7 +442,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         const maxRange = ranges.includes('far') ? 'far' : 'near'
                         rangedAttackActions.push(new Action(attack, actionType, {
                             icon2: ICON.thrown,
-                            name: attack.name._toTitleCase() + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                            name: _toTitleCase(attack.name) + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                             range: this.showAttackRanges ? maxRange : undefined
                         }))
                         continue
@@ -448,7 +450,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 } else if (ranges.includes('near') || ranges.includes('far')) {
                     const maxRange = ranges.includes('far') ? 'far' : 'near'
                     rangedAttackActions.push(new Action(attack, actionType, {
-                        name: attack.name._toTitleCase() + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                        name: _toTitleCase(attack.name) + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                         range: this.showAttackRanges ? maxRange : undefined
                     }))
                 }
