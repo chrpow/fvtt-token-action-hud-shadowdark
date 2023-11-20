@@ -96,8 +96,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
-                this.#buildBard(),
-                this.#buildRanger(),
+                this.#buildPerform(),
+                this.#buildHerbalism(),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildLight()
@@ -332,7 +332,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
-        async #buildBard() {
+        async #buildPerform() {
             if (this.actor.itemTypes.Talent.find((t) => t.name === 'Perform')) {
                 // Get attacks
                 const perform = this.actor?.itemTypes['Class Ability']
@@ -348,7 +348,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
-        async #buildRanger() {
+        async #buildHerbalism() {
             if (this.actor.itemTypes.Talent.find((t) => t.name === 'Herbalism')) {
                 // Get attacks
                 const herbalism = this.actor?.itemTypes['Class Ability']
