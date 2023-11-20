@@ -96,6 +96,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
+                this.#buildBard(),
+                this.#buildRanger(),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildLight()
@@ -330,10 +332,44 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
+        async #buildBard() {
+            if (this.actor.itemTypes.Talent.find((t) => t.name === 'Perform')) {
+                // Get attacks
+                const perform = this.actor?.itemTypes['Class Ability']
+                // Exit if no performs exist
+                if (!perform || perform?.length === 0) return
+
+                const actionType = 'classAbility'
+
+                const performActions = [...perform].map((h) => {
+                    return new Action(h, actionType)
+                })
+                if (performActions.length > 0) this.addActions(performActions, GROUP.perform)
+            }
+        }
+
+        async #buildRanger() {
+            if (this.actor.itemTypes.Talent.find((t) => t.name === 'Herbalism')) {
+                // Get attacks
+                const herbalism = this.actor?.itemTypes['Class Ability']
+                console.log(herbalism)
+                // Exit if no remedies exist
+                if (!herbalism || herbalism?.length === 0) return
+
+                const actionType = 'classAbility'
+
+                const herbalismActions = [...herbalism].map((h) => {
+                    return new Action(h, actionType)
+                })
+                console.log(herbalismActions)
+
+                if (herbalismActions.length > 0) this.addActions(herbalismActions, GROUP.herbalism)
+                
+            }
+        }
+
         async #buildInventory() {
             const actionType = 'item'
-            const groupId = 'inventory'
-            const groupName = 'Inventory'
 
             // The types of items shown in the inventory menu
             const itemTypes = [
