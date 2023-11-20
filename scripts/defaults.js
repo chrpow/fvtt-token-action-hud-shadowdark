@@ -32,6 +32,22 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 ]
             },
             {
+                nestId: 'perform',
+                id: 'perform',
+                name: 'Perform',
+                groups: [
+                    { ...groups.perform, nestId: 'perform_perform' }
+                ]
+            },
+            {
+                nestId: 'herbalism',
+                id: 'herbalism',
+                name: 'Herbalism',
+                groups: [
+                    { ...groups.herbalism, nestId: 'herbalism_herbalism' }
+                ]
+            },
+            {
                 nestId: 'abilities',
                 id: 'abilities',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.abilities.label'),

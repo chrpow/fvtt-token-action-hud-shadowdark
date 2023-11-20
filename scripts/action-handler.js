@@ -96,6 +96,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
+                this.#buildPerform(),
+                this.#buildHerbalism(),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildLight()
@@ -163,7 +165,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             + attack.system.bonuses.attackBonus
                             + weaponMasterBonus
                         meleeAttackActions.push(new Action(attack, actionType, {
-                            name: attack.name + this.#getBonusString(meleeAttackBonus),
+                            name: attack.name + getBonusString(meleeAttackBonus),
                             range: (this.showAttackRanges) ? 'close' : undefined
                         })
                         )
@@ -174,10 +176,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                                 + parseInt(this.actor?.system.bonuses.rangedAttackBonus, 10)
                                 + parseInt(attack.system.bonuses.attackBonus, 10)
                                 + weaponMasterBonus
-
                             rangedAttackActions.push(new Action(attack, actionType, {
                                 icon2: ICON.thrown,
-                                name: attack.name + this.#getBonusString(thrownAttackBonus),
+                                name: attack.name + getBonusString(thrownAttackBonus),
                                 range: (this.showAttackRanges) ? attack.system.range : undefined
                             })
                             )
@@ -190,7 +191,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             + weaponMasterBonus
 
                         rangedAttackActions.push(new Action(attack, actionType, {
-                            name: attack.name + this.#getBonusString(rangedAttackBonus),
+                            name: attack.name + getBonusString(rangedAttackBonus),
                             range: (this.showAttackRanges) ? attack.system.range : undefined
                         })
                         )
@@ -231,6 +232,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.addActions(rangedAttackActions, rangedGroupData)
             }
         }
+        
         /**
          * Build abilities
          */
@@ -241,7 +243,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
                     const id = ability
-                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name) + ((this.showAbilityBonus && this.actor) ? this.#getBonusString(this.actor?.system.abilities[ability].mod) : '')
+                    const name = coreModule.api.Utils.i18n(ABILITY[ability].name) + ((this.showAbilityBonus && this.actor) ? getBonusString(this.actor?.system.abilities[ability].mod) : '')
                     const encodedValue = [actionType, id].join(this.delimiter)
 
                     return {
@@ -254,6 +256,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(abilityActions, GROUP.abilities)
         }
 
+        /**
+         * Build spells
+         */
         async #buildSpells() {
             const actionType = 'spell'
 
@@ -330,10 +335,46 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
+        /**
+         * Build bard perform abilities
+         */
+        async #buildPerform() {
+            if (this.actor.itemTypes.Talent.find((t) => t.name === 'Perform')) {
+                // Get perform abilities
+                const perform = this.actor?.itemTypes['Class Ability']
+                // Exit if no perform abilities exist
+                if (!perform || perform?.length === 0) return
+
+                const actionType = 'classAbility'
+
+                const performActions = [...perform.filter((a) => !a.system.lost)].map((p, index) => {
+                    return new Action(p, actionType)
+                })
+                this.addActions(performActions, GROUP.perform)
+            }
+        }
+
+        async #buildHerbalism() {
+            if (this.actor.itemTypes.Talent.find((t) => t.name === 'Herbalism')) {
+                // Get herbal remedies
+                const herbalism = this.actor?.itemTypes['Class Ability']
+                // Exit if no remedies exist
+                if (!herbalism || herbalism?.length === 0) return
+
+                const actionType = 'classAbility'
+
+                const herbalismActions = [...herbalism.filter((a) => !a.system.lost)].map((h) => {
+                    return new Action(h, actionType)
+                })
+                this.addActions(herbalismActions, GROUP.herbalism)
+            }
+        }
+
+        /**
+         * Build inventory
+         */
         async #buildInventory() {
             const actionType = 'item'
-            const groupId = 'inventory'
-            const groupName = 'Inventory'
 
             // The types of items shown in the inventory menu
             const itemTypes = [
@@ -393,6 +434,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(treasureActions, itemTypeGroupData)
         }
 
+        /**
+         * Build lights
+         */
         async #buildLight() {
             const actionType = 'light'
 
@@ -417,6 +461,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(lightActions, GROUP.light)
         }
 
+        /**
+         * Build NPC attacks
+         */
         async #buildNPCAttacks() {
             // Get attacks
             const attacks = this.actor?.itemTypes['NPC Attack']
@@ -433,7 +480,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const ranges = attack.system.ranges
                 if (ranges.includes('close')) {
                     meleeAttackActions.push(new Action(attack, actionType, {
-                        name: _toTitleCase(attack.name) + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                        name: _toTitleCase(attack.name) + `${this.showAttackBonus ? getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                         range: this.showAttackRanges ? 'close' : undefined
                     }))
 
@@ -442,7 +489,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         const maxRange = ranges.includes('far') ? 'far' : 'near'
                         rangedAttackActions.push(new Action(attack, actionType, {
                             icon2: ICON.thrown,
-                            name: _toTitleCase(attack.name) + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                            name: _toTitleCase(attack.name) + `${this.showAttackBonus ? getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                             range: this.showAttackRanges ? maxRange : undefined
                         }))
                         continue
@@ -450,7 +497,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 } else if (ranges.includes('near') || ranges.includes('far')) {
                     const maxRange = ranges.includes('far') ? 'far' : 'near'
                     rangedAttackActions.push(new Action(attack, actionType, {
-                        name: _toTitleCase(attack.name) + `${this.showAttackBonus ? this.#getBonusString(attack.system.bonuses.attackBonus) : ''}`,
+                        name: _toTitleCase(attack.name) + `${this.showAttackBonus ? getBonusString(attack.system.bonuses.attackBonus) : ''}`,
                         range: this.showAttackRanges ? maxRange : undefined
                     }))
                 }
@@ -477,6 +524,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
         }
 
+        /**
+         * Build NPC features
+         */
         async #buildNPCFeatures() {
             const features = this.actor?.itemTypes['NPC Feature']
             // Exit if no features exist
@@ -491,12 +541,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             )
             this.addActions(featureActions, GROUP.features)
         }
+    }
 
-        #getBonusString(bonus) {
-            return ` (${bonus >= 0 ? '+' : ''}${bonus})`
-        }
-
-        // async #buildMultipleTokenActions() { }
+    // Convert a numerical bonus into a string with the appropriate +/- sign.
+    function getBonusString(bonus) {
+        return ` (${bonus >= 0 ? '+' : ''}${bonus})`
     }
 
     // convert a string to titlecase (useful for monsters from monster importer)

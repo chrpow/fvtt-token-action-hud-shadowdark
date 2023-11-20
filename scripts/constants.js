@@ -24,6 +24,8 @@ export const ACTION_TYPE = {
     attack: 'SHADOWDARK.sheet.npc.attacks_label',
     ability: 'SHADOWDARK.class-ability.ability.label',
     spell: 'SHADOWDARK.item_type.spell',
+    perform: 'Perform',
+    herbalism: 'Herbalism',
     item: 'tokenActionHud.template.item',
     light: 'SHADOWDARK.sheet.item.tab.light',
     feature: 'SHADOWDARK.sheet.npc.features_label'
@@ -37,9 +39,11 @@ export const GROUP = {
     inventory: { id: 'inventory', name: 'SHADOWDARK.sheet.player.tab.inventory', type: 'system' },
     attacks: { id: 'attacks', name: 'SHADOWDARK.sheet.npc.attacks_label', type: 'system' },
     abilities: { id: 'abilities', name: 'SHADOWDARK.sheet.abilities.label', type: 'system' },
-    spells: { id: 'spells', name: 'SHADOWDARK.sheet.player.spells', type: 'system'},
-    light: {id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system'},
-    features: {id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system'}
+    spells: { id: 'spells', name: 'SHADOWDARK.sheet.player.spells', type: 'system' },
+    perform: { id: 'perform', name: 'Perform', type: 'system' },
+    herbalism: { id: 'herbalism', name: 'Herbalism', type: 'system' },
+    light: {id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system' },
+    features: {id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system' }
 }
 
 export const ABILITY = {

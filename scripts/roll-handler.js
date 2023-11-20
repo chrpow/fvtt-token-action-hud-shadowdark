@@ -77,6 +77,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 case 'feature':
                     this.#handleItemAction(event, actor, actionId)
                     break
+                case 'classAbility':
+                    this.#handleClassAbility(event, actor, actionId)
+                    break
                 // case 'utility':
                 //     this.#handleUtilityAction(token, actionId)
                 //     break
@@ -92,8 +95,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         */
         async #handleAttackAction(event, actor, actionId) {
             actor.rollAttack(actionId)
-            // item.toChat(event)
         }
+
         /**
          * Handle ability action
          * @private
@@ -103,8 +106,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #handleAbilityAction(event, actor, actionId) {
             actor.rollAbility(actionId, { event: event })
-            // item.toChat(event)
         }
+
         /**
          * Handle spell action
          * @private
@@ -114,8 +117,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #handleSpellAction(event, actor, actionId) {
             actor.castSpell(actionId)
-            // item.toChat(event)
         }
+
+        /**
+         * Handle class ability
+         * @private
+         * @param {object} event    The event
+         * @param {object} actor    The actor
+         * @param {string} actionId The action id
+         */
+            async #handleClassAbility(event, actor, actionId) {
+                actor.useAbility(actionId)
+            }
+
         /**
          * Handle item action
          * @private
@@ -138,22 +152,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         #handleLightAction(event, actor, actionId) {
             const light = actor.getEmbeddedDocument("Item", actionId)
             light.parent.sheet._toggleLightSource(light)
-        }
-
-        /**
-         * Handle utility action
-         * @private
-         * @param {object} token    The token
-         * @param {string} actionId The action id
-         */
-        async #handleUtilityAction(token, actionId) {
-            switch (actionId) {
-                case 'endTurn':
-                    if (game.combat?.current?.tokenId === token.id) {
-                        await game.combat?.nextTurn()
-                    }
-                    break
-            }
         }
     }
 })
