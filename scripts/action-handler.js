@@ -341,10 +341,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                 const actionType = 'classAbility'
 
-                const performActions = [...perform].map((h) => {
-                    return new Action(h, actionType)
+                const performActions = [...perform.filter((a) => !a.system.lost)].map((p, index) => {
+                    return new Action(p, actionType)
                 })
-                if (performActions.length > 0) this.addActions(performActions, GROUP.perform)
+                this.addActions(performActions, GROUP.perform)
             }
         }
 
@@ -358,13 +358,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                 const actionType = 'classAbility'
 
-                const herbalismActions = [...herbalism].map((h) => {
+                const herbalismActions = [...herbalism.filter((a) => !a.system.lost)].map((h) => {
                     return new Action(h, actionType)
                 })
                 console.log(herbalismActions)
 
-                if (herbalismActions.length > 0) this.addActions(herbalismActions, GROUP.herbalism)
-                
+                this.addActions(herbalismActions, GROUP.herbalism)
             }
         }
 
