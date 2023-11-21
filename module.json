@@ -21,7 +21,9 @@
   },
   "esmodules": ["./scripts/token-action-hud-shadowdark.min.js"],
   "scripts": [],
-  "styles": [],
+  "styles": [
+    "./styles/tah-shadowdark.css"
+  ],
   "languages": [
     {
       "lang": "en",
