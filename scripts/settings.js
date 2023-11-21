@@ -5,7 +5,7 @@ import { MODULE } from './constants.js'
  * Called by Token Action HUD Core to register Token Action HUD system module settings
  * @param {function} coreUpdate Token Action HUD Core update function
  */
-export function register (coreUpdate) {
+export function register(coreUpdate) {
     game.settings.register(MODULE.ID, 'showAttackBonus', {
         name: 'Show Roll Bonus for Attacks',
         hint: 'Show roll bonus for attacks.',
