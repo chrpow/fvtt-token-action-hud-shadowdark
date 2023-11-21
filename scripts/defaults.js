@@ -20,7 +20,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'attacks',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.npc.attacks_label'),
                 groups: [
-                    { ...groups.attacks, nestId: 'attacks_attacks' },
+                    { ...groups.attacks, nestId: 'attacks_attacks' }
                 ]
             },
             {
@@ -28,7 +28,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'spells',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.spells'),
                 groups: [
-                    { ...groups.spells, nestId: 'spells_spells' },
+                    { ...groups.spells, nestId: 'spells_spells' }
                 ]
             },
             {
@@ -52,7 +52,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'abilities',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.abilities.label'),
                 groups: [
-                    { ...groups.abilities, nestId: 'abilities_abilities' },
+                    { ...groups.abilities, nestId: 'abilities_abilities' }
+                ]
+            },
+            {
+                nestId: 'talents',
+                id: 'talents',
+                name: coreModule.api.Utils.i18n('SHADOWDARK.class.talents.label'),
+                groups: [
+                    { ...groups.talents, nestId: 'talents_talents' }
                 ]
             },
             {
@@ -60,7 +68,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'inventory',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.tab.inventory'),
                 groups: [
-                    { ...groups.inventory, nestId: 'inventory_inventory' },
+                    { ...groups.inventory, nestId: 'inventory_inventory' }
                 ]
             },
             {
@@ -68,7 +76,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 id: 'light',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.item.tab.light'),
                 groups: [
-                    { ...groups.light, nestId: 'light_light'}
+                    { ...groups.light, nestId: 'light_light' }
                 ]
             },
             {

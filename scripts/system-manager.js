@@ -17,7 +17,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @override
          * @returns {ActionHandler} The ActionHandler instance
          */
-        doGetActionHandler () {
+        doGetActionHandler() {
             return new ActionHandler()
         }
 
@@ -28,7 +28,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @override
          * @returns {object} The available roll handlers
          */
-        getAvailableRollHandlers () {
+        getAvailableRollHandlers() {
             const coreTitle = 'Core Template'
             const choices = { core: coreTitle }
             return choices
@@ -41,13 +41,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} rollHandlerId The roll handler ID
          * @returns {rollHandler}        The RollHandler instance
          */
-        doGetRollHandler (rollHandlerId) {
+        doGetRollHandler(rollHandlerId) {
             let rollHandler
             switch (rollHandlerId) {
-            case 'core':
-            default:
-                rollHandler = new Core()
-                break
+                case 'core':
+                default:
+                    rollHandler = new Core()
+                    break
             }
             return rollHandler
         }
@@ -58,7 +58,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @override
          * @param {function} coreUpdate The Token Action HUD Core update function
          */
-        doRegisterSettings (coreUpdate) {
+        doRegisterSettings(coreUpdate) {
             systemSettings.register(coreUpdate)
         }
 
@@ -67,7 +67,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Called by Token Action HUD Core
          * @returns {object} The default layout and groups
          */
-        async doRegisterDefaultFlags () {
+        async doRegisterDefaultFlags() {
             return DEFAULTS
         }
     }

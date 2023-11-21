@@ -126,9 +126,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-            async #handleClassAbility(event, actor, actionId) {
-                actor.useAbility(actionId)
-            }
+        async #handleClassAbility(event, actor, actionId) {
+            actor.useAbility(actionId)
+        }
 
         /**
          * Handle item action
