@@ -1,0 +1,4 @@
+.tah-action button.tah-shadowdark-lost {
+    text-decoration: line-through;
+    color: var(--tah-button-disabled-text-color);
+}

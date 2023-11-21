@@ -52,6 +52,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             this.hideLantern = Utils.getSetting("hideLantern");
             this.showAttackRanges = Utils.getSetting("showAttackRanges");
             this.showSpellRanges = Utils.getSetting("showSpellRanges");
+            this.hideLost = Utils.getSetting("hideLost");
 
             // Set items variable
             if (this.actor) {
@@ -93,8 +94,8 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
-                this.#buildPerform(),
-                this.#buildHerbalism(),
+                this.#buildClassAbilities(GROUP.perform, 'Perform', 'Perform'),
+                this.#buildClassAbilities(GROUP.herbalism, 'Herbalism', 'Herbal Remedy'),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildLight(),
@@ -148,95 +149,74 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             const meleeAttackActions = [];
             const rangedAttackActions = [];
 
-            // if (this.showAttackBonus) {
-                // Sort attacks by type
-                for (const attack of attacks) {
-                    const weaponMasterBonus = this.actor?.calcWeaponMasterBonus(attack);
-                    const baseAttackBonus = (await attack.isFinesseWeapon())
-                        ? Math.max(
-                            this.actor?.attackBonus("melee"),
-                            this.actor?.attackBonus("ranged")
-                        )
-                        : this.actor?.attackBonus(attack.system.type);
+            // Sort attacks by type
+            for (const attack of attacks) {
+                const weaponMasterBonus = this.actor?.calcWeaponMasterBonus(attack);
+                const baseAttackBonus = (await attack.isFinesseWeapon())
+                    ? Math.max(
+                        this.actor?.attackBonus("melee"),
+                        this.actor?.attackBonus("ranged")
+                    )
+                    : this.actor?.attackBonus(attack.system.type);
 
-                    if (attack.system.type === "melee") {
-                        const meleeAttackBonus =
+                if (attack.system.type === "melee") {
+                    const meleeAttackBonus =
+                        baseAttackBonus +
+                        this.actor?.system.bonuses.meleeAttackBonus +
+                        attack.system.bonuses.attackBonus +
+                        weaponMasterBonus;
+                    meleeAttackActions.push(
+                        new Action(attack, actionType, {
+                            name:
+                                attack.name +
+                                (this.showAttackBonus ? getBonusString(meleeAttackBonus) : ""),
+                            range: this.showAttackRanges ? "close" : undefined,
+                        })
+                    );
+
+                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+                    if (await attack.hasProperty("thrown")) {
+                        const thrownAttackBonus =
                             baseAttackBonus +
-                            this.actor?.system.bonuses.meleeAttackBonus +
-                            attack.system.bonuses.attackBonus +
+                            parseInt(this.actor?.system.bonuses.rangedAttackBonus, 10) +
+                            parseInt(attack.system.bonuses.attackBonus, 10) +
                             weaponMasterBonus;
-                        meleeAttackActions.push(
-                            new Action(attack, actionType, {
-                                name: attack.name + ((this.showAttackBonus) ? getBonusString(meleeAttackBonus) : ''),
-                                range: this.showAttackRanges ? "close" : undefined
-                            })
-                        );
-
-                        // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                        if (await attack.hasProperty("thrown")) {
-                            const thrownAttackBonus =
-                                baseAttackBonus +
-                                parseInt(this.actor?.system.bonuses.rangedAttackBonus, 10) +
-                                parseInt(attack.system.bonuses.attackBonus, 10) +
-                                weaponMasterBonus;
-                            rangedAttackActions.push(
-                                new Action(attack, actionType, {
-                                    icon2: ICON.thrown,
-                                    name: attack.name + ((this.showAttackBonus) ? getBonusString(thrownAttackBonus) : ''),
-                                    range: this.showAttackRanges
-                                        ? attack.system.range
-                                        : undefined,
-                                })
-                            );
-                            continue;
-                        }
-                    } else if (attack.system.type === "ranged") {
-                        const rangedAttackBonus =
-                            baseAttackBonus +
-                            this.actor?.system.bonuses.rangedAttackBonus +
-                            attack.system.bonuses.attackBonus +
-                            weaponMasterBonus;
-
                         rangedAttackActions.push(
                             new Action(attack, actionType, {
-                                name: attack.name + ((this.showAttackBonus) ? getBonusString(rangedAttackBonus) : ''),
+                                icon2: ICON.thrown,
+                                name:
+                                    attack.name +
+                                    (this.showAttackBonus
+                                        ? getBonusString(thrownAttackBonus)
+                                        : ""),
                                 range: this.showAttackRanges ? attack.system.range : undefined,
                             })
                         );
+                        continue;
                     }
+                } else if (attack.system.type === "ranged") {
+                    const rangedAttackBonus =
+                        baseAttackBonus +
+                        this.actor?.system.bonuses.rangedAttackBonus +
+                        attack.system.bonuses.attackBonus +
+                        weaponMasterBonus;
+
+                    rangedAttackActions.push(
+                        new Action(attack, actionType, {
+                            name:
+                                attack.name +
+                                (this.showAttackBonus ? getBonusString(rangedAttackBonus) : ""),
+                            range: this.showAttackRanges ? attack.system.range : undefined,
+                        })
+                    );
                 }
-            // } 
-            // else {
-            //     // Sort attacks by type
-            //     for (const attack of attacks) {
-            //         if (attack.system.type === "melee") {
-            //             meleeAttackActions.push(
-            //                 new Action(attack, actionType, {
-            //                     range: this.showAttackRanges ? attack.system.range : undefined
-            //                 })
-            //             );
-            //             // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-            //             if (await attack.hasProperty("thrown")) {
-            //                 rangedAttackActions.push(
-            //                     new Action(attack, actionType, { icon2: ICON.thrown })
-            //                 );
-            //                 continue;
-            //             }
-            //         } else if (attack.system.type === "ranged") {
-            //             rangedAttackActions.push(
-            //                 new Action(attack, actionType, {
-            //                     range: this.showAttackRanges ? attack.system.range : undefined,
-            //                 })
-            //             );
-            //         }
-            //     }
-            // }
+            }
 
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
                     id: "melee",
                     name: "Melee",
-                    type: "system-derived"
+                    type: "system-derived",
                 };
                 this.addGroup(meleeGroupData, GROUP.attacks);
                 this.addActions(meleeAttackActions, meleeGroupData);
@@ -245,7 +225,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                 const rangedGroupData = {
                     id: "ranged",
                     name: "Ranged",
-                    type: "system-derived"
+                    type: "system-derived",
                 };
                 this.addGroup(rangedGroupData, GROUP.attacks);
                 this.addActions(rangedAttackActions, rangedGroupData);
@@ -273,7 +253,6 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                         id,
                         name,
                         encodedValue,
-                        // cssClass
                     };
                 })
             );
@@ -306,12 +285,15 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                         type: "system-derived",
                     };
 
-                    const activeSpells = spells.filter(
-                        (spell) => spell.system.tier === tier && !spell.system.lost
-                    );
+                    const activeSpells = (this.hideLost) ?
+                        spells.filter(
+                            (spell) => spell.system.tier === tier && !spell.system.lost
+                        ) :
+                        spells
                     const spellActions = activeSpells.map((spell) => {
                         return new Action(spell, actionType, {
                             range: this.showSpellRanges ? spell.system.range : undefined,
+                            cssClass: (spell.system.lost) ? 'tah-shadowdark-lost' : ''
                         });
                     });
                     this.addGroup(tierGroupData, GROUP.spells);
@@ -320,12 +302,14 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             }
 
             const wands = this.actor?.itemTypes.Wand;
-            const usableWands = wands.filter(
-                (wand) =>
-                    wand.system.class.includes(this.actor?.system.class) &&
-                    !wand.system.lost &&
-                    !wand.system.stashed
-            );
+            const usableWands = (this.hideLost) ?
+                wands.filter(
+                    (wand) =>
+                        wand.system.class.includes(this.actor?.system.class) &&
+                        !wand.system.lost &&
+                        !wand.system.stashed
+                ) :
+                wands
             if (usableWands.length > 0) {
                 const wandGroupData = {
                     id: `spells_wands`,
@@ -338,6 +322,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                         name: wand.system.spellName,
                         icon2: this.wandScrollIcon ? ICON.wand : undefined,
                         range: this.showSpellRanges ? wand.system.range : undefined,
+                        cssClass: (wand.system.lost) ? 'tah-shadowdark-lost' : ''
                     });
                 });
                 this.addGroup(wandGroupData, GROUP.spells);
@@ -371,41 +356,26 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
         }
 
         /**
-         * Build bard perform abilities
+         * Build class abilities (e.g. bard perform and ranger herbalism)
          */
-        async #buildPerform() {
-            if (this.actor.itemTypes.Talent.find((t) => t.name === "Perform")) {
-                // Get perform abilities
-                const perform = this.actor?.itemTypes["Class Ability"].filter((a) => a.system.group === 'Perform')
-                // Exit if no perform abilities exist
-                if (!perform || perform?.length === 0) return;
-
-                const actionType = "classAbility";
-
-                const performActions = [...perform.filter((a) => !a.system.lost)].map(
-                    (p, index) => {
-                        return new Action(p, actionType);
-                    }
+        async #buildClassAbilities(actionGroup, talentName, groupName) {
+            // Verify the actor has the necessary talent
+            if (this.actor.itemTypes.Talent.find((t) => t.name === talentName)) {
+                // Get class abilities from the specified group
+                const classAbility = this.actor?.itemTypes["Class Ability"].filter(
+                    (a) => a.system.group === groupName
                 );
-                this.addActions(performActions, GROUP.perform);
-            }
-        }
-
-        async #buildHerbalism() {
-            if (this.actor.itemTypes.Talent.find((t) => t.name === "Herbalism")) {
-                // Get herbal remedies
-                const herbalism = this.actor?.itemTypes["Class Ability"].filter((a) => a.system.group === 'Herbal Remedy')
-                // Exit if no remedies exist
-                if (!herbalism || herbalism?.length === 0) return;
+                // Exit if no class abilities exist
+                if (!classAbility || classAbility?.length === 0) return;
 
                 const actionType = "classAbility";
 
-                const herbalismActions = [
-                    ...herbalism.filter((a) => !a.system.lost),
-                ].map((h) => {
-                    return new Action(h, actionType);
-                });
-                this.addActions(herbalismActions, GROUP.herbalism);
+                const classAbilityActions = [
+                    ...((this.hideLost) ? classAbility.filter((a) => !a.system?.lost) : classAbility)
+                ].map((c, index) => {
+                    return new Action(c, actionType, {cssClass: (c.system?.lost) ? 'tah-shadowdark-lost' : ''})
+                })
+                this.addActions(classAbilityActions, actionGroup);
             }
         }
 
@@ -500,8 +470,11 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             const lightActions = await Promise.all(
                 lights.map(async (light) => {
                     return light.system.light.active
-                        ? new Action(light, actionType, { icon2: ICON.flame, cssClass: 'toggle active' })
-                        : new Action(light, actionType, { cssClass: 'toggle' });
+                        ? new Action(light, actionType, {
+                            icon2: ICON.flame,
+                            cssClass: "toggle active",
+                        })
+                        : new Action(light, actionType, { cssClass: "toggle" });
                 })
             );
             this.addActions(lightActions, GROUP.light);
@@ -564,7 +537,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                                     ? getBonusString(attack.system.bonuses.attackBonus)
                                     : ""
                                 }`,
-                            range: this.showAttackRanges ? maxRange : undefined
+                            range: this.showAttackRanges ? maxRange : undefined,
                         })
                     );
                 }
@@ -623,13 +596,13 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
 
     class Action {
         constructor(item, actionType, options) {
-            this.id = item.id
-            this.name = options?.name || item.name
-            this.encodedValue = [actionType, item.id].join("|")
+            this.id = item.id;
+            this.name = options?.name || item.name;
+            this.encodedValue = [actionType, item.id].join("|");
             this.img = coreModule.api.Utils.getImage(item);
-            this.icon1 = ICON[options?.range]
-            this.icon2 = options?.icon2
-            this.cssClass = options?.cssClass
+            this.icon1 = ICON[options?.range];
+            this.icon2 = options?.icon2;
+            this.cssClass = options?.cssClass;
         }
     }
 });

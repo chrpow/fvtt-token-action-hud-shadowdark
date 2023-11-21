@@ -22,7 +22,7 @@
   "esmodules": ["./scripts/token-action-hud-shadowdark.min.js"],
   "scripts": [],
   "styles": [
-    "./styles/tah-pf2e.css"
+    "./styles/tah-shadowdark.css"
   ],
   "languages": [
     {

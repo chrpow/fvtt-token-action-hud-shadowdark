@@ -79,17 +79,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     { ...groups.features, nestId: 'features_features' }
                 ]
             }
-            // {
-            //     nestId: 'utility',
-            //     id: 'utility',
-            //     name: coreModule.api.Utils.i18n('tokenActionHud.utility'),
-            //     groups: [
-            //         { ...groups.combat, nestId: 'utility_combat' },
-            //         { ...groups.token, nestId: 'utility_token' },
-            //         { ...groups.rests, nestId: 'utility_rests' },
-            //         { ...groups.utility, nestId: 'utility_utility' }
-            //     ]
-            // }
         ],
         groups: groupsArray
     }
