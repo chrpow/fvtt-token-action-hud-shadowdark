@@ -30,12 +30,12 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
         inventoryActions = null;
         spellActions = null;
 
-    /**
-     * Build system actions
-     * Called by Token Action HUD Core
-     * @override
-     * @param {array} groupIds
-     */ 
+        /**
+         * Build system actions
+         * Called by Token Action HUD Core
+         * @override
+         * @param {array} groupIds
+         */
         async buildSystemActions(groupIds) {
             // Set actor and token variables
             this.actors = !this.actor ? this.#getActors() : [this.actor];
@@ -98,6 +98,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                 this.#buildClassAbilities(GROUP.herbalism, 'Herbalism', 'Herbal Remedy'),
                 this.#buildAttacks(),
                 this.#buildInventory(),
+                this.#buildTalents(),
                 this.#buildLight(),
             ]);
         }
@@ -362,21 +363,38 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
             // Verify the actor has the necessary talent
             if (this.actor.itemTypes.Talent.find((t) => t.name === talentName)) {
                 // Get class abilities from the specified group
-                const classAbility = this.actor?.itemTypes["Class Ability"].filter(
+                const classAbilities = this.actor?.itemTypes["Class Ability"].filter(
                     (a) => a.system.group === groupName
                 );
                 // Exit if no class abilities exist
-                if (!classAbility || classAbility?.length === 0) return;
+                if (!classAbilities || classAbilities?.length === 0) return;
 
                 const actionType = "classAbility";
 
                 const classAbilityActions = [
-                    ...((this.hideLost) ? classAbility.filter((a) => !a.system?.lost) : classAbility)
-                ].map((c, index) => {
-                    return new Action(c, actionType, {cssClass: (c.system?.lost) ? 'tah-shadowdark-lost' : ''})
+                    ...((this.hideLost) ? classAbilities.filter((a) => !a.system?.lost) : classAbilities)
+                ].map((c) => {
+                    return new Action(c, actionType, { cssClass: (c.system?.lost) ? 'tah-shadowdark-lost' : '' })
                 })
                 this.addActions(classAbilityActions, actionGroup);
             }
+        }
+
+        /**
+         * Build talents
+         */
+        async #buildTalents() {
+            // Get talents
+            const talents = this.actor?.itemTypes.Talent
+            // Exit if no talents exist
+            if (!talents || talents?.length === 0) return;
+
+            const actionType = "item";
+
+            const talentActions = talents.map((t) => {
+                return new Action(t, actionType)
+            })
+            this.addActions(talentActions, GROUP.talents);
         }
 
         /**
@@ -392,7 +410,7 @@ Hooks.once("tokenActionHudCoreApiReady", async (coreModule) => {
                 "Potion",
                 "Scroll",
                 "Wand",
-                "Weapon",
+                "Weapon"
             ];
 
             const treasureGroupName = "Gems and Treasure";

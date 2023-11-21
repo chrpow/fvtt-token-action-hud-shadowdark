@@ -29,7 +29,6 @@ export const ACTION_TYPE = {
     item: 'tokenActionHud.template.item',
     light: 'SHADOWDARK.sheet.item.tab.light',
     feature: 'SHADOWDARK.sheet.npc.features_label'
-    // utility: 'tokenActionHud.utility'
 }
 
 /**
@@ -43,7 +42,8 @@ export const GROUP = {
     perform: { id: 'perform', name: 'Perform', type: 'system' },
     herbalism: { id: 'herbalism', name: 'Herbalism', type: 'system' },
     light: { id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system' },
-    features: { id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system' }
+    features: { id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system' },
+    talents: { id: 'talents' , name: 'SHADOWDARK.class.talents.label', type: 'system'}
 }
 
 export const ABILITY = {
