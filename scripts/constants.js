@@ -43,7 +43,7 @@ export const GROUP = {
     herbalism: { id: 'herbalism', name: 'Herbalism', type: 'system' },
     light: { id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system' },
     features: { id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system' },
-    talents: { id: 'talents' , name: 'SHADOWDARK.class.talents.label', type: 'system'}
+    talents: { id: 'talents', name: 'SHADOWDARK.class.talents.label', type: 'system' }
 }
 
 export const ABILITY = {

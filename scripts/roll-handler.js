@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 export let RollHandler = null
 
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
@@ -12,14 +13,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} event        The event
          * @param {string} encodedValue The encoded value
          */
-        async doHandleActionEvent(event, encodedValue) {
+        async doHandleActionEvent (event, encodedValue) {
             const payload = encodedValue.split('|')
             console.log(payload)
 
             if (payload.length !== 2) {
                 super.throwInvalidValueErr()
             }
-
 
             const actionTypeId = payload[0]
             const actionId = payload[1]
@@ -57,29 +57,29 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} actionTypeId The action type id
          * @param {string} actionId     The actionId
          */
-        async #handleAction(event, actor, token, actionTypeId, actionId) {
+        async #handleAction (event, actor, token, actionTypeId, actionId) {
             switch (actionTypeId) {
-                case 'attack':
-                    await this.#handleAttackAction(event, actor, actionId)
-                    break
-                case 'ability':
-                    await this.#handleAbilityAction(event, actor, actionId)
-                    break
-                case 'spell':
-                    await this.#handleSpellAction(event, actor, actionId)
-                    break
-                case 'item':
-                    this.#handleItemAction(event, actor, actionId)
-                    break
-                case 'light':
-                    this.#handleLightAction(event, actor, actionId)
-                    break
-                case 'feature':
-                    this.#handleItemAction(event, actor, actionId)
-                    break
-                case 'classAbility':
-                    this.#handleClassAbility(event, actor, actionId)
-                    break
+            case 'attack':
+                await this.#handleAttackAction(event, actor, actionId)
+                break
+            case 'ability':
+                await this.#handleAbilityAction(event, actor, actionId)
+                break
+            case 'spell':
+                await this.#handleSpellAction(event, actor, actionId)
+                break
+            case 'item':
+                this.#handleItemAction(event, actor, actionId)
+                break
+            case 'light':
+                this.#handleLightAction(event, actor, actionId)
+                break
+            case 'feature':
+                this.#handleItemAction(event, actor, actionId)
+                break
+            case 'classAbility':
+                this.#handleClassAbility(event, actor, actionId)
+                break
                 // case 'utility':
                 //     this.#handleUtilityAction(token, actionId)
                 //     break
@@ -93,7 +93,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         * @param {object} actor    The actor
         * @param {string} actionId The action id
         */
-        async #handleAttackAction(event, actor, actionId) {
+        async #handleAttackAction (event, actor, actionId) {
             actor.rollAttack(actionId)
         }
 
@@ -104,8 +104,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        async #handleAbilityAction(event, actor, actionId) {
-            actor.rollAbility(actionId, { event: event })
+        async #handleAbilityAction (event, actor, actionId) {
+            actor.rollAbility(actionId, { event })
         }
 
         /**
@@ -115,7 +115,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        async #handleSpellAction(event, actor, actionId) {
+        async #handleSpellAction (event, actor, actionId) {
             actor.castSpell(actionId)
         }
 
@@ -126,7 +126,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        async #handleClassAbility(event, actor, actionId) {
+        async #handleClassAbility (event, actor, actionId) {
             actor.useAbility(actionId)
         }
 
@@ -137,7 +137,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        #handleItemAction(event, actor, actionId) {
+        #handleItemAction (event, actor, actionId) {
             const item = actor.items.get(actionId)
             item.displayCard()
         }
@@ -149,8 +149,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        #handleLightAction(event, actor, actionId) {
-            const light = actor.getEmbeddedDocument("Item", actionId)
+        #handleLightAction (event, actor, actionId) {
+            const light = actor.getEmbeddedDocument('Item', actionId)
             light.parent.sheet._toggleLightSource(light)
         }
     }
