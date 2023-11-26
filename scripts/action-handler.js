@@ -271,7 +271,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const spells = this.actor?.itemTypes.Spell
 
-            // Exit if no spells exist
             if (spells.length > 0) {
                 const activeTiers = []
                 for (const spell of spells) {
@@ -305,11 +304,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
             }
 
-            const wands = this.actor?.itemTypes.Wand
+            const wands = this.actor?.itemTypes.Wand.filter(
+                (wand) =>
+                    (wand.system.class.includes(this.actor?.system.class) ||
+                    this.actor.itemTypes.Talent.find((t) => t.name === 'Magical Dabbler'))
+            )
             const usableWands = (this.hideLost)
                 ? wands.filter(
                     (wand) =>
-                        wand.system.class.includes(this.actor?.system.class) &&
                         !wand.system.lost &&
                         !wand.system.stashed
                 )
@@ -333,11 +335,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.addActions(wandActions, wandGroupData)
             }
 
-            const scrolls = this.actor?.itemTypes.Scroll
-            const usableScrolls = scrolls.filter(
+            const scrolls = this.actor?.itemTypes.Scroll.filter(
                 (scroll) =>
-                    scroll.system.class.includes(this.actor?.system.class) &&
-                    !scroll.system.stashed
+                    (scroll.system.class.includes(this.actor?.system.class) ||
+                    this.actor.itemTypes.Talent.find((t) => t.name === 'Magical Dabbler'))
+            )
+            const usableScrolls = scrolls.filter(
+                (scroll) => !scroll.system.stashed
             )
             if (usableScrolls.length > 0) {
                 const scrollGroupData = {
