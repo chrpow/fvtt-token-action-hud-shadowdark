@@ -5,6 +5,7 @@ import { GROUP } from './constants.js'
  */
 export let DEFAULTS = null
 
+// eslint-disable-next-line no-undef
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     const groups = GROUP
 

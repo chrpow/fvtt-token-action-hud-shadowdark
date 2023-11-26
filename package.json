@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -wcm"
+    "dev": "rollup -wcm",
+    "lint": "eslint scripts/*.js"
   },
   "devDependencies": {
     "@rollup/plugin-multi-entry": "^6.0.0",
@@ -13,5 +14,17 @@
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2"
   },
-  "type": "module"
+  "eslintConfig": {
+    "env": {
+      "broswer": true,
+      "node": true
+    }
+  },
+  "eslintIgnore": [
+    "scripts/*.min.js"
+  ],
+  "type": "module",
+  "dependencies": {
+    "lint": "^1.1.2"
+  }
 }
