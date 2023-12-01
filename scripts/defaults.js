@@ -35,7 +35,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             {
                 nestId: 'perform',
                 id: 'perform',
-                name: 'Perform',
+                name: coreModule.api.Utils.i18n('tokenActionHud.shadowdark.perform'),
                 groups: [
                     { ...groups.perform, nestId: 'perform_perform' }
                 ]
@@ -43,7 +43,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             {
                 nestId: 'herbalism',
                 id: 'herbalism',
-                name: 'Herbalism',
+                name: coreModule.api.Utils.i18n('tokenActionHud.shadowdark.herbalism'),
                 groups: [
                     { ...groups.herbalism, nestId: 'herbalism_herbalism' }
                 ]
