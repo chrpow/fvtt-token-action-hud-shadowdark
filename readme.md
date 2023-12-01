@@ -1,3 +1,7 @@
+![GitHub Release](https://img.shields.io/github/release-date/chrpow/fvtt-token-action-hud-shadowdark)
+![All Versions](https://img.shields.io/github/downloads/chrpow/fvtt-token-action-hud-shadowdark/total)
+![Latest Version](https://img.shields.io/github/downloads/chrpow/fvtt-token-action-hud-shadowdark/latest/module.zip)
+
 # Token Action HUD Shadowdark
 
 Token Action HUD Shadowdark is a repositionable HUD of actions for a selected token.
