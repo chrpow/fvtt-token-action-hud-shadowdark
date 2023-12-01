@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { SystemManager } from './system-manager.js'
 import { MODULE, REQUIRED_CORE_MODULE_VERSION } from './constants.js'
 
