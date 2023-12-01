@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 // System Module Imports
-import { ABILITY, GROUP, ICON } from './constants.js'
+import { ACTION_TYPE, ABILITY, GROUP, ICON } from './constants.js'
 import { Utils } from './utils.js'
 
 export let ActionHandler = null
@@ -219,7 +219,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
                     id: 'melee',
-                    name: 'Melee',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.melee),
                     type: 'system-derived'
                 }
                 this.addGroup(meleeGroupData, GROUP.attacks)
@@ -228,7 +228,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (rangedAttackActions.length > 0) {
                 const rangedGroupData = {
                     id: 'ranged',
-                    name: 'Ranged',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.ranged),
                     type: 'system-derived'
                 }
                 this.addGroup(rangedGroupData, GROUP.attacks)
@@ -280,7 +280,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
                 for (const tier of activeTiers) {
                     const tierGroupId = `tier${tier}`
-                    const tierGroupName = `Tier ${tier}`
+                    const tierGroupName = `${coreModule.api.Utils.i18n(ACTION_TYPE.tier)} ${tier}`
 
                     const tierGroupData = {
                         id: tierGroupId,
@@ -319,7 +319,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (usableWands.length > 0) {
                 const wandGroupData = {
                     id: 'spells_wands',
-                    name: 'Wands',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.wands),
                     type: 'system-derived'
                 }
 
@@ -346,7 +346,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (usableScrolls.length > 0) {
                 const scrollGroupData = {
                     id: 'spells_scrolls',
-                    name: 'Scrolls',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.scrolls),
                     type: 'system-derived'
                 }
 
@@ -420,7 +420,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 'Weapon'
             ]
 
-            const treasureGroupName = 'Gems and Treasure'
             const treasureTypes = ['Gem']
 
             const treasure = []
@@ -437,7 +436,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
                 const itemTypeGroupData = {
                     id: `inventory_${itemType.slugify()}`,
-                    name: itemType,
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE[itemType.slugify()]),
                     type: 'system-derived'
                 }
                 if (items.length > 0) {
@@ -457,7 +456,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (!treasure || treasure?.length === 0) return
             const itemTypeGroupData = {
                 id: 'inventory_treasure',
-                name: treasureGroupName,
+                name: coreModule.api.Utils.i18n(ACTION_TYPE.treasure),
                 type: 'system-derived'
             }
             const treasureActions = treasure.map((treasure) => {
@@ -571,7 +570,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (meleeAttackActions.length > 0) {
                 const meleeGroupData = {
                     id: 'melee',
-                    name: 'Melee',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.melee),
                     type: 'system-derived'
                 }
                 this.addGroup(meleeGroupData, GROUP.attacks)
@@ -580,7 +579,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (rangedAttackActions.length > 0) {
                 const rangedGroupData = {
                     id: 'ranged',
-                    name: 'Ranged',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.ranged),
                     type: 'system-derived'
                 }
                 this.addGroup(rangedGroupData, GROUP.attacks)

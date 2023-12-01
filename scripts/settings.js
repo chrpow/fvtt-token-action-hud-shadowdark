@@ -8,8 +8,12 @@ import { MODULE } from './constants.js'
  */
 export function register (coreUpdate) {
     game.settings.register(MODULE.ID, 'showAttackBonus', {
-        name: 'Show Roll Bonus for Attacks',
-        hint: 'Show roll bonus for attacks.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showAttackBonus.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showAttackBonus.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,
@@ -20,8 +24,12 @@ export function register (coreUpdate) {
     })
 
     game.settings.register(MODULE.ID, 'showAbilityBonus', {
-        name: 'Show Roll Bonus for Abilities',
-        hint: 'Show roll bonus for abilities.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showAbilityBonus.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showAbilityBonus.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,
@@ -32,8 +40,12 @@ export function register (coreUpdate) {
     })
 
     game.settings.register(MODULE.ID, 'showAttackRanges', {
-        name: 'Show Range Icons for Attacks',
-        hint: 'Show range icons for attacks.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showAttackRanges.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showAttackRanges.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,
@@ -44,8 +56,12 @@ export function register (coreUpdate) {
     })
 
     game.settings.register(MODULE.ID, 'showSpellRanges', {
-        name: 'Show Range Icons for Spells',
-        hint: 'Show range icons for spells.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showSpellRanges.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.showSpellRanges.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,
@@ -56,8 +72,12 @@ export function register (coreUpdate) {
     })
 
     game.settings.register(MODULE.ID, 'wandScrollIcon', {
-        name: 'Show Icon for Wands and Scrolls',
-        hint: 'Abbreviate wand and scroll names with icons.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.wandScrollIcon.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.wandScrollIcon.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,
@@ -68,8 +88,12 @@ export function register (coreUpdate) {
     })
 
     game.settings.register(MODULE.ID, 'hideLantern', {
-        name: 'Hide Oil When No Lantern Equipped',
-        hint: 'Hide oil from the Light menu when no lantern is present.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.hideLantern.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.hideLantern.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,
@@ -80,8 +104,12 @@ export function register (coreUpdate) {
     })
 
     game.settings.register(MODULE.ID, 'hideLost', {
-        name: 'Hide Lost Spells and Abilities',
-        hint: 'Hide lost spells and abilities from the HUD.',
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.hideLost.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.hideLost.hint'
+        ),
         scope: 'client',
         config: true,
         type: Boolean,

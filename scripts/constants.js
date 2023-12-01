@@ -24,11 +24,23 @@ export const ACTION_TYPE = {
     attack: 'SHADOWDARK.sheet.npc.attacks_label',
     ability: 'SHADOWDARK.class-ability.ability.label',
     spell: 'SHADOWDARK.item_type.spell',
-    perform: 'Perform',
-    herbalism: 'Herbalism',
+    perform: 'tokenActionHud.shadowdark.perform',
+    herbalism: 'tokenActionHud.shadowdark.herbalism',
     item: 'tokenActionHud.template.item',
     light: 'SHADOWDARK.sheet.item.tab.light',
-    feature: 'SHADOWDARK.sheet.npc.features_label'
+    feature: 'SHADOWDARK.sheet.npc.features_label',
+    melee: 'SHADOWDARK.weapon.type.melee',
+    ranged: 'SHADOWDARK.weapon.type.ranged',
+    wands: 'SHADOWDARK.inventory.section.wands',
+    scrolls: 'SHADOWDARK.inventory.section.scrolls',
+    armor: 'SHADOWDARK.item_type.armor',
+    basic: 'SHADOWDARK.item_type.basic',
+    potion: 'SHADOWDARK.item.potion.label',
+    scroll: 'SHADOWDARK.item.scroll.label',
+    wand: 'SHADOWDARK.item.wand.label',
+    weapon: 'SHADOWDARK.item_type.weapon',
+    treasure: 'SHADOWDARK.item.treasure',
+    tier: 'SHADOWDARK.sheet.player.spells_tier'
 }
 
 /**
@@ -39,8 +51,8 @@ export const GROUP = {
     attacks: { id: 'attacks', name: 'SHADOWDARK.sheet.npc.attacks_label', type: 'system' },
     abilities: { id: 'abilities', name: 'SHADOWDARK.sheet.abilities.label', type: 'system' },
     spells: { id: 'spells', name: 'SHADOWDARK.sheet.player.spells', type: 'system' },
-    perform: { id: 'perform', name: 'Perform', type: 'system' },
-    herbalism: { id: 'herbalism', name: 'Herbalism', type: 'system' },
+    perform: { id: 'perform', name: 'tokenActionHud.shadowdark.perform', type: 'system' },
+    herbalism: { id: 'herbalism', name: 'tokenActionHud.shadowdark.herbalism', type: 'system' },
     light: { id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system' },
     features: { id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system' },
     talents: { id: 'talents', name: 'SHADOWDARK.class.talents.label', type: 'system' }
