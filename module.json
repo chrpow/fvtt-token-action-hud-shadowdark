@@ -25,11 +25,41 @@
     "./styles/tah-shadowdark.css"
   ],
   "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    }
+		{
+			"lang": "de",
+			"name": "Deutsch",
+			"path": "languages/de.json"
+		},
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "languages/en.json"
+		},
+		{
+			"lang": "es",
+			"name": "Español",
+			"path": "languages/es.json"
+		},
+		{
+			"lang": "fi",
+			"name": "suomi",
+			"path": "languages/fi.json"
+		},
+		{
+			"lang": "fr",
+			"name": "Français",
+			"path": "languages/fr.json"
+		},
+		{
+			"lang": "ko",
+			"name": "한국어",
+			"path": "languages/ko.json"
+		},
+		{
+			"lang": "sv",
+			"name": "Svenska",
+			"path": "languages/sv.json"
+		}
   ],
   "packs": [],
   "relationships": {
