@@ -14,9 +14,6 @@ This is an add-on module to [Larkinabout's Token Action HUD Core](https://github
 - Unlock the HUD to customise layout and groups per user, and actions per actor.
 - Add your own macros, journal entries and roll table compendiums.
 
-# Planned Features
-- Full localization to languages supported by the FoundryVTT system.
-
 # Installation
 
 1. On Foundry VTT's **Configuration and Setup** screen, go to **Add-on Modules**
