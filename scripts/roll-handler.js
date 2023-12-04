@@ -59,32 +59,35 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #handleAction (event, actor, token, actionTypeId, actionId) {
             switch (actionTypeId) {
             case 'attack':
-                await this.#handleAttackAction(event, actor, actionId)
+                await this.#handleAttackAction(actor, actionId)
+                break
+            case 'npcAttack':
+                await this.#handleNPCAttackAction(actor, actionId)
                 break
             case 'specialAttack':
-                await this.#handleSpecialAttackAction(event, actor, actionId)
+                await this.#handleSpecialAttackAction(actor, actionId)
                 break
             case 'ability':
                 await this.#handleAbilityAction(event, actor, actionId)
                 break
             case 'spell':
-                await this.#handleSpellAction(event, actor, actionId)
+                await this.#handleSpellAction(actor, actionId)
+                break
+            case 'npcSpell':
+                await this.#handleNPCSpell(actor, actionId)
                 break
             case 'item':
-                this.#handleItemAction(event, actor, actionId)
+                await this.#handleItemAction(actor, actionId)
                 break
             case 'light':
-                this.#handleLightAction(event, actor, actionId)
+                await this.#handleLightAction(actor, actionId)
                 break
             case 'feature':
-                this.#handleItemAction(event, actor, actionId)
+                await this.#handleItemAction(actor, actionId)
                 break
             case 'classAbility':
-                this.#handleClassAbility(event, actor, actionId)
+                await this.#handleClassAbility(actor, actionId)
                 break
-                // case 'utility':
-                //     this.#handleUtilityAction(token, actionId)
-                //     break
             }
         }
 
@@ -95,8 +98,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         * @param {object} actor    The actor
         * @param {string} actionId The action id
         */
-        async #handleAttackAction (event, actor, actionId) {
-            actor.rollAttack(actionId)
+        async #handleAttackAction (actor, actionId) {
+            await actor.rollAttack(actionId)
+        }
+
+        async #handleNPCAttackAction (actor, actionId) {
+            await actor.rollAttack(actionId)
+            const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
+            feature.displayCard(feature.id)
         }
 
         /**
@@ -106,8 +115,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         * @param {object} actor    The actor
         * @param {string} actionId The action id
         */
-        async #handleSpecialAttackAction (event, actor, actionId) {
-            actor.useAbility(actionId)
+        async #handleSpecialAttackAction (actor, actionId) {
+            await actor.useAbility(actionId)
             const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
             feature.displayCard(feature.id)
         }
@@ -120,7 +129,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} actionId The action id
          */
         async #handleAbilityAction (event, actor, actionId) {
-            actor.rollAbility(actionId, { event })
+            await actor.rollAbility(actionId, { event })
         }
 
         /**
@@ -130,8 +139,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        async #handleSpellAction (event, actor, actionId) {
-            actor.castSpell(actionId)
+        async #handleSpellAction (actor, actionId) {
+            await actor.castSpell(actionId)
+        }
+
+        /**
+        * Handle NPC spell action
+        * @private
+        * @param {object} event    The event
+        * @param {object} actor    The actor
+        * @param {string} actionId The action id
+        */
+        async #handleNPCSpell (actor, actionId) {
+            await actor.castNPCSpell(actionId)
         }
 
         /**
@@ -141,8 +161,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        async #handleClassAbility (event, actor, actionId) {
-            actor.useAbility(actionId)
+        async #handleClassAbility (actor, actionId) {
+            await actor.useAbility(actionId)
         }
 
         /**
@@ -152,9 +172,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        #handleItemAction (event, actor, actionId) {
+        async #handleItemAction (actor, actionId) {
             const item = actor.items.get(actionId)
-            item.displayCard()
+            await item.displayCard()
         }
 
         /**
@@ -164,9 +184,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */
-        #handleLightAction (event, actor, actionId) {
+        async #handleLightAction (actor, actionId) {
             const light = actor.getEmbeddedDocument('Item', actionId)
-            light.parent.sheet._toggleLightSource(light)
+            await light.parent.sheet._toggleLightSource(light)
         }
     }
 })

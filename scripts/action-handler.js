@@ -102,11 +102,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 this.#buildAbilities(),
                 this.#buildSpells(),
                 this.#buildClassAbilities(GROUP.perform, 'Perform', 'Perform'),
-                this.#buildClassAbilities(
-                    GROUP.herbalism,
-                    'Herbalism',
-                    'Herbal Remedy'
-                ),
+                this.#buildClassAbilities(GROUP.herbalism, 'Herbalism', 'Herbal Remedy'),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildTalents(),
@@ -124,7 +120,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
             await Promise.all([
                 this.#buildNPCAttacks(),
-                this.#buildSpells(),
+                this.#buildNPCSpells(),
                 this.#buildNPCFeatures(),
                 this.#buildAbilities()
             ])
@@ -401,6 +397,28 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         /**
+         * Build spells
+         */
+        #buildNPCSpells () {
+            const spells = this.actor?.itemTypes['NPC Spell']
+
+            if (!spells || spells?.length === 0) return
+
+            const actionType = 'npcSpell'
+
+            const spellActions = [
+                ...(this.hideLost
+                    ? spells.filter((a) => !a.system?.lost)
+                    : spells)
+            ].map((c) => {
+                return new Action(c, actionType, {
+                    cssClass: c.system?.lost ? 'tah-shadowdark-lost' : ''
+                })
+            })
+            this.addActions(spellActions, GROUP.spells)
+        }
+
+        /**
          * Build class abilities (e.g. bard perform and ranger herbalism)
          */
         async #buildClassAbilities (actionGroup, talentName, groupName) {
@@ -573,7 +591,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const ranges = attack.system.ranges
                 if (ranges.includes('close')) {
                     meleeAttackActions.push(
-                        new Action(attack, 'attack', {
+                        new Action(attack, 'npcAttack', {
                             name:
                                 _toTitleCase(attack.name) +
                                 `${this.showAttackBonus
@@ -592,7 +610,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             ? 'far'
                             : 'near'
                         rangedAttackActions.push(
-                            new Action(attack, 'attack', {
+                            new Action(attack, 'npcAttack', {
                                 icon2: ICON.thrown,
                                 name:
                                     _toTitleCase(attack.name) +
@@ -613,7 +631,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 } else if (ranges.includes('near') || ranges.includes('far')) {
                     const maxRange = ranges.includes('far') ? 'far' : 'near'
                     rangedAttackActions.push(
-                        new Action(attack, 'attack', {
+                        new Action(attack, 'npcAttack', {
                             name:
                                 _toTitleCase(attack.name) +
                                 `${this.showAttackBonus
