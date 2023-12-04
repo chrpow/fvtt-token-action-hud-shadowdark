@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { Utils } from './utils.js'
 export let RollHandler = null
 
 Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
@@ -83,7 +84,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 await this.#handleLightAction(actor, actionId)
                 break
             case 'feature':
-                await this.#handleItemAction(actor, actionId)
+                await this.#handleNPCFeature(actor, actionId)
                 break
             case 'classAbility':
                 await this.#handleClassAbility(actor, actionId)
@@ -104,8 +105,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
         async #handleNPCAttackAction (actor, actionId) {
             await actor.rollAttack(actionId)
+            const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
             const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
-            feature.displayCard(feature.id)
+            await feature.displayCard({ rollMode })
         }
 
         /**
@@ -117,8 +119,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         */
         async #handleSpecialAttackAction (actor, actionId) {
             await actor.useAbility(actionId)
+            const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
             const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
-            feature.displayCard(feature.id)
+            await feature.displayCard({ rollMode })
         }
 
         /**
@@ -152,6 +155,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         */
         async #handleNPCSpell (actor, actionId) {
             await actor.castNPCSpell(actionId)
+        }
+
+        /**
+         * Handle NPC feature action
+         * @private
+         * @param {object} event    The event
+         * @param {object} actor    The actor
+         * @param {string} actionId The action id
+         */
+        async #handleNPCFeature (actor, actionId) {
+            const feature = actor.items.get(actionId)
+            const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
+            await feature.displayCard({ rollMode })
         }
 
         /**

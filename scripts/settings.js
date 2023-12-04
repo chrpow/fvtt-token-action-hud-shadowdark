@@ -118,4 +118,20 @@ export function register (coreUpdate) {
             coreUpdate(value)
         }
     })
+
+    game.settings.register(MODULE.ID, 'hideNPCFeatures', {
+        name: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.hideNPCFeatures.name'
+        ),
+        hint: game.i18n.localize(
+            'tokenActionHud.shadowdark.setting.hideNPCFeatures.hint'
+        ),
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+        onChange: (value) => {
+            coreUpdate(value)
+        }
+    })
 }
