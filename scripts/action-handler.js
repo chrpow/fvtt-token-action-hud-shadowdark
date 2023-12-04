@@ -66,10 +66,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             // Set settings variables
             this.abbreviateSkills = Utils.getSetting('abbreviateSkills')
             this.addAuxiliaryActions = Utils.getSetting('addAuxiliaryActions')
-            this.addDamageAndCritical = Utils.getSetting('addDamageAndCritical')
+            this.addDamageAndCritical = Utils.getSetting(
+                'addDamageAndCritical'
+            )
             this.addStowedItems = Utils.getSetting('addStowedItems')
             this.addUnequippedItems = Utils.getSetting('addUnequippedItems')
-            this.calculateAttackPenalty = Utils.getSetting('calculateAttackPenalty')
+            this.calculateAttackPenalty = Utils.getSetting(
+                'calculateAttackPenalty'
+            )
             this.colorSkills = Utils.getSetting('colorSkills')
             this.showAttackImages = Utils.getSetting('showAttackImages')
             this.showAttackNames = Utils.getSetting('showAttackNames')
@@ -116,6 +120,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             }
             await Promise.all([
                 this.#buildNPCAttacks(),
+                this.#buildNPCSpells(),
                 this.#buildNPCFeatures(),
                 this.#buildAbilities()
             ])
@@ -155,7 +160,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             // Sort attacks by type
             for (const attack of attacks) {
-                const weaponMasterBonus = this.actor?.calcWeaponMasterBonus(attack)
+                const weaponMasterBonus =
+                    this.actor?.calcWeaponMasterBonus(attack)
                 const baseAttackBonus = (await attack.isFinesseWeapon())
                     ? Math.max(
                         this.actor?.attackBonus('melee'),
@@ -173,7 +179,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         new Action(attack, actionType, {
                             name:
                                 attack.name +
-                                (this.showAttackBonus ? getBonusString(meleeAttackBonus) : ''),
+                                (this.showAttackBonus
+                                    ? getBonusString(meleeAttackBonus)
+                                    : ''),
                             range: this.showAttackRanges ? 'close' : undefined
                         })
                     )
@@ -182,7 +190,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     if (await attack.hasProperty('thrown')) {
                         const thrownAttackBonus =
                             baseAttackBonus +
-                            parseInt(this.actor?.system.bonuses.rangedAttackBonus, 10) +
+                            parseInt(
+                                this.actor?.system.bonuses.rangedAttackBonus,
+                                10
+                            ) +
                             parseInt(attack.system.bonuses.attackBonus, 10) +
                             weaponMasterBonus
                         rangedAttackActions.push(
@@ -193,7 +204,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                                     (this.showAttackBonus
                                         ? getBonusString(thrownAttackBonus)
                                         : ''),
-                                range: this.showAttackRanges ? attack.system.range : undefined
+                                range: this.showAttackRanges
+                                    ? attack.system.range
+                                    : undefined
                             })
                         )
                         continue
@@ -209,8 +222,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         new Action(attack, actionType, {
                             name:
                                 attack.name +
-                                (this.showAttackBonus ? getBonusString(rangedAttackBonus) : ''),
-                            range: this.showAttackRanges ? attack.system.range : undefined
+                                (this.showAttackBonus
+                                    ? getBonusString(rangedAttackBonus)
+                                    : ''),
+                            range: this.showAttackRanges
+                                ? attack.system.range
+                                : undefined
                         })
                     )
                 }
@@ -249,7 +266,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     const name =
                         coreModule.api.Utils.i18n(ABILITY[ability].name) +
                         (this.showAbilityBonus && this.actor
-                            ? getBonusString(this.actor?.system.abilities[ability].mod)
+                            ? getBonusString(
+                                this.actor?.system.abilities[ability].mod
+                            )
                             : '')
                     const encodedValue = [actionType, id].join(this.delimiter)
 
@@ -280,7 +299,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
                 for (const tier of activeTiers) {
                     const tierGroupId = `tier${tier}`
-                    const tierGroupName = `${coreModule.api.Utils.i18n(ACTION_TYPE.tier)} ${tier}`
+                    const tierGroupName = `${coreModule.api.Utils.i18n(
+                        ACTION_TYPE.tier
+                    )} ${tier}`
 
                     const tierGroupData = {
                         id: tierGroupId,
@@ -288,15 +309,21 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         type: 'system-derived'
                     }
 
-                    const activeSpells = (this.hideLost)
+                    const activeSpells = this.hideLost
                         ? spells.filter(
-                            (spell) => spell.system.tier === tier && !spell.system.lost
+                            (spell) =>
+                                spell.system.tier === tier &&
+                                !spell.system.lost
                         )
                         : spells
                     const spellActions = activeSpells.map((spell) => {
                         return new Action(spell, actionType, {
-                            range: this.showSpellRanges ? spell.system.range : undefined,
-                            cssClass: (spell.system.lost) ? 'tah-shadowdark-lost' : ''
+                            range: this.showSpellRanges
+                                ? spell.system.range
+                                : undefined,
+                            cssClass: spell.system.lost
+                                ? 'tah-shadowdark-lost'
+                                : ''
                         })
                     })
                     this.addGroup(tierGroupData, GROUP.spells)
@@ -306,14 +333,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const wands = this.actor?.itemTypes.Wand.filter(
                 (wand) =>
-                    (wand.system.class.includes(this.actor?.system.class) ||
-                    this.actor.itemTypes.Talent.find((t) => t.name === 'Magical Dabbler'))
+                    wand.system.class.includes(this.actor?.system.class) ||
+                    this.actor.itemTypes.Talent.find(
+                        (t) => t.name === 'Magical Dabbler'
+                    )
             )
-            const usableWands = (this.hideLost)
+            const usableWands = this.hideLost
                 ? wands.filter(
-                    (wand) =>
-                        !wand.system.lost &&
-                        !wand.system.stashed
+                    (wand) => !wand.system.lost && !wand.system.stashed
                 )
                 : wands
             if (usableWands.length > 0) {
@@ -327,8 +354,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return new Action(wand, actionType, {
                         name: wand.system.spellName,
                         icon2: this.wandScrollIcon ? ICON.wand : undefined,
-                        range: this.showSpellRanges ? wand.system.range : undefined,
-                        cssClass: (wand.system.lost) ? 'tah-shadowdark-lost' : ''
+                        range: this.showSpellRanges
+                            ? wand.system.range
+                            : undefined,
+                        cssClass: wand.system.lost ? 'tah-shadowdark-lost' : ''
                     })
                 })
                 this.addGroup(wandGroupData, GROUP.spells)
@@ -337,8 +366,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const scrolls = this.actor?.itemTypes.Scroll.filter(
                 (scroll) =>
-                    (scroll.system.class.includes(this.actor?.system.class) ||
-                    this.actor.itemTypes.Talent.find((t) => t.name === 'Magical Dabbler'))
+                    scroll.system.class.includes(this.actor?.system.class) ||
+                    this.actor.itemTypes.Talent.find(
+                        (t) => t.name === 'Magical Dabbler'
+                    )
             )
             const usableScrolls = scrolls.filter(
                 (scroll) => !scroll.system.stashed
@@ -354,7 +385,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return new Action(scroll, actionType, {
                         name: scroll.system.spellName,
                         icon2: this.wandScrollIcon ? ICON.scroll : undefined,
-                        range: this.showSpellRanges ? scroll.system.range : undefined
+                        range: this.showSpellRanges
+                            ? scroll.system.range
+                            : undefined
                     })
                 })
 
@@ -364,24 +397,52 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         /**
+         * Build spells
+         */
+        #buildNPCSpells () {
+            const spells = this.actor?.itemTypes['NPC Spell']
+
+            if (!spells || spells?.length === 0) return
+
+            const actionType = 'npcSpell'
+
+            const spellActions = [
+                ...(this.hideLost
+                    ? spells.filter((a) => !a.system?.lost)
+                    : spells)
+            ].map((c) => {
+                return new Action(c, actionType, {
+                    cssClass: c.system?.lost ? 'tah-shadowdark-lost' : ''
+                })
+            })
+            this.addActions(spellActions, GROUP.spells)
+        }
+
+        /**
          * Build class abilities (e.g. bard perform and ranger herbalism)
          */
         async #buildClassAbilities (actionGroup, talentName, groupName) {
             // Verify the actor has the necessary talent
-            if (this.actor.itemTypes.Talent.find((t) => t.name === talentName)) {
+            if (
+                this.actor.itemTypes.Talent.find((t) => t.name === talentName)
+            ) {
                 // Get class abilities from the specified group
-                const classAbilities = this.actor?.itemTypes['Class Ability'].filter(
-                    (a) => a.system.group === groupName
-                )
+                const classAbilities = this.actor?.itemTypes[
+                    'Class Ability'
+                ].filter((a) => a.system.group === groupName)
                 // Exit if no class abilities exist
                 if (!classAbilities || classAbilities?.length === 0) return
 
                 const actionType = 'classAbility'
 
                 const classAbilityActions = [
-                    ...((this.hideLost) ? classAbilities.filter((a) => !a.system?.lost) : classAbilities)
+                    ...(this.hideLost
+                        ? classAbilities.filter((a) => !a.system?.lost)
+                        : classAbilities)
                 ].map((c) => {
-                    return new Action(c, actionType, { cssClass: (c.system?.lost) ? 'tah-shadowdark-lost' : '' })
+                    return new Action(c, actionType, {
+                        cssClass: c.system?.lost ? 'tah-shadowdark-lost' : ''
+                    })
                 })
                 this.addActions(classAbilityActions, actionGroup)
             }
@@ -432,11 +493,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                 const items = []
                 for (const item of itemArray) {
-                    item.system.treasure ? treasure.push(item) : items.push(item)
+                    item.system.treasure
+                        ? treasure.push(item)
+                        : items.push(item)
                 }
                 const itemTypeGroupData = {
                     id: `inventory_${itemType.slugify()}`,
-                    name: coreModule.api.Utils.i18n(ACTION_TYPE[itemType.slugify()]),
+                    name: coreModule.api.Utils.i18n(
+                        ACTION_TYPE[itemType.slugify()]
+                    ),
                     type: 'system-derived'
                 }
                 if (items.length > 0) {
@@ -510,10 +575,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildNPCAttacks () {
             // Get attacks
             const attacks = this.actor?.itemTypes['NPC Attack']
-            // Exit if no attacks exist
-            if (!attacks || attacks?.length === 0) return
+            const specialAttacks = this.actor?.itemTypes['NPC Special Attack']
 
-            const actionType = 'attack'
+            // Exit if no attacks exist
+            if (
+                !(attacks || specialAttacks) ||
+                (attacks?.length === 0 && specialAttacks?.length === 0)
+            ) { return }
 
             const meleeAttackActions = []
             const rangedAttackActions = []
@@ -523,11 +591,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const ranges = attack.system.ranges
                 if (ranges.includes('close')) {
                     meleeAttackActions.push(
-                        new Action(attack, actionType, {
+                        new Action(attack, 'npcAttack', {
                             name:
                                 _toTitleCase(attack.name) +
                                 `${this.showAttackBonus
-                                    ? getBonusString(attack.system.bonuses.attackBonus)
+                                    ? getBonusString(
+                                        attack.system.bonuses.attackBonus
+                                    )
                                     : ''
                                 }`,
                             range: this.showAttackRanges ? 'close' : undefined
@@ -536,17 +606,24 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                     // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
                     if (ranges.includes('near') || ranges.includes('far')) {
-                        const maxRange = ranges.includes('far') ? 'far' : 'near'
+                        const maxRange = ranges.includes('far')
+                            ? 'far'
+                            : 'near'
                         rangedAttackActions.push(
-                            new Action(attack, actionType, {
+                            new Action(attack, 'npcAttack', {
                                 icon2: ICON.thrown,
                                 name:
                                     _toTitleCase(attack.name) +
                                     `${this.showAttackBonus
-                                        ? getBonusString(attack.system.bonuses.attackBonus)
+                                        ? getBonusString(
+                                            attack.system.bonuses
+                                                .attackBonus
+                                        )
                                         : ''
                                     }`,
-                                range: this.showAttackRanges ? maxRange : undefined
+                                range: this.showAttackRanges
+                                    ? maxRange
+                                    : undefined
                             })
                         )
                         continue
@@ -554,11 +631,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 } else if (ranges.includes('near') || ranges.includes('far')) {
                     const maxRange = ranges.includes('far') ? 'far' : 'near'
                     rangedAttackActions.push(
-                        new Action(attack, actionType, {
+                        new Action(attack, 'npcAttack', {
                             name:
                                 _toTitleCase(attack.name) +
                                 `${this.showAttackBonus
-                                    ? getBonusString(attack.system.bonuses.attackBonus)
+                                    ? getBonusString(
+                                        attack.system.bonuses.attackBonus
+                                    )
                                     : ''
                                 }`,
                             range: this.showAttackRanges ? maxRange : undefined
@@ -584,6 +663,18 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 }
                 this.addGroup(rangedGroupData, GROUP.attacks)
                 this.addActions(rangedAttackActions, rangedGroupData)
+            }
+            if (specialAttacks.length > 0) {
+                const specialAttackActions = specialAttacks.map((s) => {
+                    return new Action(s, 'specialAttack', { name: s.name })
+                })
+                const specialGroupData = {
+                    id: 'specialAttacks',
+                    name: coreModule.api.Utils.i18n(ACTION_TYPE.specialAttack),
+                    type: 'system-derived'
+                }
+                this.addGroup(specialGroupData, GROUP.attacks)
+                this.addActions(specialAttackActions, specialGroupData)
             }
         }
 

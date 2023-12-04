@@ -25,6 +25,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 ]
             },
             {
+                nestId: 'specialAttacks',
+                id: 'specialAttacks',
+                name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.npc.specials_label'),
+                groups: [
+                    { ...groups.specialAttacks, nestId: 'specialAttacks_specialAttacks' }
+                ]
+            },
+            {
                 nestId: 'spells',
                 id: 'spells',
                 name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.player.spells'),

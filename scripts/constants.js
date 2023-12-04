@@ -35,12 +35,9 @@ export const ACTION_TYPE = {
     scrolls: 'SHADOWDARK.inventory.section.scrolls',
     armor: 'SHADOWDARK.item_type.armor',
     basic: 'SHADOWDARK.item_type.basic',
-    potion: 'SHADOWDARK.item.potion.label',
-    scroll: 'SHADOWDARK.item.scroll.label',
-    wand: 'SHADOWDARK.item.wand.label',
-    weapon: 'SHADOWDARK.item_type.weapon',
     treasure: 'SHADOWDARK.item.treasure',
-    tier: 'SHADOWDARK.sheet.player.spells_tier'
+    tier: 'SHADOWDARK.sheet.player.spells_tier',
+    specialAttack: 'SHADOWDARK.sheet.npc.specials_label'
 }
 
 /**

@@ -14,5 +14,7 @@
     "tokenActionHud.shadowdark.setting.hideLantern.hint": "Hide oil from the Light menu when no lantern is present",
     "tokenActionHud.shadowdark.setting.hideLantern.name": "Hide Oil When No Lantern Equipped",
     "tokenActionHud.shadowdark.setting.hideLost.hint": "Hide lost spells and abilities from the HUD",
-    "tokenActionHud.shadowdark.setting.hideLost.name": "Hide Lost Spells and Abilities"
+    "tokenActionHud.shadowdark.setting.hideLost.name": "Hide Lost Spells and Abilities",
+    "tokenActionHud.shadowdark.setting.hideNPCFeatures.hint": "If unchecked, NPC features will be posted publicly to the chat when used from the HUD",
+    "tokenActionHud.shadowdark.setting.hideNPCFeatures.name": "Hide NPC Features from Players"
 }

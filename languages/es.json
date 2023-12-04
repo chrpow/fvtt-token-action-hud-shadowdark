@@ -14,5 +14,7 @@
     "tokenActionHud.shadowdark.setting.hideLantern.hint": "Ocultar aceite del menú Luz cuando no hay farol",
     "tokenActionHud.shadowdark.setting.hideLantern.name": "Ocultar aceite cuando no hay farol",
     "tokenActionHud.shadowdark.setting.hideLost.hint": "Ocultar hechizos y habilidades perdidos del HUD",
-    "tokenActionHud.shadowdark.setting.hideLost.name": "Ocultar hechizos y habilidades perdidos"
+    "tokenActionHud.shadowdark.setting.hideLost.name": "Ocultar hechizos y habilidades perdidos",
+    "tokenActionHud.shadowdark.setting.hideNPCFeatures.hint": "Si no está marcado, las características de NPC se publicarán públicamente en el chat cuando se utilicen desde el HUD",
+    "tokenActionHud.shadowdark.setting.hideNPCFeatures.name": "Ocultar características de NPC de los jugadores"
 }

@@ -18,7 +18,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @override
          * @returns {ActionHandler} The ActionHandler instance
          */
-        doGetActionHandler () {
+        getActionHandler () {
             return new ActionHandler()
         }
 
@@ -42,7 +42,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} rollHandlerId The roll handler ID
          * @returns {rollHandler}        The RollHandler instance
          */
-        doGetRollHandler (rollHandlerId) {
+        getRollHandler (rollHandlerId) {
             let rollHandler
             switch (rollHandlerId) {
             case 'core':
@@ -59,7 +59,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @override
          * @param {function} coreUpdate The Token Action HUD Core update function
          */
-        doRegisterSettings (coreUpdate) {
+        registerSettings (coreUpdate) {
             systemSettings.register(coreUpdate)
         }
 
@@ -68,7 +68,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Called by Token Action HUD Core
          * @returns {object} The default layout and groups
          */
-        async doRegisterDefaultFlags () {
+        async registerDefaults () {
             return DEFAULTS
         }
     }
