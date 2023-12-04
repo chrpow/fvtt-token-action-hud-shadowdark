@@ -13,9 +13,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} event        The event
          * @param {string} encodedValue The encoded value
          */
-        async doHandleActionEvent (event, encodedValue) {
+        async handleActionClick (event, encodedValue) {
             const payload = encodedValue.split('|')
-            console.log(payload)
 
             if (payload.length !== 2) {
                 super.throwInvalidValueErr()
@@ -62,6 +61,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             case 'attack':
                 await this.#handleAttackAction(event, actor, actionId)
                 break
+            case 'specialAttack':
+                await this.#handleSpecialAttackAction(event, actor, actionId)
+                break
             case 'ability':
                 await this.#handleAbilityAction(event, actor, actionId)
                 break
@@ -95,6 +97,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         */
         async #handleAttackAction (event, actor, actionId) {
             actor.rollAttack(actionId)
+        }
+
+        /**
+        * Handle special attack action
+        * @private
+        * @param {object} event    The event
+        * @param {object} actor    The actor
+        * @param {string} actionId The action id
+        */
+        async #handleSpecialAttackAction (event, actor, actionId) {
+            actor.useAbility(actionId)
+            const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
+            feature.displayCard(feature.id)
         }
 
         /**
