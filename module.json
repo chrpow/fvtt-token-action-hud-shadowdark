@@ -17,7 +17,7 @@
   "version": "This is auto replaced",
   "compatibility": {
     "minimum": "11",
-    "verified": "11.314"
+    "verified": "11.315"
   },
   "esmodules": ["./scripts/token-action-hud-shadowdark.min.js"],
   "scripts": [],
@@ -69,8 +69,8 @@
         "type": "system",
         "compatibility": [
           {
-            "minimum": "1.6.0",
-            "verified": "1.6.2"
+            "minimum": "1.7.3",
+            "verified": "1.7.3"
           }
         ]
       }
