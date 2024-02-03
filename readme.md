@@ -4,6 +4,8 @@
 
 # Token Action HUD Shadowdark
 
+If you like Token Action HUD Shadowdark, consider supporting me by purchasing one of my [Shadowdark products](https://preview.drivethrurpg.com/en/publisher/26600/chris-powell).
+
 Token Action HUD Shadowdark is a repositionable HUD of actions for a selected token.
 
 This is an add-on module to [Larkinabout's Token Action HUD Core](https://github.com/Larkinabout/fvtt-token-action-hud-core/). 
