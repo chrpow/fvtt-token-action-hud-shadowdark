@@ -116,7 +116,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #buildNpcActions () {
             if (!this.actor?.backgroundItems?.class) {
-                this.actor?._populateBackgroundItems()
+                // this.actor?._populateBackgroundItems()
             }
             await Promise.all([
                 this.#buildNPCAttacks(),
@@ -315,8 +315,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                                 spell.system.tier === tier &&
                                 !spell.system.lost
                         )
-                        : spells
+                        : spells.filter(
+                            (spell) =>
+                                spell.system.tier === tier
+                        )
                     const spellActions = activeSpells.map((spell) => {
+                        console.log(tier)
+                        console.log(activeSpells)
                         return new Action(spell, actionType, {
                             range: this.showSpellRanges
                                 ? spell.system.range
