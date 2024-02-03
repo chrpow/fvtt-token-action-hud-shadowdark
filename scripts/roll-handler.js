@@ -107,7 +107,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await actor.rollAttack(actionId)
             const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
             const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
-            await feature.displayCard({ rollMode })
+            await feature?.displayCard({ rollMode })
         }
 
         /**
@@ -121,7 +121,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await actor.useAbility(actionId)
             const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
             const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
-            await feature.displayCard({ rollMode })
+            await feature?.displayCard({ rollMode })
         }
 
         /**
@@ -167,7 +167,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #handleNPCFeature (actor, actionId) {
             const feature = actor.items.get(actionId)
             const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
-            await feature.displayCard({ rollMode })
+            await feature?.displayCard({ rollMode })
         }
 
         /**
