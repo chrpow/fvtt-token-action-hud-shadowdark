@@ -12,17 +12,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * Called by Token Action HUD Core when an action event is triggered
          * @override
          * @param {object} event        The event
-         * @param {string} encodedValue The encoded value
          */
-        async handleActionClick (event, encodedValue) {
-            const payload = encodedValue.split('|')
-
-            if (payload.length !== 2) {
-                super.throwInvalidValueErr()
-            }
-
-            const actionTypeId = payload[0]
-            const actionId = payload[1]
+        async handleActionClick (event) {
+            const { actionType, actionId } = this.action.system;
 
             // const renderable = ['attack', 'ability']
 
@@ -34,7 +26,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             // If single actor is selected
             if (this.actor) {
-                await this.#handleAction(event, this.actor, this.token, actionTypeId, actionId)
+                await this.#handleAction(event, this.actor, this.token, actionType, actionId)
                 return
             }
 
@@ -44,7 +36,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             // If multiple actors are selected
             for (const token of controlledTokens) {
                 const actor = token.actor
-                await this.#handleAction(event, actor, token, actionTypeId, actionId)
+                await this.#handleAction(event, actor, token, actionType, actionId)
             }
         }
 
@@ -54,11 +46,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} event        The event
          * @param {object} actor        The actor
          * @param {object} token        The token
-         * @param {string} actionTypeId The action type id
+         * @param {string} actionType The action type id
          * @param {string} actionId     The actionId
          */
-        async #handleAction (event, actor, token, actionTypeId, actionId) {
-            switch (actionTypeId) {
+        async #handleAction (event, actor, token, actionType, actionId) {
+            switch (actionType) {
             case 'attack':
                 await this.#handleAttackAction(actor, actionId)
                 break
@@ -196,7 +188,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         /**
          * Handle light action
          * @private
-         * @param {object} event    The event
          * @param {object} actor    The actor
          * @param {string} actionId The action id
          */

@@ -259,7 +259,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
-                    const id = ability
+                    const id = `${actionType}-${ability}`
                     const name =
                         coreModule.api.Utils.i18n(ABILITY[ability].name) +
                         (this.showAbilityBonus && this.actor
@@ -267,12 +267,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                                 this.actor?.system.abilities[ability].mod
                             )
                             : '')
-                    const encodedValue = [actionType, id].join(this.delimiter)
 
                     return {
                         id,
                         name,
-                        encodedValue
+                        system: { actionType, actionId: ability }
                     }
                 })
             )
@@ -711,13 +710,15 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
     class Action {
         constructor (item, actionType, options) {
-            this.id = item.id
+            // NOTE: The action ID must be unique across groups
+            // Ex. actions in buildLight and buildAttack may reference the same item in buildInventory
+            this.id = `${actionType}-${item.id}`
             this.name = options?.name || item.name
-            this.encodedValue = [actionType, item.id].join('|')
             this.img = coreModule.api.Utils.getImage(item)
             this.icon1 = ICON[options?.range]
             this.icon2 = options?.icon2
             this.cssClass = options?.cssClass
+            this.system = { actionType, actionId: item.id }
         }
     }
 })
