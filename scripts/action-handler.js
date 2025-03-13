@@ -195,7 +195,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             weaponMasterBonus
                         rangedAttackActions.push(
                             new Action(attack, actionType, {
-                                icon2: ICON.thrown,
+                                icon2: this.#getThrownIcon(),
                                 name:
                                     attack.name +
                                     (this.showAttackBonus
@@ -352,7 +352,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const wandActions = usableWands.map((wand) => {
                     return new Action(wand, actionType, {
                         name: wand.system.spellName,
-                        icon2: this.wandScrollIcon ? ICON.wand : undefined,
+                        icon2: this.#getWandScrollIcon('wand'),
                         range: this.showSpellRanges
                             ? wand.system.range
                             : undefined,
@@ -383,7 +383,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 const scrollActions = usableScrolls.map((scroll) => {
                     return new Action(scroll, actionType, {
                         name: scroll.system.spellName,
-                        icon2: this.wandScrollIcon ? ICON.scroll : undefined,
+                        icon2: this.#getWandScrollIcon('scroll'),
                         range: this.showSpellRanges
                             ? scroll.system.range
                             : undefined
@@ -559,7 +559,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 lights.map(async (light) => {
                     return light.system.light.active
                         ? new Action(light, actionType, {
-                            icon2: ICON.flame,
+                            icon2: `<i class="${ICON.flame}"></i>`,
                             cssClass: 'toggle active'
                         })
                         : new Action(light, actionType, { cssClass: 'toggle' })
@@ -610,7 +610,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             : 'near'
                         rangedAttackActions.push(
                             new Action(attack, 'npcAttack', {
-                                icon2: ICON.thrown,
+                                icon2: this.#getThrownIcon(),
                                 name:
                                     _toTitleCase(attack.name) +
                                     `${this.showAttackBonus
@@ -694,11 +694,29 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             )
             this.addActions(featureActions, GROUP.features)
         }
+
+        #getWandScrollIcon(itemKey) {
+            const title = game.i18n.localize(`SHADOWDARK.item.${itemKey}.label`);
+            const icon = ICON[itemKey];
+            return (this.wandScrollIcon && icon) ? `<i class="${icon}" title="${title}"></i>` : "";
+        }
+
+        #getThrownIcon() {
+            const title = game.i18n.localize("SHADOWDARK.weapon.properties.thrown");
+            const icon = ICON.thrown;
+            return `<i class="${icon}" title="${title}"></i>`;
+        }
     }
 
     // Convert a numerical bonus into a string with the appropriate +/- sign.
     function getBonusString (bonus) {
         return ` (${bonus >= 0 ? '+' : ''}${bonus})`
+    }
+    
+    function _getRangeIcon(range) {
+        const title = CONFIG.SHADOWDARK.RANGES[range] ?? "";
+        const icon = ICON[range];
+        return (icon) ? `<i class="${icon}" title="${title}"></i>` : "";
     }
 
     // convert a string to titlecase (useful for monsters from monster importer)
@@ -715,7 +733,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.id = `${actionType}-${item.id}`
             this.name = options?.name || item.name
             this.img = coreModule.api.Utils.getImage(item)
-            this.icon1 = ICON[options?.range]
+            this.icon1 = _getRangeIcon(options?.range)
             this.icon2 = options?.icon2
             this.cssClass = options?.cssClass
             this.system = { actionType, actionId: item.id }

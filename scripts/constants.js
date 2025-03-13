@@ -65,12 +65,12 @@ export const ABILITY = {
 }
 
 export const ICON = {
-    thrown: '<i class="fa-solid fa-share"></i>',
-    wand: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
-    scroll: '<i class="fa-solid fa-scroll"></i>',
-    flame: '<i class="fa-solid fa-fire-flame-curved"></i>',
-    close: '<i class="fa-solid fa-circle-c"></i>',
-    near: '<i class="fa-solid fa-circle-n"></i>',
-    far: '<i class="fa-solid fa-circle-f"></i>',
-    self: '<i class="fa-solid fa-circle-user"></i>'
+    thrown: 'fa-solid fa-share',
+    wand: 'fa-solid fa-wand-magic-sparkles',
+    scroll: 'fa-solid fa-scroll',
+    flame: 'fa-solid fa-fire-flame-curved',
+    close: 'fa-solid fa-circle-c',
+    near: 'fa-solid fa-circle-n',
+    far: 'fa-solid fa-circle-f',
+    self: 'fa-solid fa-circle-user'
 }
