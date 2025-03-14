@@ -70,7 +70,7 @@
         "compatibility": [
           {
             "minimum": "3.3.0",
-            "verified": "3.3.0"
+            "verified": "3.3.1"
           }
         ]
       }

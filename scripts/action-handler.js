@@ -101,7 +101,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
-                this.#buildClassAbilities(GROUP.perform, 'Perform', 'Perform'),
+                this.#buildClassAbilities(GROUP.presence, 'Presence', 'Presence'),
                 this.#buildClassAbilities(GROUP.herbalism, 'Herbalism', 'Herbal Remedy'),
                 this.#buildAttacks(),
                 this.#buildInventory(),
