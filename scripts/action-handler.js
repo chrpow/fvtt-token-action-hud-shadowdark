@@ -418,7 +418,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
 
         /**
-         * Build class abilities (e.g. bard perform and ranger herbalism)
+         * Build class abilities (e.g. bard presence and ranger herbalism)
          */
         async #buildClassAbilities (actionGroup, talentName, groupName) {
             // Verify the actor has the necessary talent
@@ -695,16 +695,16 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.addActions(featureActions, GROUP.features)
         }
 
-        #getWandScrollIcon(itemKey) {
-            const title = game.i18n.localize(`SHADOWDARK.item.${itemKey}.label`);
-            const icon = ICON[itemKey];
-            return (this.wandScrollIcon && icon) ? `<i class="${icon}" title="${title}"></i>` : "";
+        #getWandScrollIcon (itemKey) {
+            const title = game.i18n.localize(`SHADOWDARK.item.${itemKey}.label`)
+            const icon = ICON[itemKey]
+            return (this.wandScrollIcon && icon) ? `<i class="${icon}" title="${title}"></i>` : ''
         }
 
-        #getThrownIcon() {
-            const title = game.i18n.localize("SHADOWDARK.weapon.properties.thrown");
-            const icon = ICON.thrown;
-            return `<i class="${icon}" title="${title}"></i>`;
+        #getThrownIcon () {
+            const title = game.i18n.localize('SHADOWDARK.weapon.properties.thrown')
+            const icon = ICON.thrown
+            return `<i class="${icon}" title="${title}"></i>`
         }
     }
 
@@ -712,11 +712,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
     function getBonusString (bonus) {
         return ` (${bonus >= 0 ? '+' : ''}${bonus})`
     }
-    
-    function _getRangeIcon(range) {
-        const title = CONFIG.SHADOWDARK.RANGES[range] ?? "";
-        const icon = ICON[range];
-        return (icon) ? `<i class="${icon}" title="${title}"></i>` : "";
+
+    function _getRangeIcon (range) {
+        const title = CONFIG.SHADOWDARK.RANGES[range] ?? ''
+        const icon = ICON[range]
+        return (icon) ? `<i class="${icon}" title="${title}"></i>` : ''
     }
 
     // convert a string to titlecase (useful for monsters from monster importer)

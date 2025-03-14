@@ -14,7 +14,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} event        The event
          */
         async handleActionClick (event) {
-            const { actionType, actionId } = this.action.system;
+            const { actionType, actionId } = this.action.system
 
             // const renderable = ['attack', 'ability']
 

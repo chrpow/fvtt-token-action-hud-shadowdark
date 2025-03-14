@@ -41,11 +41,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 ]
             },
             {
-                nestId: 'perform',
-                id: 'perform',
-                name: coreModule.api.Utils.i18n('tokenActionHud.shadowdark.perform'),
+                nestId: 'presence',
+                id: 'presence',
+                name: coreModule.api.Utils.i18n('tokenActionHud.shadowdark.presence'),
                 groups: [
-                    { ...groups.perform, nestId: 'perform_perform' }
+                    { ...groups.presence, nestId: 'presence_presence' }
                 ]
             },
             {
