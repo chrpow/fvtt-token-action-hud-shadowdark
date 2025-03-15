@@ -41,19 +41,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 ]
             },
             {
-                nestId: 'presence',
-                id: 'presence',
-                name: coreModule.api.Utils.i18n('tokenActionHud.shadowdark.presence'),
+                nestId: 'classAbilities',
+                id: 'classAbilities',
+                name: coreModule.api.Utils.i18n('SHADOWDARK.sheet.special_abilities.label'),
                 groups: [
-                    { ...groups.presence, nestId: 'presence_presence' }
-                ]
-            },
-            {
-                nestId: 'herbalism',
-                id: 'herbalism',
-                name: coreModule.api.Utils.i18n('tokenActionHud.shadowdark.herbalism'),
-                groups: [
-                    { ...groups.herbalism, nestId: 'herbalism_herbalism' }
+                    { ...groups.classAbilities, nestId: 'classAbilities_classAbilities' }
                 ]
             },
             {
