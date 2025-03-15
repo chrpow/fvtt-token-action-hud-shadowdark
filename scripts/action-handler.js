@@ -417,7 +417,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         // async #buildClassAbilities (actionGroup, talentName, groupName) {
         async #buildClassAbilities () {
-            const actionType = 'Class Ability'
+            const actionType = 'classAbility'
             const classAbilities = this.actor?.itemTypes['Class Ability']
             console.log(classAbilities)
 
