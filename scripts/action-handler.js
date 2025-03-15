@@ -101,8 +101,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             await Promise.all([
                 this.#buildAbilities(),
                 this.#buildSpells(),
-                this.#buildClassAbilities(GROUP.presence, 'Presence', 'Presence'),
-                this.#buildClassAbilities(GROUP.herbalism, 'Herbalism', 'Herbal Remedy'),
+                this.#buildClassAbilities(),
                 this.#buildAttacks(),
                 this.#buildInventory(),
                 this.#buildTalents(),
@@ -287,12 +286,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             const spells = this.actor?.itemTypes.Spell
 
             if (spells.length > 0) {
-                const activeTiers = []
-                for (const spell of spells) {
-                    if (!activeTiers.includes(spell.system.tier)) {
-                        activeTiers.push(spell.system.tier)
-                    }
-                }
+                const activeTiers = [...new Set(spells.map(item => item.system.tier))]
+
                 for (const tier of activeTiers) {
                     const tierGroupId = `tier${tier}`
                     const tierGroupName = `${coreModule.api.Utils.i18n(
@@ -420,30 +415,38 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         /**
          * Build class abilities (e.g. bard presence and ranger herbalism)
          */
-        async #buildClassAbilities (actionGroup, talentName, groupName) {
-            // Verify the actor has the necessary talent
-            if (
-                this.actor.itemTypes.Talent.find((t) => t.name === talentName)
-            ) {
-                // Get class abilities from the specified group
-                const classAbilities = this.actor?.itemTypes[
-                    'Class Ability'
-                ].filter((a) => a.system.group === groupName)
-                // Exit if no class abilities exist
-                if (!classAbilities || classAbilities?.length === 0) return
+        // async #buildClassAbilities (actionGroup, talentName, groupName) {
+        async #buildClassAbilities () {
+            const actionType = 'classAbility'
+            const classAbilities = this.actor?.itemTypes['Class Ability']
+            console.log(classAbilities)
 
-                const actionType = 'classAbility'
+            if (classAbilities.length > 0) {
+                const activeGroups = [...new Set(classAbilities.map(item => item.system.group))]
 
-                const classAbilityActions = [
-                    ...(this.hideLost
-                        ? classAbilities.filter((a) => !a.system?.lost)
-                        : classAbilities)
-                ].map((c) => {
-                    return new Action(c, actionType, {
-                        cssClass: c.system?.lost ? 'tah-shadowdark-lost' : ''
+                for (const g of activeGroups) {
+                    const groupData = { id: g.slugify(), name: g, type: 'system' }
+
+                    const activeAbilities = this.hideLost
+                        ? classAbilities.filter(
+                            (ab) =>
+                                ab.system.group === g &&
+                                !ab.system.lost
+                        )
+                        : classAbilities.filter(
+                            (ab) =>
+                                ab.system.group === g
+                        )
+                    const abilityActions = activeAbilities.map((ab) => {
+                        return new Action(ab, actionType, {
+                            cssClass: ab.system.lost
+                                ? 'tah-shadowdark-lost'
+                                : ''
+                        })
                     })
-                })
-                this.addActions(classAbilityActions, actionGroup)
+                    this.addGroup(groupData, GROUP.classAbilities)
+                    this.addActions(abilityActions, groupData)
+                }
             }
         }
 
