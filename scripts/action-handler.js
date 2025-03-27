@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 // System Module Imports
-import { ACTION_TYPE, ABILITY, GROUP, ICON } from './constants.js'
+import { ACTION_TYPE, GROUP, ICON } from './constants.js'
 import { Utils } from './utils.js'
 
 export let ActionHandler = null
@@ -48,8 +48,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (this.actorType && !knownActors.includes(this.actorType)) return
 
             // Settings
-            this.showAttackBonus = Utils.getSetting('showAttackBonus')
-            this.showAbilityBonus = Utils.getSetting('showAbilityBonus')
             this.wandScrollIcon = Utils.getSetting('wandScrollIcon')
             this.hideLantern = Utils.getSetting('hideLantern')
             this.showAttackRanges = Utils.getSetting('showAttackRanges')
@@ -173,11 +171,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         weaponMasterBonus
                     meleeAttackActions.push(
                         new Action(attack, actionType, {
-                            name:
-                                attack.name +
-                                (this.showAttackBonus
-                                    ? getBonusString(meleeAttackBonus)
-                                    : ''),
+                            name: attack.name,
+                            info1: {
+                                text: coreModule.api.Utils.getModifier(meleeAttackBonus),
+                                title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.meleeAttackBonus")}: ${coreModule.api.Utils.getModifier(meleeAttackBonus)}`
+                            },
                             range: this.showAttackRanges ? 'close' : undefined
                         })
                     )
@@ -195,11 +193,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         rangedAttackActions.push(
                             new Action(attack, actionType, {
                                 icon2: this.#getThrownIcon(),
-                                name:
-                                    attack.name +
-                                    (this.showAttackBonus
-                                        ? getBonusString(thrownAttackBonus)
-                                        : ''),
+                                name: attack.name,
+                                info1: {
+                                    text: coreModule.api.Utils.getModifier(thrownAttackBonus),
+                                    title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus")}: ${coreModule.api.Utils.getModifier(thrownAttackBonus)}`
+                                },
                                 range: this.showAttackRanges
                                     ? attack.system.range
                                     : undefined
@@ -216,11 +214,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
                     rangedAttackActions.push(
                         new Action(attack, actionType, {
-                            name:
-                                attack.name +
-                                (this.showAttackBonus
-                                    ? getBonusString(rangedAttackBonus)
-                                    : ''),
+                            name: attack.name,
+                            info1: {
+                                text: coreModule.api.Utils.getModifier(rangedAttackBonus),
+                                title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus")} ${coreModule.api.Utils.getModifier(rangedAttackBonus)}`
+                            },
                             range: this.showAttackRanges
                                 ? attack.system.range
                                 : undefined
@@ -254,22 +252,21 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          */
         async #buildAbilities () {
             const actionType = 'ability'
-            const abilities = ['str', 'dex', 'con', 'int', 'wis', 'cha']
+            const abilities = CONFIG.SHADOWDARK.ABILITY_KEYS;
 
             const abilityActions = await Promise.all(
                 abilities.map(async (ability) => {
-                    const id = `${actionType}-${ability}`
-                    const name =
-                        coreModule.api.Utils.i18n(ABILITY[ability].name) +
-                        (this.showAbilityBonus && this.actor
-                            ? getBonusString(
-                                this.actor?.system.abilities[ability].mod
-                            )
-                            : '')
-
+                    const id = `${actionType}-${ability}`;
+                    const name = coreModule.api.Utils.i18n(CONFIG.SHADOWDARK.ABILITIES_LONG[ability]);
+                    const mod = this.actor?.system.abilities[ability].mod
+                    
                     return {
-                        id,
-                        name,
+                        id: `${actionType}-${ability}`,
+                        name: (this.abbreviateSkills) ? Utils.capitalize(ability) : name,
+                        info1: (this.actor) ? {
+                            text: coreModule.api.Utils.getModifier(mod),
+                            title: `${game.i18n.localize("SHADOWDARK.class-ability.ability.check")}: ${coreModule.api.Utils.getModifier(mod)}`
+                        }: null,
                         system: { actionType, actionId: ability }
                     }
                 })
@@ -419,7 +416,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildClassAbilities () {
             const actionType = 'classAbility'
             const classAbilities = this.actor?.itemTypes['Class Ability']
-            console.log(classAbilities)
 
             if (classAbilities.length > 0) {
                 const activeGroups = [...new Set(classAbilities.map(item => item.system.group))]
@@ -594,14 +590,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 if (ranges.includes('close')) {
                     meleeAttackActions.push(
                         new Action(attack, 'npcAttack', {
-                            name:
-                                _toTitleCase(attack.name) +
-                                `${this.showAttackBonus
-                                    ? getBonusString(
-                                        attack.system.bonuses.attackBonus
-                                    )
-                                    : ''
-                                }`,
+                            name: Utils.capitalize(attack.name),
+                            info1: {
+                                text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
+                                title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+                            },
                             range: this.showAttackRanges ? 'close' : undefined
                         })
                     )
@@ -614,18 +607,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         rangedAttackActions.push(
                             new Action(attack, 'npcAttack', {
                                 icon2: this.#getThrownIcon(),
-                                name:
-                                    _toTitleCase(attack.name) +
-                                    `${this.showAttackBonus
-                                        ? getBonusString(
-                                            attack.system.bonuses
-                                                .attackBonus
-                                        )
-                                        : ''
-                                    }`,
-                                range: this.showAttackRanges
-                                    ? maxRange
-                                    : undefined
+                                name: Utils.capitalize(attack.name),
+                                info1: {
+                                    text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
+                                    title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+                                },
+                                range: this.showAttackRanges ? maxRange : undefined
                             })
                         )
                         continue
@@ -634,14 +621,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     const maxRange = ranges.includes('far') ? 'far' : 'near'
                     rangedAttackActions.push(
                         new Action(attack, 'npcAttack', {
-                            name:
-                                _toTitleCase(attack.name) +
-                                `${this.showAttackBonus
-                                    ? getBonusString(
-                                        attack.system.bonuses.attackBonus
-                                    )
-                                    : ''
-                                }`,
+                            name: Utils.capitalize(attack.name),
+                            info1: {
+                                text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
+                                title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+                            },
                             range: this.showAttackRanges ? maxRange : undefined
                         })
                     )
@@ -711,22 +695,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         }
     }
 
-    // Convert a numerical bonus into a string with the appropriate +/- sign.
-    function getBonusString (bonus) {
-        return ` (${bonus >= 0 ? '+' : ''}${bonus})`
-    }
-
     function _getRangeIcon (range) {
         const title = CONFIG.SHADOWDARK.RANGES[range] ?? ''
         const icon = ICON[range]
         return (icon) ? `<i class="${icon}" title="${title}"></i>` : ''
-    }
-
-    // convert a string to titlecase (useful for monsters from monster importer)
-    function _toTitleCase (str) {
-        return str.replace(/\w\S*/g, function (txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-        })
     }
 
     class Action {
@@ -739,6 +711,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             this.icon1 = _getRangeIcon(options?.range)
             this.icon2 = options?.icon2
             this.cssClass = options?.cssClass
+            this.info1 = options?.info1
             this.system = { actionType, actionId: item.id }
         }
     }
