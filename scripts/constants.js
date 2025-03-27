@@ -52,15 +52,6 @@ export const GROUP = {
     talents: { id: 'talents', name: 'SHADOWDARK.class.talents.label', type: 'system' }
 }
 
-export const ABILITY = {
-    str: { name: 'SHADOWDARK.ability_strength' },
-    dex: { name: 'SHADOWDARK.ability_dexterity' },
-    con: { name: 'SHADOWDARK.ability_constitution' },
-    int: { name: 'SHADOWDARK.ability_intelligence' },
-    wis: { name: 'SHADOWDARK.ability_wisdom' },
-    cha: { name: 'SHADOWDARK.ability_charisma' }
-}
-
 export const ICON = {
     thrown: 'fa-solid fa-share',
     wand: 'fa-solid fa-wand-magic-sparkles',
