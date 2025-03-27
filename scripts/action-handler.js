@@ -416,7 +416,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         async #buildClassAbilities () {
             const actionType = 'classAbility'
             const classAbilities = this.actor?.itemTypes['Class Ability']
-            console.log(classAbilities)
 
             if (classAbilities.length > 0) {
                 const activeGroups = [...new Set(classAbilities.map(item => item.system.group))]
