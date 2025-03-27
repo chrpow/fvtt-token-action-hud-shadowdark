@@ -591,7 +591,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                 if (ranges.includes('close')) {
                     meleeAttackActions.push(
                         new Action(attack, 'npcAttack', {
-                            name: _toTitleCase(attack.name),
+                            name: Utils.capitalize(attack.name),
                             info1: {
                                 text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
                                 title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
@@ -608,7 +608,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         rangedAttackActions.push(
                             new Action(attack, 'npcAttack', {
                                 icon2: this.#getThrownIcon(),
-                                name: _toTitleCase(attack.name),
+                                name: Utils.capitalize(attack.name),
                                 info1: {
                                     text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
                                     title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
@@ -622,7 +622,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     const maxRange = ranges.includes('far') ? 'far' : 'near'
                     rangedAttackActions.push(
                         new Action(attack, 'npcAttack', {
-                            name: _toTitleCase(attack.name),
+                            name: Utils.capitalize(attack.name),
                             info1: {
                                 text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
                                 title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
@@ -700,13 +700,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         const title = CONFIG.SHADOWDARK.RANGES[range] ?? ''
         const icon = ICON[range]
         return (icon) ? `<i class="${icon}" title="${title}"></i>` : ''
-    }
-
-    // convert a string to titlecase (useful for monsters from monster importer)
-    function _toTitleCase (str) {
-        return str.replace(/\w\S*/g, function (txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-        })
     }
 
     class Action {
