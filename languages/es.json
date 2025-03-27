@@ -1,8 +1,4 @@
 {
-    "tokenActionHud.shadowdark.setting.showAttackBonus.hint": "Mostrar bonus de tirada para ataques",
-    "tokenActionHud.shadowdark.setting.showAttackBonus.name": "Mostrar bonus de tirada para ataques",
-    "tokenActionHud.shadowdark.setting.showAbilityBonus.hint": "Mostrar bonus de tiro para habilidades",
-    "tokenActionHud.shadowdark.setting.showAbilityBonus.name": "Mostrar bonus de tiro para habilidades",
     "tokenActionHud.shadowdark.setting.showAttackRanges.hint": "Mostrar iconos de rangos de ataques",
     "tokenActionHud.shadowdark.setting.showAttackRanges.name": "Mostrar iconos de rangos de ataques",
     "tokenActionHud.shadowdark.setting.showSpellRanges.hint": "Mostrar iconos de rangos de hechizos",

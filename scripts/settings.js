@@ -7,38 +7,6 @@ import { MODULE } from './constants.js'
  * @param {function} coreUpdate Token Action HUD Core update function
  */
 export function register (coreUpdate) {
-    game.settings.register(MODULE.ID, 'showAttackBonus', {
-        name: game.i18n.localize(
-            'tokenActionHud.shadowdark.setting.showAttackBonus.name'
-        ),
-        hint: game.i18n.localize(
-            'tokenActionHud.shadowdark.setting.showAttackBonus.hint'
-        ),
-        scope: 'client',
-        config: true,
-        type: Boolean,
-        default: true,
-        onChange: (value) => {
-            coreUpdate(value)
-        }
-    })
-
-    game.settings.register(MODULE.ID, 'showAbilityBonus', {
-        name: game.i18n.localize(
-            'tokenActionHud.shadowdark.setting.showAbilityBonus.name'
-        ),
-        hint: game.i18n.localize(
-            'tokenActionHud.shadowdark.setting.showAbilityBonus.hint'
-        ),
-        scope: 'client',
-        config: true,
-        type: Boolean,
-        default: true,
-        onChange: (value) => {
-            coreUpdate(value)
-        }
-    })
-
     game.settings.register(MODULE.ID, 'showAttackRanges', {
         name: game.i18n.localize(
             'tokenActionHud.shadowdark.setting.showAttackRanges.name'

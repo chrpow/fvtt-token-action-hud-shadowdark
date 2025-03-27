@@ -48,8 +48,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             if (this.actorType && !knownActors.includes(this.actorType)) return
 
             // Settings
-            this.showAttackBonus = Utils.getSetting('showAttackBonus')
-            this.showAbilityBonus = Utils.getSetting('showAbilityBonus')
             this.wandScrollIcon = Utils.getSetting('wandScrollIcon')
             this.hideLantern = Utils.getSetting('hideLantern')
             this.showAttackRanges = Utils.getSetting('showAttackRanges')
@@ -174,10 +172,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     meleeAttackActions.push(
                         new Action(attack, actionType, {
                             name: attack.name,
-                            info1: this.showAttackBonus ? {
+                            info1: {
                                 text: coreModule.api.Utils.getModifier(meleeAttackBonus),
                                 title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.meleeAttackBonus")}: ${coreModule.api.Utils.getModifier(meleeAttackBonus)}`
-                            } : {},
+                            },
                             range: this.showAttackRanges ? 'close' : undefined
                         })
                     )
@@ -196,10 +194,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             new Action(attack, actionType, {
                                 icon2: this.#getThrownIcon(),
                                 name: attack.name,
-                                info1: this.showAttackBonus ? {
+                                info1: {
                                     text: coreModule.api.Utils.getModifier(thrownAttackBonus),
                                     title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus")}: ${coreModule.api.Utils.getModifier(thrownAttackBonus)}`
-                                } : {},
+                                },
                                 range: this.showAttackRanges
                                     ? attack.system.range
                                     : undefined
@@ -217,10 +215,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     rangedAttackActions.push(
                         new Action(attack, actionType, {
                             name: attack.name,
-                            info1: this.showAttackBonus ? {
+                            info1: {
                                 text: coreModule.api.Utils.getModifier(rangedAttackBonus),
                                 title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus")} ${coreModule.api.Utils.getModifier(rangedAttackBonus)}`
-                            } : {},
+                            },
                             range: this.showAttackRanges
                                 ? attack.system.range
                                 : undefined
@@ -265,7 +263,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     return {
                         id: `${actionType}-${ability}`,
                         name: (this.abbreviateSkills) ? Utils.capitalize(ability) : name,
-                        info1: (this.actor && this.showAbilityBonus) ? {
+                        info1: (this.actor) ? {
                             text: coreModule.api.Utils.getModifier(mod),
                             title: `${game.i18n.localize("SHADOWDARK.class-ability.ability.check")}: ${coreModule.api.Utils.getModifier(mod)}`
                         }: null,
@@ -594,10 +592,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     meleeAttackActions.push(
                         new Action(attack, 'npcAttack', {
                             name: _toTitleCase(attack.name),
-                            info1: this.showAttackBonus ? {
+                            info1: {
                                 text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
-                                title: `${game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")} ${coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus)}`
-                            } : {},
+                                title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+                            },
                             range: this.showAttackRanges ? 'close' : undefined
                         })
                     )
@@ -611,10 +609,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                             new Action(attack, 'npcAttack', {
                                 icon2: this.#getThrownIcon(),
                                 name: _toTitleCase(attack.name),
-                                info1: this.showAttackBonus ? {
+                                info1: {
                                     text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
-                                    title: `${game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")} ${coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus)}`
-                                } : {},
+                                    title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+                                },
                                 range: this.showAttackRanges ? maxRange : undefined
                             })
                         )
@@ -625,10 +623,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                     rangedAttackActions.push(
                         new Action(attack, 'npcAttack', {
                             name: _toTitleCase(attack.name),
-                            info1: this.showAttackBonus ? {
+                            info1: {
                                 text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
-                                title: `${game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")} ${coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus)}`
-                            } : {},
+                                title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+                            },
                             range: this.showAttackRanges ? maxRange : undefined
                         })
                     )
