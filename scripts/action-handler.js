@@ -171,61 +171,82 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
                         this.actor?.system.bonuses.meleeAttackBonus +
                         attack.system.bonuses.attackBonus +
                         weaponMasterBonus
-                    meleeAttackActions.push(
-                        new Action(attack, actionType, {
-                            name:
-                                attack.name +
-                                (this.showAttackBonus
-                                    ? getBonusString(meleeAttackBonus)
-                                    : ''),
-                            range: this.showAttackRanges ? 'close' : undefined
-                        })
-                    )
-
-                    // Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-                    if (await attack.hasProperty('thrown')) {
-                        const thrownAttackBonus =
-                            baseAttackBonus +
-                            parseInt(
-                                this.actor?.system.bonuses.rangedAttackBonus,
-                                10
-                            ) +
-                            parseInt(attack.system.bonuses.attackBonus, 10) +
-                            weaponMasterBonus
-                        rangedAttackActions.push(
-                            new Action(attack, actionType, {
-                                icon2: this.#getThrownIcon(),
-                                name:
-                                    attack.name +
-                                    (this.showAttackBonus
-                                        ? getBonusString(thrownAttackBonus)
-                                        : ''),
-                                range: this.showAttackRanges
-                                    ? attack.system.range
-                                    : undefined
-                            })
-                        )
-                        continue
-                    }
+					//handle versatile weapons
+					const hands = []
+					if (attack.system.damage.oneHanded) {
+						hands.push('1h')
+					} if (attack.system.damage.twoHanded) {
+						hands.push('2h')
+					}
+					for (const handedness of hands) {
+						const name = `${attack.name}
+							${(await attack.isVersatile()
+								? ` ${handedness.toUpperCase()}`
+								: '')}
+							${(this.showAttackBonus
+								? getBonusString(meleeAttackBonus)
+								: '')}`
+						meleeAttackActions.push(								
+							new Action(attack, actionType, {
+								name,
+								range: this.showAttackRanges ? 'close' : undefined,
+								handedness
+							})
+						)
+						// Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
+						if (await attack.isThrownWeapon()) {
+							const thrownAttackBonus =
+								baseAttackBonus +
+								parseInt(
+									this.actor?.system.bonuses.rangedAttackBonus,
+									10
+								) +
+								parseInt(attack.system.bonuses.attackBonus, 10) +
+								weaponMasterBonus
+							const name = `${attack.name}
+								${(await attack.isVersatile()
+									? ` ${handedness.toUpperCase()}`
+									: '')}
+								${(this.showAttackBonus
+									? getBonusString(thrownAttackBonus)
+									: '')}`
+							rangedAttackActions.push(								
+								new Action(attack, actionType, {
+									name,
+									range: this.showAttackRanges
+										? attack.system.range
+										: undefined,
+									handedness
+								}))
+						}
+					}                 
                 } else if (attack.system.type === 'ranged') {
                     const rangedAttackBonus =
                         baseAttackBonus +
                         this.actor?.system.bonuses.rangedAttackBonus +
                         attack.system.bonuses.attackBonus +
                         weaponMasterBonus
-
-                    rangedAttackActions.push(
-                        new Action(attack, actionType, {
-                            name:
-                                attack.name +
-                                (this.showAttackBonus
-                                    ? getBonusString(rangedAttackBonus)
-                                    : ''),
-                            range: this.showAttackRanges
-                                ? attack.system.range
-                                : undefined
-                        })
-                    )
+					const hands = []
+					if (attack.system.damage.oneHanded) {
+						hands.push('1h')
+					} if (attack.system.damage.twoHanded) {
+						hands.push('2h')
+					}
+					for (const handedness of hands) {
+						rangedAttackActions.push(
+							new Action(attack, actionType, {
+								name:
+									attack.name +
+									(this.showAttackBonus
+										? getBonusString(rangedAttackBonus)
+										: ''),
+								range: this.showAttackRanges
+									? attack.system.range
+									: undefined,
+								handedness
+							})
+						)
+					}
                 }
             }
 
@@ -733,13 +754,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         constructor (item, actionType, options) {
             // NOTE: The action ID must be unique across groups
             // Ex. actions in buildLight and buildAttack may reference the same item in buildInventory
-            this.id = `${actionType}-${item.id}`
+            this.id = `${actionType}-${item.id}${options?.handedness ? `-${options?.handedness}`: ``}`,
             this.name = options?.name || item.name
             this.img = coreModule.api.Utils.getImage(item)
             this.icon1 = _getRangeIcon(options?.range)
             this.icon2 = options?.icon2
             this.cssClass = options?.cssClass
             this.system = { actionType, actionId: item.id }
+			if (options?.handedness) this.system.handedness = options.handedness
         }
     }
 })

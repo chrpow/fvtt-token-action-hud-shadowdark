@@ -14,8 +14,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {object} event        The event
          */
         async handleActionClick (event) {
-            const { actionType, actionId } = this.action.system
-
+            const actionType = this.action.system.actionType
+			const actionId = this.action.system.actionId
+			const handedness = this.action.system?.handedness
             // const renderable = ['attack', 'ability']
 
             // if (renderable.includes(actionTypeId) && this.isRenderItem()) {
@@ -26,7 +27,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
             // If single actor is selected
             if (this.actor) {
-                await this.#handleAction(event, this.actor, this.token, actionType, actionId)
+				const options = {handedness}
+                await this.#handleAction(event, this.actor, this.token, actionType, actionId, options)
                 return
             }
 
@@ -36,7 +38,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
             // If multiple actors are selected
             for (const token of controlledTokens) {
                 const actor = token.actor
-                await this.#handleAction(event, actor, token, actionType, actionId)
+				const options = {handedness}
+                await this.#handleAction(event, actor, token, actionType, actionId, options)
             }
         }
 
@@ -49,10 +52,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
          * @param {string} actionType The action type id
          * @param {string} actionId     The actionId
          */
-        async #handleAction (event, actor, token, actionType, actionId) {
+        async #handleAction (event, actor, token, actionType, actionId, options) {
             switch (actionType) {
             case 'attack':
-                await this.#handleAttackAction(actor, actionId)
+                await this.#handleAttackAction(actor, actionId, options)
                 break
             case 'npcAttack':
                 await this.#handleNPCAttackAction(actor, actionId)
@@ -90,9 +93,13 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
         * @param {object} event    The event
         * @param {object} actor    The actor
         * @param {string} actionId The action id
+		* @param {string} handedness Weapon handedness
         */
-        async #handleAttackAction (actor, actionId) {
-            await actor.rollAttack(actionId)
+        async #handleAttackAction (actor, actionId, options) {
+			const handedness = options?.handedness
+			console.log(handedness)
+			const o = {handedness}
+            await actor.rollAttack(actionId, o)
         }
 
         async #handleNPCAttackAction (actor, actionId) {
