@@ -190,7 +190,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 								handedness,
 								info1: {
 									text: coreModule.api.Utils.getModifier(meleeAttackBonus),
-									title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.meleeAttackBonus")}: ${coreModule.api.Utils.getModifier(meleeAttackBonus)}`
+									title: `${game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.meleeAttackBonus')}: ${coreModule.api.Utils.getModifier(meleeAttackBonus)}`
 								}
 							})
 						)
@@ -217,7 +217,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 									handedness,
 									info1: {
 										text: coreModule.api.Utils.getModifier(thrownAttackBonus),
-										title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus")}: ${coreModule.api.Utils.getModifier(thrownAttackBonus)}`
+										title: `${game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus')}: ${coreModule.api.Utils.getModifier(thrownAttackBonus)}`
 									}
 								})
 							)
@@ -248,9 +248,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 									: undefined,
 								handedness,
 								info1: {
-									text: "+2",//coreModule.api.Utils.getModifier(rangedAttackBonus),
-									title: `${game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus")} ${coreModule.api.Utils.getModifier(rangedAttackBonus)}`
-								},
+									text: coreModule.api.Utils.getModifier(rangedAttackBonus),
+									title: `${game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.rangedAttackBonus')} ${coreModule.api.Utils.getModifier(rangedAttackBonus)}`
+								}
 							})
 						)
 					}
@@ -286,16 +286,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
 			const abilityActions = await Promise.all(
 				abilities.map(async (ability) => {
-					const id = `${actionType}-${ability}`
 					const name = coreModule.api.Utils.i18n(CONFIG.SHADOWDARK.ABILITIES_LONG[ability])
 					const mod = this.actor?.system.abilities[ability].mod
 					return {
 						id: `${actionType}-${ability}`,
-						name: (this.abbreviateSkills) ? coreModule.api.Utils.capitalize(ability) : name,
-						info1: (this.actor) ? {
-							text: coreModule.api.Utils.getModifier(mod),
-							title: `${game.i18n.localize("SHADOWDARK.class-ability.ability.check")}: ${coreModule.api.Utils.getModifier(mod)}`
-						} : null,
+						name: (this.abbreviateSkills)
+							? coreModule.api.Utils.capitalize(ability)
+							: name,
+						info1: (this.actor)
+							? {
+								text: coreModule.api.Utils.getModifier(mod),
+								title: `${game.i18n.localize('SHADOWDARK.class-ability.ability.check')}: ${coreModule.api.Utils.getModifier(mod)}`
+							}
+							: null,
 						system: { actionType, actionId: ability }
 					}
 				})
@@ -342,7 +345,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						return new Action(spell, actionType, {
 							info1: {
 								text: coreModule.api.Utils.getModifier(spellBonus),
-								title: game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.spellCastingBonus")
+								title: game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.spellCastingBonus')
 							},
 							range: this.showSpellRanges
 								? spell.system.range
@@ -384,7 +387,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						name: wand.system.spellName,
 						info1: {
 							text: coreModule.api.Utils.getModifier(spellBonus),
-							title: game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.spellCastingBonus")
+							title: game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.spellCastingBonus')
 						},
 						icon2: this.#getWandScrollIcon('wand'),
 						range: this.showSpellRanges
@@ -422,7 +425,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						name: scroll.system.spellName,
 						info1: {
 							text: coreModule.api.Utils.getModifier(spellBonus),
-							title: game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.spellCastingBonus")
+							title: game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.spellCastingBonus')
 						},
 						icon2: this.#getWandScrollIcon('scroll'),
 						range: this.showSpellRanges
@@ -454,7 +457,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 				return new Action(c, actionType, {
 					info1: {
 						text: coreModule.api.Utils.getModifier(this.actor.system?.spellcastingBonus),
-						title: game.i18n.localize("SHADOWDARK.item.effect.predefined_effect.spellCastingBonus")
+						title: game.i18n.localize('SHADOWDARK.item.effect.predefined_effect.spellCastingBonus')
 					},
 					cssClass: c.system?.lost ? 'tah-shadowdark-lost' : ''
 				})
@@ -493,7 +496,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						return new Action(ab, actionType, {
 							info1: {
 								text: coreModule.api.Utils.getModifier(abBonus),
-								title: game.i18n.localize("SHADOWDARK.dialog.item_roll.ability_bonus")
+								title: game.i18n.localize('SHADOWDARK.dialog.item_roll.ability_bonus')
 							},
 							cssClass: ab.system.lost
 								? 'tah-shadowdark-lost'
@@ -515,12 +518,32 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 			// Exit if no talents exist
 			if (!talents || talents?.length === 0) return
 
+			// Get category headings
+			const categories = [...new Set(talents.map(t => t.system.talentClass))]
+
 			const actionType = 'item'
 
-			const talentActions = talents.map((t) => {
-				return new Action(t, actionType)
-			})
-			this.addActions(talentActions, GROUP.talents)
+			for (const category of categories) {
+				const talentArray = talents.filter(
+					(t) => t.system.talentClass === category
+				)
+				if (!talentArray || talentArray?.length === 0) continue
+
+				const talentTypeGroupData = {
+					id: `talents_${category}`,
+					name: coreModule.api.Utils.i18n(
+						ACTION_TYPE[category] ?? coreModule.api.Utils.capitalize(category)
+					),
+					type: 'system-derived'
+				}
+				if (talentArray.length > 0) {
+					this.addGroup(talentTypeGroupData, GROUP.talents)
+					const itemActions = talentArray.map((t) => {
+						return new Action(t, actionType)
+					})
+					this.addActions(itemActions, talentTypeGroupData)
+				}
+			}
 		}
 
 		/**
@@ -618,7 +641,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 				lights.map(async (light) => {
 					return light.system.light.active
 						? new Action(light, actionType, {
-							icon2: `<i class="${ICON.flame}"></i>`,
+							icon2: `<i class='${ICON.flame}'></i>`,
 							cssClass: 'toggle active'
 						})
 						: new Action(light, actionType, { cssClass: 'toggle' })
@@ -655,7 +678,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 							name: coreModule.api.Utils.capitalize(attack.name),
 							info1: {
 								text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
-								title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+								title: game.i18n.localize('SHADOWDARK.item.npc_attack_bonus')
 							},
 							range: this.showAttackRanges ? 'close' : undefined
 						})
@@ -670,7 +693,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 								name: coreModule.api.Utils.capitalize(attack.name),
 								info1: {
 									text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
-									title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+									title: game.i18n.localize('SHADOWDARK.item.npc_attack_bonus')
 								},
 								range: this.showAttackRanges
 									? maxRange
@@ -686,7 +709,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 							name: coreModule.api.Utils.capitalize(attack.name),
 							info1: {
 								text: coreModule.api.Utils.getModifier(attack.system.bonuses.attackBonus),
-								title: game.i18n.localize("SHADOWDARK.item.npc_attack_bonus")
+								title: game.i18n.localize('SHADOWDARK.item.npc_attack_bonus')
 							},
 							range: this.showAttackRanges ? maxRange : undefined
 						})
@@ -748,7 +771,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 			const title = game.i18n.localize(`SHADOWDARK.item.${itemKey}.label`)
 			const icon = ICON[itemKey]
 			return this.wandScrollIcon && icon
-				? `<i class="${icon}" title="${title}"></i>`
+				? `<i class='${icon}' title='${title}'></i>`
 				: ''
 		}
 
@@ -757,14 +780,14 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 				'SHADOWDARK.weapon.properties.thrown'
 			)
 			const icon = ICON.thrown
-			return `<i class="${icon}" title="${title}"></i>`
+			return `<i class='${icon}' title='${title}'></i>`
 		}
 	}
 
 	function _getRangeIcon(range) {
 		const title = CONFIG.SHADOWDARK.RANGES[range] ?? ''
 		const icon = ICON[range]
-		return icon ? `<i class="${icon}" title="${title}"></i>` : ''
+		return icon ? `<i class='${icon}' title='${title}'></i>` : ''
 	}
 
 	class Action {
