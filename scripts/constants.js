@@ -29,13 +29,15 @@ export const ACTION_TYPE = {
 	feature: 'SHADOWDARK.sheet.npc.features_label',
 	melee: 'SHADOWDARK.weapon.type.melee',
 	ranged: 'SHADOWDARK.weapon.type.ranged',
-	wands: 'SHADOWDARK.inventory.section.wands',
-	scrolls: 'SHADOWDARK.inventory.section.scrolls',
-	armor: 'SHADOWDARK.item_type.armor',
-	basic: 'SHADOWDARK.item_type.basic',
-	treasure: 'SHADOWDARK.item.treasure',
+	wand: 'SHADOWDARK.inventory.section.wands',
+	scroll: 'SHADOWDARK.inventory.section.scrolls',
+	armor: 'SHADOWDARK.inventory.section.armor',
+	basic: 'SHADOWDARK.inventory.section.basic',
+	treasure: 'SHADOWDARK.inventory.section.treasure',
 	tier: 'SHADOWDARK.sheet.player.spells_tier',
-	specialAttack: 'SHADOWDARK.sheet.npc.specials_label'
+	specialAttack: 'SHADOWDARK.sheet.npc.specials_label',
+	weapon: 'SHADOWDARK.inventory.section.weapon',
+	potion: 'SHADOWDARK.inventory.section.potions'
 }
 
 /**
@@ -50,15 +52,6 @@ export const GROUP = {
 	light: { id: 'light', name: 'SHADOWDARK.sheet.item.tab.light', type: 'system' },
 	features: { id: 'features', name: 'SHADOWDARK.sheet.npc.features_label', type: 'system' },
 	talents: { id: 'talents', name: 'SHADOWDARK.class.talents.label', type: 'system' }
-}
-
-export const ABILITY = {
-	str: { name: 'SHADOWDARK.ability_strength' },
-	dex: { name: 'SHADOWDARK.ability_dexterity' },
-	con: { name: 'SHADOWDARK.ability_constitution' },
-	int: { name: 'SHADOWDARK.ability_intelligence' },
-	wis: { name: 'SHADOWDARK.ability_wisdom' },
-	cha: { name: 'SHADOWDARK.ability_charisma' }
 }
 
 export const ICON = {
