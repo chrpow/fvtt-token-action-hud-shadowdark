@@ -11,6 +11,12 @@
         "sourceType": "module"
     },
     "rules": {
-        "indent": ["error", 4]
+        "indent": "off",
+		"no-tabs": 0,
+		"space-before-function-paren": ["error", {
+			"anonymous": "always",
+			"named": "never",
+			"asyncArrow": "always"
+		}]
     }
 }
