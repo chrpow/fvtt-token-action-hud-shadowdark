@@ -37,7 +37,11 @@ export const ACTION_TYPE = {
 	tier: 'SHADOWDARK.sheet.player.spells_tier',
 	specialAttack: 'SHADOWDARK.sheet.npc.specials_label',
 	weapon: 'SHADOWDARK.inventory.section.weapon',
-	potion: 'SHADOWDARK.inventory.section.potions'
+	potion: 'SHADOWDARK.inventory.section.potions',
+	ancestry: 'SHADOWDARK.talent.class.ancestry',
+	class: 'SHADOWDARK.talent.class.class',
+	patronBoon: 'SHADOWDARK.talent.class.patronBoon',
+	level: 'SHADOWDARK.talent.class.level'
 }
 
 /**
