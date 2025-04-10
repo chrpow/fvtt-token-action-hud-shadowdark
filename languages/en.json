@@ -1,8 +1,4 @@
 {
-	"tokenActionHud.shadowdark.setting.showAttackBonus.hint": "Show roll bonus for attacks",
-	"tokenActionHud.shadowdark.setting.showAttackBonus.name": "Show Roll Bonus for Attacks",
-	"tokenActionHud.shadowdark.setting.showAbilityBonus.hint": "Show roll bonus for abilities",
-	"tokenActionHud.shadowdark.setting.showAbilityBonus.name": "Show Roll Bonus for Abilities",
 	"tokenActionHud.shadowdark.setting.showAttackRanges.hint": "Show range icons for attacks",
 	"tokenActionHud.shadowdark.setting.showAttackRanges.name": "Show Range Icons for Attacks",
 	"tokenActionHud.shadowdark.setting.showSpellRanges.hint": "Show Range Icons for Spells",
