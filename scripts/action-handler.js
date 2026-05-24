@@ -152,21 +152,17 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
 			// Sort attacks by type
 			for (const attack of attacks) {
-				const weaponMasterBonus =
-					this.actor?.calcWeaponMasterBonus(attack)
-				const baseAttackBonus = (await attack.isFinesseWeapon())
-					? Math.max(
-						this.actor?.attackBonus('melee'),
-						this.actor?.attackBonus('ranged')
-					)
-					: this.actor?.attackBonus(attack.system.type)
+				const isFinesse = attack.system.isFinesse ?? false
+				const strMod = this.actor?.system.abilities.str.mod ?? 0
+				const dexMod = this.actor?.system.abilities.dex.mod ?? 0
+				const weaponItemBonus = attack.system.bonuses?.attackBonus ?? 0
 
 				if (attack.system.type === 'melee') {
+					const baseMeleeBonus = isFinesse ? Math.max(strMod, dexMod) : strMod
 					const meleeAttackBonus =
-						baseAttackBonus +
-						this.actor?.system.bonuses.meleeAttackBonus +
-						attack.system.bonuses.attackBonus +
-						weaponMasterBonus
+						baseMeleeBonus +
+						(this.actor?.system.bonuses?.meleeAttackBonus ?? 0) +
+						weaponItemBonus
 					// handle versatile weapons
 					const hands = []
 					if (attack.system.damage.oneHanded) {
@@ -177,7 +173,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 					}
 					for (const handedness of hands) {
 						const name = `${attack.name}
-                            ${(await attack.isVersatile())
+                            ${(attack.system.isVersatile)
 								? ` ${handedness.toUpperCase()}`
 								: ''
 							}`
@@ -195,19 +191,12 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 							})
 						)
 						// Duplicate melee weapons that can be thrown, adding a 'thrown' icon to them.
-						if (await attack.isThrownWeapon()) {
+						if (attack.system.isThrown) {
+							const baseThrownBonus = isFinesse ? Math.max(strMod, dexMod) : dexMod
 							const thrownAttackBonus =
-								baseAttackBonus +
-								parseInt(
-									this.actor?.system.bonuses
-										.rangedAttackBonus,
-									10
-								) +
-								parseInt(
-									attack.system.bonuses.attackBonus,
-									10
-								) +
-								weaponMasterBonus
+								baseThrownBonus +
+								(this.actor?.system.bonuses?.rangedAttackBonus ?? 0) +
+								weaponItemBonus
 							rangedAttackActions.push(
 								new Action(attack, actionType, {
 									name,
@@ -224,11 +213,11 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						}
 					}
 				} else if (attack.system.type === 'ranged') {
+					const baseRangedBonus = isFinesse ? Math.max(strMod, dexMod) : dexMod
 					const rangedAttackBonus =
-						baseAttackBonus +
-						this.actor?.system.bonuses.rangedAttackBonus +
-						attack.system.bonuses.attackBonus +
-						weaponMasterBonus
+						baseRangedBonus +
+						(this.actor?.system.bonuses?.rangedAttackBonus ?? 0) +
+						weaponItemBonus
 					const hands = []
 					if (attack.system.damage.oneHanded) {
 						hands.push('1h')
@@ -240,7 +229,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						rangedAttackActions.push(
 							new Action(attack, actionType, {
 								name: `${attack.name}
-										${(await attack.isVersatile())
+										${(attack.system.isVersatile)
 										? ` ${handedness.toUpperCase()}`
 										: ''}`,
 								range: this.showAttackRanges
@@ -339,9 +328,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 						)
 						: spells.filter((spell) => spell.system.tier === tier)
 					const spellActions = await Promise.all(activeSpells.map(async (spell) => {
-						const ability = (await this.actor.getSpellcastingAbility(spell.id))
-						const spellBonus = this.actor?.system.abilities[ability].mod +
-							this.actor.system.bonuses?.spellcastingCheckBonus
+						const ability = await this.actor.system._getSpellcastingAbility(spell.uuid)
+						const spellBonus = (this.actor?.system.abilities[ability]?.mod ?? 0) +
+							(this.actor.system.bonuses?.spellcastingCheckBonus ?? 0)
 						return new Action(spell, actionType, {
 							info1: {
 								text: coreModule.api.Utils.getModifier(spellBonus),
@@ -380,9 +369,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 				}
 
 				const wandActions = await Promise.all(usableWands.map(async (wand) => {
-					const ability = (await this.actor.getSpellcastingAbility(wand.id))
-					const spellBonus = this.actor?.system.abilities[ability].mod +
-						this.actor.system.bonuses?.spellcastingCheckBonus
+					const ability = await this.actor.system._getSpellcastingAbility(wand.uuid)
+					const spellBonus = (this.actor?.system.abilities[ability]?.mod ?? 0) +
+						(this.actor.system.bonuses?.spellcastingCheckBonus ?? 0)
 					return new Action(wand, actionType, {
 						name: wand.system.spellName,
 						info1: {
@@ -418,9 +407,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 				}
 
 				const scrollActions = await Promise.all(usableScrolls.map(async (scroll) => {
-					const ability = (await this.actor.getSpellcastingAbility(scroll.id))
-					const spellBonus = this.actor?.system.abilities[ability].mod +
-						this.actor.system.bonuses?.spellcastingCheckBonus
+					const ability = await this.actor.system._getSpellcastingAbility(scroll.uuid)
+					const spellBonus = (this.actor?.system.abilities[ability]?.mod ?? 0) +
+						(this.actor.system.bonuses?.spellcastingCheckBonus ?? 0)
 					return new Action(scroll, actionType, {
 						name: scroll.system.spellName,
 						info1: {
