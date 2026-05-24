@@ -91,19 +91,19 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		*/
 		async #handleAttackAction(event, actor, system) {
 			const actionId = system.actionId
-			const options = {
+			const weaponUuid = actor.items.get(actionId)?.uuid
+			const config = {
 				handedness: system?.handedness,
-				fastForward: event.shiftKey
+				skipPrompt: event.shiftKey
 			}
-			await actor.rollAttack(actionId, options)
+			await actor.system.rollAttack(weaponUuid, config)
 		}
 
 		async #handleNPCAttackAction(event, actor, system) {
 			const actionId = system.actionId
-			const options = {
-				fastForward: event.shiftKey
-			}
-			await actor.rollAttack(actionId, options)
+			const attackUuid = actor.items.get(actionId)?.uuid
+			const config = { skipPrompt: event.shiftKey }
+			await actor.system.rollAttack(attackUuid, config)
 
 			const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
 			const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
@@ -118,12 +118,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		*/
 		async #handleSpecialAttackAction(actor, system) {
 			const actionId = system.actionId
-
-			await actor.useAbility(actionId)
-
 			const rollMode = Utils.getSetting('hideNPCFeatures') ? 'selfroll' : undefined
-			const feature = actor.items.find((i) => i.type === 'NPC Feature' && i.name === actor.items.get(actionId).name)
-			await feature?.displayCard({ rollMode })
+			const item = actor.items.get(actionId)
+			await item?.displayCard({ rollMode })
 		}
 
 		/**
@@ -135,11 +132,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		 */
 		async #handleAbilityAction(event, actor, system) {
 			const actionId = system.actionId
-			const options = {
-				event,
-				fastForward: event.shiftKey
-			}
-			await actor.rollAbility(actionId, options)
+			const config = { skipPrompt: event.shiftKey }
+			await actor.system.rollStatCheck(actionId, config)
 		}
 
 		/**
@@ -151,10 +145,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		 */
 		async #handleSpellAction(event, actor, system) {
 			const actionId = system.actionId
-			const options = {
-				fastForward: event.shiftKey
-			}
-			await actor.castSpell(actionId, options)
+			const spellUuid = actor.items.get(actionId)?.uuid
+			const config = { skipPrompt: event.shiftKey }
+			await actor.system.castSpell(spellUuid, config)
 		}
 
 		/**
@@ -166,10 +159,9 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		*/
 		async #handleNPCSpell(event, actor, system) {
 			const actionId = system.actionId
-			const options = {
-				fastForward: event.shiftKey
-			}
-			await actor.castNPCSpell(actionId, options)
+			const spellUuid = actor.items.get(actionId)?.uuid
+			const config = { skipPrompt: event.shiftKey }
+			await actor.system.castSpell(spellUuid, config)
 		}
 
 		/**
@@ -194,11 +186,10 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		 * @param {object} system   Data for the action
 		 */
 		async #handleClassAbility(event, actor, system) {
-			const options = {
-				fastForward: event.shiftKey
-			}
 			const actionId = system.actionId
-			await actor.useAbility(actionId, options)
+			const abilityUuid = actor.items.get(actionId)?.uuid
+			const config = { skipPrompt: event.shiftKey }
+			await actor.system.useAbility(abilityUuid, config)
 		}
 
 		/**
@@ -222,8 +213,8 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		 */
 		async #handleLightAction(actor, system) {
 			const actionId = system.actionId
-			const light = actor.getEmbeddedDocument('Item', actionId)
-			await light.parent.sheet._toggleLightSource(light)
+			const light = actor.items.get(actionId)
+			await actor.toggleLight(!light.system.light.active, actionId)
 		}
 	}
 })
