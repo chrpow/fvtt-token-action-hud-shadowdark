@@ -2,7 +2,7 @@
 	"tokenActionHud.shadowdark.setting.showAttackRanges.hint": "Show range icons for attacks",
 	"tokenActionHud.shadowdark.setting.showAttackRanges.name": "Show Range Icons for Attacks",
 	"tokenActionHud.shadowdark.setting.showSpellRanges.hint": "Show Range Icons for Spells",
-	"tokenActionHud.shadowdark.setting.showSpellRanges.name": "Show range icons for spells",
+	"tokenActionHud.shadowdark.setting.showSpellRanges.name": "Show Range Icons for Spells",
 	"tokenActionHud.shadowdark.setting.wandScrollIcon.hint": "Abbreviate wand and scroll names with icons",
 	"tokenActionHud.shadowdark.setting.wandScrollIcon.name": "Show Icon for Wands and Scrolls",
 	"tokenActionHud.shadowdark.setting.hideLantern.hint": "Hide oil from the Light menu when no lantern is present",

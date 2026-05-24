@@ -15,11 +15,6 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 		 */
 		async handleActionClick(event) {
 			const system = this.action.system
-			// const renderable = ['attack', 'ability']
-
-			// if (renderable.includes(actionTypeId) && this.isRenderItem()) {
-			//     return this.doRenderItem(this.actor, actionId)
-			// }
 
 			const knownCharacters = ['Player', 'NPC']
 
@@ -101,7 +96,7 @@ Hooks.once('tokenActionHudCoreApiReady', async (coreModule) => {
 
 		async #handleNPCAttackAction(event, actor, system) {
 			const actionId = system.actionId
-			const attackUuid = actor.items.get(actionId)?.uuid
+			const attackUuid = actor.items.get(actionId)?.id
 			const config = { skipPrompt: event.shiftKey }
 			await actor.system.rollAttack(attackUuid, config)
 
