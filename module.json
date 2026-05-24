@@ -82,8 +82,7 @@
         "compatibility": [
           {
             "minimum": "2.0",
-            "maximum": "2.0.99",
-            "verified": "2.0.11"
+            "verified": "2.1.0"
           }
         ]
       }
