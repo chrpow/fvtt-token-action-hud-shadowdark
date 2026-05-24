@@ -93,8 +93,8 @@
     }
   },
   "socket": false,
-  "manifest": "This is auto replaced",
-  "download": "This is auto replaced",
+  "manifest": "https://raw.githubusercontent.com/pamput/fvtt-token-action-hud-shadowdark/refs/heads/update-to-core-2.1.1/module.json",
+  "download": "https://github.com/pamput/fvtt-token-action-hud-shadowdark/archive/refs/heads/update-to-core-2.1.1.zip",
   "protected": false,
   "readme": "https://github.com/chrpow/fvtt-token-action-hud-shadowdark#readme",
   "coreTranslation": false,
